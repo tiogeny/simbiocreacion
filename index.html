@@ -1,0 +1,2307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimbioCreación: Competencia vs Convergencia Exponencial</title>
+  <style>
+    :root {
+      --bg-primary: #0a0e14;
+      --bg-secondary: #131922;
+      --bg-card: rgba(19, 25, 34, 0.92);
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --border-color: #21262d;
+      --border-light: #30363d;
+      --accent-pink: #ff2a85;
+      --accent-pink-glow: rgba(255, 42, 133, 0.45);
+      --accent-blue: #388bfd;
+      --accent-green: #3fb950;
+      --accent-gold: #f1e05a;
+      --accent-purple: #bc8cff;
+      --danger: #f85149;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle background grid */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 139, 253, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(255, 42, 133, 0.06) 0%, transparent 45%),
+        linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Top Navigation Header */
+    header {
+      position: relative;
+      z-index: 20;
+      height: 58px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(10, 14, 20, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #FF2E4C, #FF9500, #FFCC00, #34C759, #00C7BE, #007AFF, #AF52DE, #FF2D55, #FF2E4C);
+      box-shadow: 0 0 16px var(--accent-pink-glow);
+      animation: spinSlow 30s linear infinite;
+    }
+
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, #ffffff, #c9d1d9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(255, 42, 133, 0.15);
+      border: 1px solid rgba(255, 42, 133, 0.4);
+      color: var(--accent-pink);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* View Switcher Tabs (Center Header) */
+    .view-switcher {
+      display: flex;
+      align-items: center;
+      background: #161b22;
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .view-tab {
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      background: transparent;
+    }
+
+    .view-tab:hover {
+      color: var(--text-main);
+    }
+
+    .view-tab.active {
+      background: #21262d;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .view-tab.active[data-view="comp"] {
+      border: 1px solid rgba(248, 81, 73, 0.4);
+      color: #ff7b72;
+    }
+
+    .view-tab.active[data-view="conv"] {
+      border: 1px solid rgba(255, 42, 133, 0.4);
+      color: var(--accent-pink);
+    }
+
+    .view-tab.active[data-view="split"] {
+      border: 1px solid rgba(56, 139, 253, 0.4);
+      color: #58a6ff;
+    }
+
+    .view-tab.active[data-view="combinatoria"] {
+      border: 1px solid rgba(241, 224, 90, 0.5);
+      color: var(--accent-gold);
+    }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      background: #21262d;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #30363d;
+      border-color: #8b949e;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--accent-pink);
+      border-color: var(--accent-pink);
+      color: white;
+      box-shadow: 0 0 12px var(--accent-pink-glow);
+    }
+
+    .btn-primary:hover {
+      background: #e01e72;
+      border-color: #e01e72;
+    }
+
+    .btn-gold {
+      background: rgba(241, 224, 90, 0.15);
+      border: 1px solid rgba(241, 224, 90, 0.4);
+      color: var(--accent-gold);
+    }
+
+    .btn-gold:hover {
+      background: rgba(241, 224, 90, 0.25);
+    }
+
+    /* Sub-header: Synergy Multiplier Control Bar */
+    .synergy-strip {
+      position: relative;
+      z-index: 15;
+      background: rgba(13, 17, 23, 0.9);
+      border-bottom: 1px solid var(--border-color);
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .synergy-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .synergy-title {
+      font-weight: 700;
+      color: #c9d1d9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .synergy-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .synergy-pill {
+      background: #161b22;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .synergy-pill:hover {
+      color: #fff;
+      border-color: #58a6ff;
+    }
+
+    .synergy-pill.active {
+      background: rgba(255, 42, 133, 0.2);
+      border-color: var(--accent-pink);
+      color: #fff;
+      box-shadow: 0 0 10px var(--accent-pink-glow);
+    }
+
+    .synergy-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Main Canvas Work Area */
+    main {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Left and Right Panes */
+    .pane {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: flex 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+
+    .pane-comp {
+      border-right: 1px solid var(--border-color);
+    }
+
+    /* Visibility classes controlled by View Switcher */
+    body[data-view="comp"] .pane-comp {
+      flex: 1;
+      display: flex;
+    }
+    body[data-view="comp"] .pane-conv {
+      display: none;
+    }
+    body[data-view="comp"] .pane-combinatoria {
+      display: none;
+    }
+
+    body[data-view="conv"] .pane-conv {
+      flex: 1;
+      display: flex;
+    }
+    body[data-view="conv"] .pane-comp {
+      display: none;
+    }
+    body[data-view="conv"] .pane-combinatoria {
+      display: none;
+    }
+
+    body[data-view="split"] .pane-comp,
+    body[data-view="split"] .pane-conv {
+      flex: 1;
+      display: flex;
+    }
+    body[data-view="split"] .pane-combinatoria {
+      display: none;
+    }
+
+    body[data-view="combinatoria"] .pane-comp,
+    body[data-view="combinatoria"] .pane-conv {
+      display: none;
+    }
+    body[data-view="combinatoria"] .pane-combinatoria {
+      flex: 1;
+      display: flex;
+    }
+
+    /* Pane Headers */
+    .pane-header {
+      padding: 12px 20px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 5;
+    }
+
+    .pane-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .pane-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .pane-comp .pane-title {
+      color: #ff7b72;
+    }
+
+    .pane-conv .pane-title {
+      color: var(--accent-pink);
+    }
+
+    .pane-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .odometer-box {
+      background: rgba(13, 17, 23, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 4px 12px;
+      text-align: right;
+    }
+
+    .odometer-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .odometer-value {
+      font-size: 18px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pane-comp .odometer-value {
+      color: #ff7b72;
+    }
+
+    .pane-conv .odometer-value {
+      color: var(--accent-pink);
+      text-shadow: 0 0 10px var(--accent-pink-glow);
+    }
+
+    /* Tree Canvas & SVG containers */
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .tree-svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: visible;
+    }
+
+    /* SVG Graphical Elements */
+    .tree-path {
+      fill: none;
+      transition: stroke-dashoffset 0.8s ease, opacity 0.4s ease;
+      stroke-linecap: round;
+    }
+
+    .path-solid {
+      opacity: 0.95;
+      filter: drop-shadow(0 0 4px rgba(255, 42, 133, 0.4));
+    }
+
+    .path-dashed-loser {
+      stroke: #30363d;
+      stroke-width: 2px;
+      stroke-dasharray: 4 6;
+      opacity: 0.4;
+    }
+
+    .node-circle {
+      cursor: pointer;
+      transition: transform 0.25s ease, filter 0.25s ease, opacity 0.3s ease;
+    }
+
+    .node-circle:hover {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.7));
+    }
+
+    .node-eliminated {
+      opacity: 0.28 !important;
+      filter: grayscale(100%) brightness(0.6) !important;
+    }
+
+    .node-label-initial {
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 900;
+      fill: #ffffff;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .node-name-label {
+      font-family: var(--font-family);
+      font-size: 10px;
+      font-weight: 600;
+      fill: var(--text-muted);
+      text-anchor: middle;
+      pointer-events: none;
+      transition: fill 0.2s ease;
+    }
+
+    .node-group:hover .node-name-label {
+      fill: #ffffff;
+    }
+
+    .sign-badge {
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: 900;
+      dominant-baseline: central;
+    }
+
+    .sign-plus { fill: #3fb950; }
+    .sign-minus { fill: #8b949e; }
+
+    /* Particles Overlay Canvas */
+    #particleCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Storytelling Toast / Narrative Subtitle Card */
+    .narrative-card {
+      position: absolute;
+      bottom: 74px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 25;
+      background: rgba(13, 17, 23, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 20px;
+      max-width: 640px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 15px rgba(255, 42, 133, 0.1);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: fadeInBottom 0.3s ease;
+    }
+
+    @keyframes fadeInBottom {
+      from { opacity: 0; transform: translate(-50%, 15px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .narrative-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .narrative-content {
+      flex: 1;
+    }
+
+    .narrative-step-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--accent-pink);
+      margin-bottom: 2px;
+    }
+
+    .narrative-text {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #f0f6fc;
+    }
+
+    .narrative-highlight {
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    /* Presenter Bottom Bar */
+    .presenter-bar {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 25;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 133, 0.18);
+      border-radius: 50px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 8px;
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-color);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .step-dot.active {
+      background: var(--accent-pink);
+      box-shadow: 0 0 8px var(--accent-pink);
+      transform: scale(1.3);
+    }
+
+    .step-dot.past {
+      background: #58a6ff;
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 22px;
+      background: var(--border-color);
+    }
+
+    /* Key hints */
+    .key-hint {
+      position: absolute;
+      bottom: 18px;
+      right: 20px;
+      z-index: 15;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kbd {
+      background: #161b22;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 10px;
+      color: #c9d1d9;
+    }
+
+    /* Floating Tooltip */
+    .synergy-tooltip {
+      position: absolute;
+      z-index: 35;
+      background: rgba(13, 17, 23, 0.95);
+      border: 1px solid var(--accent-pink);
+      box-shadow: 0 8px 24px rgba(255, 42, 133, 0.35);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #fff;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -100%) translateY(-10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .synergy-tooltip.show {
+      opacity: 1;
+      transform: translate(-50%, -100%) translateY(-14px);
+    }
+
+    /* PANE COMBINATORIA (186 vs 1,073,741,823) */
+    .pane-combinatoria {
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      position: relative;
+      background: radial-gradient(circle at center, #111822 0%, #0a0e14 80%);
+      padding: 20px 40px 80px;
+    }
+
+    .comb-header {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .comb-header h2 {
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #FF2E4C, #FFCC00, #34C759, #007AFF, #AF52DE);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .comb-header p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .comb-comparison {
+      display: flex;
+      flex: 1;
+      gap: 24px;
+      align-items: stretch;
+      position: relative;
+    }
+
+    .comb-card {
+      flex: 1;
+      background: rgba(19, 25, 34, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comb-card.active-power {
+      border-color: rgba(255, 42, 133, 0.5);
+      box-shadow: 0 0 30px rgba(255, 42, 133, 0.15);
+    }
+
+    .comb-card-title {
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .comb-stat-huge {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .comb-formula {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      background: rgba(0,0,0,0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .comb-visual-area {
+      flex: 1;
+      position: relative;
+      margin-top: 10px;
+      min-height: 220px;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      width: 580px;
+      max-width: 92%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+      overflow: hidden;
+    }
+
+    .modal-overlay.open .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: rgba(10, 14, 20, 0.6);
+    }
+
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .btn-chip {
+      background: #161b22;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-chip:hover {
+      border-color: var(--accent-pink);
+      color: #fff;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .input-node-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #161b22;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .input-node-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 11px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .input-node-text {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .input-node-role {
+      width: 100px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--text-muted);
+      font-size: 10px;
+      outline: none;
+    }
+
+    /* Winner celebration banner in competition */
+    .winner-banner {
+      position: absolute;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(248, 81, 73, 0.15);
+      border: 1px solid rgba(248, 81, 73, 0.4);
+      color: #ff7b72;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body data-view="split">
+
+  <!-- TOP BAR -->
+  <header>
+    <div class="brand" id="brandBtn" title="Acerca de SimbioCreación">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-title">SimbioCreación</div>
+      </div>
+      <span class="brand-tag">Beno Juárez · Fab Lab</span>
+    </div>
+
+    <!-- VIEW SWITCHER (CENTER) -->
+    <div class="view-switcher">
+      <button class="view-tab" data-view="comp" title="Ver solo la rama de eliminación">
+        <span>⚔️</span> Competición
+      </button>
+      <button class="view-tab" data-view="conv" title="Ver solo el árbol simbiótico">
+        <span>🌿</span> SimbioCreación
+      </button>
+      <button class="view-tab active" data-view="split" title="Comparativa simultánea lado a lado">
+        <span>◫</span> Comparativa Split
+      </button>
+      <button class="view-tab" data-view="combinatoria" title="El poder de 2³⁰-1 combinaciones">
+        <span>✨</span> Salto Combinatorio
+      </button>
+    </div>
+
+    <!-- ACTIONS (RIGHT) -->
+    <div class="header-actions">
+      <button class="btn" id="btnConfig" title="Configurar Nombres de Participantes">👥 Participantes</button>
+      <button class="btn" id="btnSound" title="Silenciar / Activar Sonido">🔊</button>
+      <button class="btn" id="btnFullscreen" title="Pantalla Completa (F)">⛶</button>
+    </div>
+  </header>
+
+  <!-- SYNERGY STRIP (SUB-HEADER) -->
+  <div class="synergy-strip">
+    <div class="synergy-left">
+      <div class="synergy-title">
+        <span>⚡ Multiplicador Simbiótico (Carpintero 100 + Programador 100):</span>
+      </div>
+      <div class="synergy-pills">
+        <button class="synergy-pill" data-factor="1" title="Suma Lineal (Aditiva)">
+          200 pts (×1 Lineal)
+        </button>
+        <button class="synergy-pill" data-factor="2.5" title="Integración Funcional (Mesa ergonómica motorizada)">
+          500 pts (×2.5 Ensamble)
+        </button>
+        <button class="synergy-pill active" data-factor="5" title="Salto de Categoría (Estación de telemedicina inteligente)">
+          1,000 pts (×5 Categoría)
+        </button>
+        <button class="synergy-pill" data-factor="25" title="Ecosistema Simbiótico Abierto Fab Lab">
+          5,000 pts (×25 Ecosistema)
+        </button>
+      </div>
+    </div>
+    <div class="synergy-desc" id="synergyDesc">
+      Salto de Categoría: Crean una "Estación de Telemedicina Postural" que no compite con nadie (Océano Azul).
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main>
+    <!-- PARTICLE LAYER -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- PANE 1: COMPETITION (LEFT) -->
+    <section class="pane pane-comp" id="paneComp">
+      <div class="pane-header">
+        <div class="pane-title-wrap">
+          <span class="pane-title">Competencia Tradicional</span>
+          <span class="pane-subtitle">(Torneo por Descarte / Silos)</span>
+        </div>
+        <div class="odometer-box">
+          <div class="odometer-label">Conocimiento Retenido</div>
+          <div class="odometer-value" id="compVal">800 pts</div>
+        </div>
+      </div>
+
+      <div class="winner-banner" id="winnerBanner">
+        <span>👑</span> <span id="winnerText">Ganador: Carlos (Carpintero)</span>
+      </div>
+
+      <div class="canvas-container">
+        <svg class="tree-svg" id="svgComp"></svg>
+      </div>
+    </section>
+
+    <!-- PANE 2: CONVERGENCE (RIGHT) -->
+    <section class="pane pane-conv" id="paneConv">
+      <div class="pane-header">
+        <div class="pane-title-wrap">
+          <span class="pane-title">SimbioCreación</span>
+          <span class="pane-subtitle">(Convergencia Exponencial / MPI)</span>
+        </div>
+        <div class="odometer-box">
+          <div class="odometer-label">Impacto Emergente</div>
+          <div class="odometer-value" id="convVal">800 pts</div>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <svg class="tree-svg" id="svgConv"></svg>
+      </div>
+    </section>
+
+    <!-- PANE 3: COMBINATORIAL VIEW -->
+    <section class="pane pane-combinatoria" id="paneComb">
+      <div class="comb-header">
+        <h2>El Poder Matemático de la SimbioCreación</h2>
+        <p>Comparación combinatoria en un taller de 30 personas (6 grupos de 5 en silos vs 30 en convergencia total)</p>
+      </div>
+
+      <div class="comb-comparison">
+        <!-- SILO CARD -->
+        <div class="comb-card">
+          <div class="comb-card-title">
+            <span style="color:#ff7b72;">⚔️ Silos Aislados (6 Pentágonos)</span>
+            <span style="font-size:11px; color:var(--text-muted);">Sin Cruce Inter-grupal</span>
+          </div>
+          <div class="comb-stat-huge" style="color:#ff7b72;">186</div>
+          <div class="comb-formula">6 × (2⁵ - 1) = 6 × 31 = 186 combinaciones</div>
+          <div class="comb-visual-area">
+            <canvas id="canvasSilos" style="width:100%; height:100%;"></canvas>
+          </div>
+        </div>
+
+        <!-- CONVERGENCE CARD -->
+        <div class="comb-card active-power">
+          <div class="comb-card-title">
+            <span style="color:var(--accent-pink);">🌿 SimbioCreación Total (Red K₃₀)</span>
+            <span style="font-size:11px; color:var(--accent-gold);">¡Multiplicador ×5,772,805!</span>
+          </div>
+          <div class="comb-stat-huge" style="color:var(--accent-gold);" id="combCount">1,073,741,823</div>
+          <div class="comb-formula">2³⁰ - 1 = 1,073,741,823 combinaciones posibles</div>
+          <div class="comb-visual-area">
+            <canvas id="canvasNetwork" style="width:100%; height:100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORYTELLING NARRATIVE CARD (SUBTITLE FOR AUDIENCE/MAYORS) -->
+    <div class="narrative-card" id="narrativeCard">
+      <div class="narrative-icon" id="narrativeIcon">🌱</div>
+      <div class="narrative-content">
+        <div class="narrative-step-tag" id="narrativeTag">Nivel 0: Genotipos de Entrada</div>
+        <div class="narrative-text" id="narrativeText">
+          Tenemos 8 participantes con saberes únicos (Carpintería, Software, UX, Biología...). En competencia se aíslan y se preparan para eliminarse. En SimbioCreación se disponen a cruzarse.
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOATING SYNERGY TOOLTIP -->
+    <div class="synergy-tooltip" id="synergyTooltip">
+      <span id="tooltipContent"></span>
+    </div>
+
+    <!-- PRESENTER BAR (BOTTOM) -->
+    <div class="presenter-bar">
+      <button class="btn" id="btnPrev" title="Ronda Anterior">◀</button>
+      
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot0" title="Nivel 0: Saberes de Entrada"></div>
+        <div class="step-dot" id="dot1" title="Nivel 1: Primer Cruce (Parejas)"></div>
+        <div class="step-dot" id="dot2" title="Nivel 2: Fusión de Cuartetos"></div>
+        <div class="step-dot" id="dot3" title="Nivel 3: El Gran Fenotipo (MPI)"></div>
+      </div>
+
+      <button class="btn btn-primary" id="btnNext" title="Avanzar Ronda (Barra Espaciadora)">Avanzar a Nivel 1 ▶</button>
+      
+      <div class="divider-v"></div>
+      
+      <button class="btn" id="btnReroll" title="Nuevo Ganador al Azar y Reiniciar">🎲 Sortear Ganador</button>
+      <button class="btn" id="btnReset" title="Reiniciar al Nivel 0">↺</button>
+    </div>
+
+    <!-- KEYBOARD SHORTCUTS HINT -->
+    <div class="key-hint">
+      <span class="kbd">Espacio</span> Avanzar | <span class="kbd">R</span> Sortear | <span class="kbd">1-4</span> Vistas | <span class="kbd">F</span> Fullscreen
+    </div>
+  </main>
+
+  <!-- PARTICIPANTS CONFIG MODAL -->
+  <div class="modal-overlay" id="modalConfig">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>👥 Configurar los 8 Saberes / Participantes</h3>
+        <button class="btn" id="btnCloseConfig">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+          Elige una temática rápida con 1 clic o edita en vivo los nombres y especialidades de tu taller:
+        </p>
+
+        <div class="preset-chips">
+          <button class="btn-chip" data-preset="innovacion">🪵 Carpintero & Software (Innovación)</button>
+          <button class="btn-chip" data-preset="gobierno">🏛️ Gabinete Municipal / Ciudad</button>
+          <button class="btn-chip" data-preset="fablab">🔬 Fab Lab & Tech Exponencial</button>
+          <button class="btn-chip" data-preset="amazonia">🌿 Saberes Ancestrales & Amazonía</button>
+          <button class="btn-chip" data-preset="letras">🔤 Clásico (A - H)</button>
+        </div>
+
+        <div class="inputs-grid" id="inputsGrid"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnSaveConfig">Guardar y Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // PALETTE MATCHING BENO JUÁREZ'S ORIGINAL WHEEL
+    const COLORS = [
+      { id: 'A', color: '#FF2E4C', defaultName: 'Carlos', defaultRole: 'Carpintero' },
+      { id: 'B', color: '#FF9500', defaultName: 'Sofía', defaultRole: 'Programadora' },
+      { id: 'C', color: '#FFCC00', defaultName: 'Diego', defaultRole: 'Diseñador UX' },
+      { id: 'D', color: '#34C759', defaultName: 'Elena', defaultRole: 'Bióloga' },
+      { id: 'E', color: '#00C7BE', defaultName: 'Mateo', defaultRole: 'Mecatrónico' },
+      { id: 'F', color: '#007AFF', defaultName: 'Lucía', defaultRole: 'Médica' },
+      { id: 'G', color: '#AF52DE', defaultName: 'Javier', defaultRole: 'Financista' },
+      { id: 'H', color: '#FF2D55', defaultName: 'Valeria', defaultRole: 'Comunidad' }
+    ];
+
+    // PRESET TEMPLATES
+    const PRESETS = {
+      innovacion: [
+        { name: "Carlos", role: "Carpintero" },
+        { name: "Sofía", role: "Programadora" },
+        { name: "Diego", role: "Diseñador UX" },
+        { name: "Elena", role: "Bióloga" },
+        { name: "Mateo", role: "Mecatrónico" },
+        { name: "Lucía", role: "Médica" },
+        { name: "Javier", role: "Finanzas" },
+        { name: "Valeria", role: "Comunidad" }
+      ],
+      gobierno: [
+        { name: "Salud", role: "Prevención" },
+        { name: "Educación", role: "Digital" },
+        { name: "Seguridad", role: "Ciudadana" },
+        { name: "Transporte", role: "Movilidad" },
+        { name: "Ambiente", role: "Residuos" },
+        { name: "Presupuesto", role: "Hacienda" },
+        { name: "Cultura", role: "Identidad" },
+        { name: "Innovación", role: "Modernización" }
+      ],
+      fablab: [
+        { name: "Impresión 3D", role: "Prototipado" },
+        { name: "Corte Láser", role: "Estructuras" },
+        { name: "Sensores IoT", role: "Electrónica" },
+        { name: "Inteligencia Art.", role: "Algoritmos" },
+        { name: "Bioplásticos", role: "Materiales" },
+        { name: "Robótica", role: "Automatización" },
+        { name: "Energía Solar", role: "Sostenibilidad" },
+        { name: "Open Source", role: "Comunidad" }
+      ],
+      amazonia: [
+        { name: "Botánica", role: "Plantas Medicinales" },
+        { name: "Artesanía", role: "Fibras Nativas" },
+        { name: "Agroforestería", role: "Chacras" },
+        { name: "Ictiología", role: "Ríos & Peces" },
+        { name: "Cosmovisión", role: "Mitos Vivos" },
+        { name: "Música", role: "Canto Ancestral" },
+        { name: "Arquitectura", role: "Malocas" },
+        { name: "Gobernanza", role: "Apu Comunal" }
+      ],
+      letras: [
+        { name: "Idea A", role: "Saber A" },
+        { name: "Idea B", role: "Saber B" },
+        { name: "Idea C", role: "Saber C" },
+        { name: "Idea D", role: "Saber D" },
+        { name: "Idea E", role: "Saber E" },
+        { name: "Idea F", role: "Saber F" },
+        { name: "Idea G", role: "Saber G" },
+        { name: "Idea H", role: "Saber H" }
+      ]
+    };
+
+    // ACTIVE STATE
+    let participants = JSON.parse(localStorage.getItem('simbio_participants_v2')) || [...PRESETS.innovacion];
+    let currentStep = 0; // 0, 1, 2, 3
+    let synergyMultiplier = 5.0; // 1, 2.5, 5, 25
+
+    // COMPETITION BRACKET (100% RANDOMIZED ON EVERY RESET)
+    let compDecisions = {
+      r1: [0, 2, 4, 6],
+      r2: [0, 4],
+      r3: 0
+    };
+
+    function randomizeCompetition() {
+      // Round 1: 4 duels: (0 vs 1), (2 vs 3), (4 vs 5), (6 vs 7)
+      const r1 = [
+        Math.random() < 0.5 ? 0 : 1,
+        Math.random() < 0.5 ? 2 : 3,
+        Math.random() < 0.5 ? 4 : 5,
+        Math.random() < 0.5 ? 6 : 7
+      ];
+      // Round 2: 2 semifinals: (r1[0] vs r1[1]), (r1[2] vs r1[3])
+      const r2 = [
+        Math.random() < 0.5 ? r1[0] : r1[1],
+        Math.random() < 0.5 ? r1[2] : r1[3]
+      ];
+      // Round 3: Final: (r2[0] vs r2[1])
+      const r3 = Math.random() < 0.5 ? r2[0] : r2[1];
+
+      compDecisions = { r1, r2, r3 };
+    }
+
+    randomizeCompetition();
+
+    // VIRTUAL COORDINATE SPACE FOR SVGs
+    const VIRTUAL_WIDTH = 640;
+    const VIRTUAL_HEIGHT = 450;
+
+    // WEB AUDIO API SYNTHESIZER
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.35, volume = 0.15) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playChord(freqs, type = 'sine', duration = 0.6) {
+      freqs.forEach((f, i) => {
+        setTimeout(() => playTone(f, type, duration, 0.1), i * 60);
+      });
+    }
+
+    function playStepSound(step) {
+      if (step === 0) playTone(261.63, 'sine', 0.25); // C4
+      else if (step === 1) playChord([261.63, 329.63], 'triangle', 0.4); // C4, E4
+      else if (step === 2) playChord([261.63, 329.63, 392.00], 'sine', 0.5); // C4, E4, G4
+      else if (step === 3) playChord([261.63, 329.63, 392.00, 523.25, 659.25], 'triangle', 1.0); // Major Arpeggio!
+    }
+
+    function playEliminationSound() {
+      if (!soundEnabled) return;
+      playTone(180, 'sawtooth', 0.4, 0.12);
+    }
+
+    // STORYTELLING SCRIPTS PER STEP
+    const NARRATIVE = [
+      {
+        icon: "🌱",
+        tag: "Nivel 0: Saberes de Entrada (Genotipos)",
+        text: "8 saberes diversos y complementarios (madera, código, medicina, etc.). Cada uno posee 100 puntos de valor base. En competencia se aíslan y se preparan para descartarse. En SimbioCreación se alistan para integrarse."
+      },
+      {
+        icon: "⚡",
+        tag: "Nivel 1: Primer Cruce Simbiótico (Parejas)",
+        text: "Fusión Carpintero + Programador: En competencia, uno es eliminado perdiendo el 50% de la inteligencia. En SimbioCreación crean una <strong>Mesa Ergonómica Automatizada</strong> multiplicando el valor hasta 1,000 pts."
+      },
+      {
+        icon: "🧬",
+        tag: "Nivel 2: Intersección de Segundo Orden (Cuartetos)",
+        text: "La mesa motorizada se fusiona con la Biología (materiales biodegradables) y la Medicina (sensores biomecánicos). Se transforma en una <strong>Estación de Salud Laboral Ciberfísica</strong>."
+      },
+      {
+        icon: "★",
+        tag: "Nivel 3: Máximo Producto de Integración (MPI)",
+        text: "Los 8 saberes viven en un solo organismo vivo e indivisible. <strong>100% de co-autoría colectiva</strong>. Mientras la competencia coronó a 1 solo y tiró 700 pts a la basura, aquí el impacto se multiplicó exponencialmente."
+      }
+    ];
+
+    // GET INITIAL FOR CIRCLE
+    function getInitial(participant) {
+      if (!participant || !participant.name) return '?';
+      return participant.name.trim().charAt(0).toUpperCase();
+    }
+
+    // PARTICLES ENGINE (CANVAS)
+    let particles = [];
+    const pCanvas = document.getElementById('particleCanvas');
+    const pCtx = pCanvas.getContext('2d');
+
+    function resizeCanvas() {
+      pCanvas.width = window.innerWidth;
+      pCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function spawnParticle(curve, color, isAsh = false) {
+      particles.push({
+        curve,
+        t: Math.random(),
+        speed: isAsh ? 0.002 : (0.006 + Math.random() * 0.005),
+        color: isAsh ? '#6e7681' : color,
+        size: isAsh ? 1.8 : (2.2 + Math.random() * 1.8),
+        isAsh,
+        life: 1.0,
+        decay: isAsh ? 0.015 : 0
+      });
+    }
+
+    function evalBezier(x1, y1, x2, y2, t) {
+      const cy1 = y1 + (y2 - y1) * 0.55;
+      const cy2 = y1 + (y2 - y1) * 0.45;
+      const mt = 1 - t;
+      const x = mt*mt*mt*x1 + 3*mt*mt*t*x1 + 3*mt*t*t*x2 + t*t*t*x2;
+      const y = mt*mt*mt*y1 + 3*mt*mt*t*cy1 + 3*mt*t*t*cy2 + t*t*t*y2;
+      return { x, y };
+    }
+
+    function loopParticles() {
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+      const paneComp = document.getElementById('paneComp');
+      const paneConv = document.getElementById('paneConv');
+      const compRect = paneComp ? paneComp.getBoundingClientRect() : null;
+      const convRect = paneConv ? paneConv.getBoundingClientRect() : null;
+
+      const currentView = document.body.getAttribute('data-view');
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.t += p.speed;
+        if (p.t > 1) {
+          if (p.isAsh) {
+            particles.splice(i, 1);
+            continue;
+          } else {
+            p.t = 0;
+          }
+        }
+
+        if (p.decay > 0) {
+          p.life -= p.decay;
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+        }
+
+        const pt = evalBezier(p.curve.x1, p.curve.y1, p.curve.x2, p.curve.y2, p.t);
+
+        // Convert virtual SVG coordinates to screen coordinates
+        let screenX, screenY;
+        const rect = p.curve.isComp ? compRect : convRect;
+        if (!rect) continue;
+
+        // Skip rendering if the pane is hidden
+        if (p.curve.isComp && (currentView === 'conv' || currentView === 'combinatoria')) continue;
+        if (!p.curve.isComp && (currentView === 'comp' || currentView === 'combinatoria')) continue;
+
+        screenX = rect.left + (pt.x / VIRTUAL_WIDTH) * rect.width;
+        screenY = rect.top + (pt.y / VIRTUAL_HEIGHT) * rect.height;
+
+        pCtx.save();
+        pCtx.beginPath();
+        pCtx.arc(screenX, screenY, p.size, 0, Math.PI * 2);
+        pCtx.fillStyle = p.color;
+        pCtx.globalAlpha = p.life * (p.isAsh ? 0.4 : 0.85);
+        if (!p.isAsh) {
+          pCtx.shadowBlur = 8;
+          pCtx.shadowColor = p.color;
+        }
+        pCtx.fill();
+        pCtx.restore();
+      }
+
+      requestAnimationFrame(loopParticles);
+    }
+    requestAnimationFrame(loopParticles);
+
+    // DRAW TREES
+    function drawTrees() {
+      const svgComp = document.getElementById('svgComp');
+      const svgConv = document.getElementById('svgConv');
+
+      svgComp.setAttribute('viewBox', `0 0 ${VIRTUAL_WIDTH} ${VIRTUAL_HEIGHT}`);
+      svgComp.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svgConv.setAttribute('viewBox', `0 0 ${VIRTUAL_WIDTH} ${VIRTUAL_HEIGHT}`);
+      svgConv.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+      svgComp.innerHTML = '';
+      svgConv.innerHTML = '';
+
+      const yLevels = [48, 160, 275, 395];
+      const radius = 17;
+
+      const paddingX = VIRTUAL_WIDTH * 0.08;
+      const stepX = (VIRTUAL_WIDTH - 2 * paddingX) / 7;
+      const xL0 = Array.from({ length: 8 }, (_, i) => paddingX + i * stepX);
+
+      const xL1 = [
+        (xL0[0] + xL0[1]) / 2,
+        (xL0[2] + xL0[3]) / 2,
+        (xL0[4] + xL0[5]) / 2,
+        (xL0[6] + xL0[7]) / 2
+      ];
+
+      const xL2 = [
+        (xL1[0] + xL1[1]) / 2,
+        (xL1[2] + xL1[3]) / 2
+      ];
+
+      const xL3 = (xL2[0] + xL2[1]) / 2;
+
+      particles = [];
+
+      renderConvergenceTree(svgConv, { yLevels, radius, xL0, xL1, xL2, xL3 });
+      renderCompetitionTree(svgComp, { yLevels, radius, xL0, xL1, xL2, xL3 });
+
+      updateUI();
+    }
+
+    function createSmoothCurve(x1, y1, x2, y2) {
+      const cy1 = y1 + (y2 - y1) * 0.55;
+      const cy2 = y1 + (y2 - y1) * 0.45;
+      return `M ${x1} ${y1} C ${x1} ${cy1}, ${x2} ${cy2}, ${x2} ${y2}`;
+    }
+
+    function addSignText(svg, x, y, text, className) {
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', x);
+      t.setAttribute('y', y);
+      t.setAttribute('class', `sign-badge ${className}`);
+      t.setAttribute('text-anchor', 'middle');
+      t.textContent = text;
+      svg.appendChild(t);
+    }
+
+    // CREATE MULTI-COLORED STRIPED CIRCLE
+    function createStripedCircle(svg, id, colorIndices) {
+      const defs = svg.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      if (!svg.querySelector('defs')) svg.appendChild(defs);
+
+      const gradId = `grad-${id}`;
+      let grad = defs.querySelector(`#${gradId}`);
+      if (!grad) {
+        grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        grad.setAttribute('id', gradId);
+        grad.setAttribute('x1', '0%');
+        grad.setAttribute('y1', '0%');
+        grad.setAttribute('x2', '100%');
+        grad.setAttribute('y2', '100%');
+
+        const stepPct = 100 / colorIndices.length;
+        colorIndices.forEach((cIdx, i) => {
+          const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stop1.setAttribute('offset', `${i * stepPct}%`);
+          stop1.setAttribute('stop-color', COLORS[cIdx].color);
+          grad.appendChild(stop1);
+
+          const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stop2.setAttribute('offset', `${(i + 1) * stepPct}%`);
+          stop2.setAttribute('stop-color', COLORS[cIdx].color);
+          grad.appendChild(stop2);
+        });
+        defs.appendChild(grad);
+      }
+      return `url(#${gradId})`;
+    }
+
+    // DRAW INDIVIDUAL NODE
+    function drawNode(svg, { cx, cy, r, fill, initial, subname, role, id, dimmed, isWinner, isMega, mathTooltip }) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'node-group');
+      g.setAttribute('id', `group-${id}`);
+
+      // Winning crown or resonance halo
+      if (isWinner) {
+        const crown = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        crown.setAttribute('x', cx);
+        crown.setAttribute('y', cy - r - 8);
+        crown.setAttribute('text-anchor', 'middle');
+        crown.setAttribute('font-size', '16');
+        crown.textContent = '👑';
+        g.appendChild(crown);
+      }
+
+      if (isMega) {
+        const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        halo.setAttribute('cx', cx);
+        halo.setAttribute('cy', cy);
+        halo.setAttribute('r', r * 1.45);
+        halo.setAttribute('fill', 'none');
+        halo.setAttribute('stroke', 'var(--accent-pink)');
+        halo.setAttribute('stroke-width', '2');
+        halo.setAttribute('stroke-dasharray', '4 4');
+        halo.setAttribute('opacity', '0.6');
+        g.appendChild(halo);
+      }
+
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', cy);
+      circle.setAttribute('r', r);
+      circle.setAttribute('fill', fill);
+      circle.setAttribute('class', `node-circle ${dimmed ? 'node-eliminated' : ''}`);
+      circle.setAttribute('stroke', '#ffffff');
+      circle.setAttribute('stroke-width', isMega ? '3' : '1.5');
+      circle.setAttribute('id', id);
+      g.appendChild(circle);
+
+      // Strike-through mark for eliminated nodes in competition
+      if (dimmed) {
+        const xMark = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const d = r * 0.7;
+        xMark.setAttribute('d', `M ${cx - d} ${cy - d} L ${cx + d} ${cy + d} M ${cx + d} ${cy - d} L ${cx - d} ${cy + d}`);
+        xMark.setAttribute('stroke', '#f85149');
+        xMark.setAttribute('stroke-width', '2.5');
+        xMark.setAttribute('stroke-linecap', 'round');
+        g.appendChild(xMark);
+      }
+
+      // Initial inside circle
+      if (initial && !dimmed) {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', cx);
+        text.setAttribute('y', cy);
+        text.setAttribute('class', 'node-label-initial');
+        text.textContent = initial;
+        g.appendChild(text);
+      }
+
+      // Name & Role label underneath
+      if (subname) {
+        const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        nameText.setAttribute('x', cx);
+        nameText.setAttribute('y', cy + r + 13);
+        nameText.setAttribute('class', 'node-name-label');
+        nameText.textContent = subname;
+        g.appendChild(nameText);
+
+        if (role) {
+          const roleText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          roleText.setAttribute('x', cx);
+          roleText.setAttribute('y', cy + r + 23);
+          roleText.setAttribute('class', 'node-name-label');
+          roleText.setAttribute('style', 'font-size:8px; opacity:0.75;');
+          roleText.textContent = role;
+          g.appendChild(roleText);
+        }
+      }
+
+      // Hover Tooltip events
+      if (mathTooltip) {
+        g.addEventListener('mouseenter', (e) => {
+          showTooltip(mathTooltip, e.clientX, e.clientY);
+        });
+        g.addEventListener('mouseleave', hideTooltip);
+      }
+
+      svg.appendChild(g);
+      return g;
+    }
+
+    // --- 1. RENDER CONVERGENCE TREE (SIMBIOCREACIÓN) ---
+    function renderConvergenceTree(svg, { yLevels, radius, xL0, xL1, xL2, xL3 }) {
+      // Level 0 -> 1 Branches
+      if (currentStep >= 1) {
+        for (let i = 0; i < 4; i++) {
+          const leftIdx = i * 2;
+          const rightIdx = i * 2 + 1;
+
+          const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathL.setAttribute('d', createSmoothCurve(xL0[leftIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathL.setAttribute('class', 'tree-path path-solid');
+          pathL.setAttribute('stroke', COLORS[leftIdx].color);
+          pathL.setAttribute('stroke-width', '3.5px');
+          svg.appendChild(pathL);
+
+          const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathR.setAttribute('d', createSmoothCurve(xL0[rightIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathR.setAttribute('class', 'tree-path path-solid');
+          pathR.setAttribute('stroke', COLORS[rightIdx].color);
+          pathR.setAttribute('stroke-width', '3.5px');
+          svg.appendChild(pathR);
+
+          // Flowing particles along branch
+          for (let p = 0; p < 2; p++) {
+            spawnParticle({ x1: xL0[leftIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: false }, COLORS[leftIdx].color);
+            spawnParticle({ x1: xL0[rightIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: false }, COLORS[rightIdx].color);
+          }
+
+          addSignText(svg, xL0[leftIdx] + 12, yLevels[0] + 30, '+', 'sign-plus');
+          addSignText(svg, xL0[rightIdx] - 12, yLevels[0] + 30, '+', 'sign-plus');
+        }
+      }
+
+      // Level 1 -> 2 Branches
+      if (currentStep >= 2) {
+        for (let i = 0; i < 2; i++) {
+          const leftIdx = i * 2;
+          const rightIdx = i * 2 + 1;
+
+          const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathL.setAttribute('d', createSmoothCurve(xL1[leftIdx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathL.setAttribute('class', 'tree-path path-solid');
+          pathL.setAttribute('stroke', COLORS[leftIdx * 2 + 1].color);
+          pathL.setAttribute('stroke-width', '5px');
+          svg.appendChild(pathL);
+
+          const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathR.setAttribute('d', createSmoothCurve(xL1[rightIdx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathR.setAttribute('class', 'tree-path path-solid');
+          pathR.setAttribute('stroke', COLORS[rightIdx * 2].color);
+          pathR.setAttribute('stroke-width', '5px');
+          svg.appendChild(pathR);
+
+          for (let p = 0; p < 3; p++) {
+            spawnParticle({ x1: xL1[leftIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: false }, COLORS[leftIdx * 2 + 1].color);
+            spawnParticle({ x1: xL1[rightIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: false }, COLORS[rightIdx * 2].color);
+          }
+
+          addSignText(svg, xL1[leftIdx] + 18, yLevels[1] + 24, '+', 'sign-plus');
+          addSignText(svg, xL1[rightIdx] - 18, yLevels[1] + 24, '+', 'sign-plus');
+        }
+      }
+
+      // Level 2 -> 3 Branches (Final)
+      if (currentStep >= 3) {
+        const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathL.setAttribute('d', createSmoothCurve(xL2[0], yLevels[2] + radius, xL3, yLevels[3] - (radius * 1.6)));
+        pathL.setAttribute('class', 'tree-path path-solid');
+        pathL.setAttribute('stroke', COLORS[1].color);
+        pathL.setAttribute('stroke-width', '7px');
+        svg.appendChild(pathL);
+
+        const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathR.setAttribute('d', createSmoothCurve(xL2[1], yLevels[2] + radius, xL3, yLevels[3] - (radius * 1.6)));
+        pathR.setAttribute('class', 'tree-path path-solid');
+        pathR.setAttribute('stroke', COLORS[5].color);
+        pathR.setAttribute('stroke-width', '7px');
+        svg.appendChild(pathR);
+
+        for (let p = 0; p < 4; p++) {
+          spawnParticle({ x1: xL2[0], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.6), isComp: false }, COLORS[1].color);
+          spawnParticle({ x1: xL2[1], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.6), isComp: false }, COLORS[5].color);
+        }
+
+        addSignText(svg, xL2[0] + 20, yLevels[2] + 24, '+', 'sign-plus');
+        addSignText(svg, xL2[1] - 20, yLevels[2] + 24, '+', 'sign-plus');
+      }
+
+      // NODES LEVEL 0
+      for (let i = 0; i < 8; i++) {
+        drawNode(svg, {
+          cx: xL0[i],
+          cy: yLevels[0],
+          r: radius,
+          fill: COLORS[i].color,
+          initial: getInitial(participants[i]),
+          subname: participants[i].name,
+          role: participants[i].role,
+          id: `conv-l0-${i}`,
+          mathTooltip: `${participants[i].name} (${participants[i].role}) · 100 pts base`
+        });
+      }
+
+      // NODES LEVEL 1
+      if (currentStep >= 1) {
+        for (let i = 0; i < 4; i++) {
+          const colorsIdx = [i * 2, i * 2 + 1];
+          const fill = createStripedCircle(svg, `conv-l1-${i}`, colorsIdx);
+          const pA = participants[i*2];
+          const pB = participants[i*2+1];
+          const ptsVal = Math.round(200 * (synergyMultiplier / 2));
+          drawNode(svg, {
+            cx: xL1[i],
+            cy: yLevels[1],
+            r: radius * 1.2,
+            fill: fill,
+            initial: '⊕',
+            id: `conv-l1-${i}`,
+            mathTooltip: `Fusión: ${pA.name} ⊕ ${pB.name} ➔ ${ptsVal} pts (Factor ×${(synergyMultiplier / 2).toFixed(1)})`
+          });
+        }
+      }
+
+      // NODES LEVEL 2
+      if (currentStep >= 2) {
+        for (let i = 0; i < 2; i++) {
+          const colorsIdx = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
+          const fill = createStripedCircle(svg, `conv-l2-${i}`, colorsIdx);
+          const ptsVal = Math.round(400 * synergyMultiplier);
+          drawNode(svg, {
+            cx: xL2[i],
+            cy: yLevels[2],
+            r: radius * 1.4,
+            fill: fill,
+            initial: '★',
+            id: `conv-l2-${i}`,
+            mathTooltip: `Cuarteto Integrado ➔ ${ptsVal.toLocaleString()} pts (Efecto Red Cuadrático)`
+          });
+        }
+      }
+
+      // NODES LEVEL 3 (FINAL MPI)
+      if (currentStep >= 3) {
+        const fill = createStripedCircle(svg, `conv-final`, [0,1,2,3,4,5,6,7]);
+        const finalPts = Math.round(800 * synergyMultiplier);
+        drawNode(svg, {
+          cx: xL3,
+          cy: yLevels[3],
+          r: radius * 1.85,
+          fill: fill,
+          initial: 'MPI',
+          subname: 'SimbioCreación (100%)',
+          id: `conv-final`,
+          isMega: true,
+          mathTooltip: `8 Saberes en Simbiosis ➔ ${finalPts.toLocaleString()} pts (Factor ×${synergyMultiplier})`
+        });
+      }
+    }
+
+    // --- 2. RENDER COMPETITION TREE (RANDOMIZED WINNER) ---
+    function renderCompetitionTree(svg, { yLevels, radius, xL0, xL1, xL2, xL3 }) {
+      const { r1, r2, r3 } = compDecisions;
+
+      // Level 0 -> 1 Branches (Round 1)
+      if (currentStep >= 1) {
+        for (let i = 0; i < 4; i++) {
+          const leftIdx = i * 2;
+          const rightIdx = i * 2 + 1;
+          const winner = r1[i];
+          const loser = winner === leftIdx ? rightIdx : leftIdx;
+
+          // Winner Branch
+          const pathWin = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathWin.setAttribute('d', createSmoothCurve(xL0[winner], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathWin.setAttribute('class', 'tree-path path-solid');
+          pathWin.setAttribute('stroke', COLORS[winner].color);
+          pathWin.setAttribute('stroke-width', '3.5px');
+          svg.appendChild(pathWin);
+
+          spawnParticle({ x1: xL0[winner], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: true }, COLORS[winner].color);
+
+          // Loser Branch (Dashed + Ash particles)
+          const pathLose = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathLose.setAttribute('d', createSmoothCurve(xL0[loser], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathLose.setAttribute('class', 'tree-path path-dashed-loser');
+          svg.appendChild(pathLose);
+
+          spawnParticle({ x1: xL0[loser], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: true }, '#6e7681', true);
+
+          addSignText(svg, xL0[winner] + (winner === leftIdx ? 12 : -12), yLevels[0] + 30, '+', 'sign-plus');
+          addSignText(svg, xL0[loser] + (loser === leftIdx ? 12 : -12), yLevels[0] + 30, '-', 'sign-minus');
+        }
+      }
+
+      // Level 1 -> 2 Branches (Round 2 Semifinals)
+      if (currentStep >= 2) {
+        for (let i = 0; i < 2; i++) {
+          const leftIdx = i * 2;
+          const rightIdx = i * 2 + 1;
+          const leftWinnerNode = r1[leftIdx];
+          const rightWinnerNode = r1[rightIdx];
+          const roundWinnerNode = r2[i];
+          const isLeftWin = roundWinnerNode === leftWinnerNode;
+
+          const winnerBranchIdx = isLeftWin ? leftIdx : rightIdx;
+          const loserBranchIdx = isLeftWin ? rightIdx : leftIdx;
+          const winnerOriginNode = isLeftWin ? leftWinnerNode : rightWinnerNode;
+          const loserOriginNode = isLeftWin ? rightWinnerNode : leftWinnerNode;
+
+          const pathWin = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathWin.setAttribute('d', createSmoothCurve(xL1[winnerBranchIdx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathWin.setAttribute('class', 'tree-path path-solid');
+          pathWin.setAttribute('stroke', COLORS[winnerOriginNode].color);
+          pathWin.setAttribute('stroke-width', '5px');
+          svg.appendChild(pathWin);
+
+          spawnParticle({ x1: xL1[winnerBranchIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: true }, COLORS[winnerOriginNode].color);
+
+          const pathLose = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathLose.setAttribute('d', createSmoothCurve(xL1[loserBranchIdx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathLose.setAttribute('class', 'tree-path path-dashed-loser');
+          svg.appendChild(pathLose);
+
+          spawnParticle({ x1: xL1[loserBranchIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: true }, '#6e7681', true);
+
+          addSignText(svg, xL1[winnerBranchIdx] + (isLeftWin ? 18 : -18), yLevels[1] + 24, '+', 'sign-plus');
+          addSignText(svg, xL1[loserBranchIdx] + (isLeftWin ? -18 : 18), yLevels[1] + 24, '-', 'sign-minus');
+        }
+      }
+
+      // Level 2 -> 3 Branches (Final Round)
+      if (currentStep >= 3) {
+        const leftNode = r2[0];
+        const rightNode = r2[1];
+        const ultimateWinner = r3;
+        const isLeftWin = ultimateWinner === leftNode;
+
+        const pathWin = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathWin.setAttribute('d', createSmoothCurve(xL2[isLeftWin ? 0 : 1], yLevels[2] + radius, xL3, yLevels[3] - radius * 1.5));
+        pathWin.setAttribute('class', 'tree-path path-solid');
+        pathWin.setAttribute('stroke', COLORS[ultimateWinner].color);
+        pathWin.setAttribute('stroke-width', '7px');
+        svg.appendChild(pathWin);
+
+        spawnParticle({ x1: xL2[isLeftWin ? 0 : 1], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - radius * 1.5, isComp: true }, COLORS[ultimateWinner].color);
+
+        const pathLose = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathLose.setAttribute('d', createSmoothCurve(xL2[isLeftWin ? 1 : 0], yLevels[2] + radius, xL3, yLevels[3] - radius * 1.5));
+        pathLose.setAttribute('class', 'tree-path path-dashed-loser');
+        svg.appendChild(pathLose);
+
+        spawnParticle({ x1: xL2[isLeftWin ? 1 : 0], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - radius * 1.5, isComp: true }, '#6e7681', true);
+      }
+
+      // NODES LEVEL 0
+      for (let i = 0; i < 8; i++) {
+        const isEliminated = currentStep >= 1 && !r1.includes(i);
+        drawNode(svg, {
+          cx: xL0[i],
+          cy: yLevels[0],
+          r: radius,
+          fill: COLORS[i].color,
+          initial: getInitial(participants[i]),
+          subname: participants[i].name,
+          role: participants[i].role,
+          id: `comp-l0-${i}`,
+          dimmed: isEliminated,
+          mathTooltip: `${participants[i].name} (${participants[i].role}) ${isEliminated ? '· ¡DESCARTADO! (-100 pts)' : '· Avanza a ronda 2'}`
+        });
+      }
+
+      // NODES LEVEL 1
+      if (currentStep >= 1) {
+        for (let i = 0; i < 4; i++) {
+          const winnerNode = r1[i];
+          const isEliminated = currentStep >= 2 && !r2.includes(winnerNode);
+          drawNode(svg, {
+            cx: xL1[i],
+            cy: yLevels[1],
+            r: radius * 1.2,
+            fill: COLORS[winnerNode].color,
+            initial: getInitial(participants[winnerNode]),
+            id: `comp-l1-${i}`,
+            dimmed: isEliminated,
+            mathTooltip: `Ganador Llave: ${participants[winnerNode].name} ${isEliminated ? '· ¡Eliminado en Semifinal!' : ''}`
+          });
+        }
+      }
+
+      // NODES LEVEL 2
+      if (currentStep >= 2) {
+        for (let i = 0; i < 2; i++) {
+          const winnerNode = r2[i];
+          const isEliminated = currentStep >= 3 && r3 !== winnerNode;
+          drawNode(svg, {
+            cx: xL2[i],
+            cy: yLevels[2],
+            r: radius * 1.4,
+            fill: COLORS[winnerNode].color,
+            initial: getInitial(participants[winnerNode]),
+            id: `comp-l2-${i}`,
+            dimmed: isEliminated,
+            mathTooltip: `Finalista: ${participants[winnerNode].name} ${isEliminated ? '· Subcampeón (Descartado)' : ''}`
+          });
+        }
+      }
+
+      // NODES LEVEL 3 (FINAL WINNER)
+      if (currentStep >= 3) {
+        const winnerNode = r3;
+        drawNode(svg, {
+          cx: xL3,
+          cy: yLevels[3],
+          r: radius * 1.85,
+          fill: COLORS[winnerNode].color,
+          initial: getInitial(participants[winnerNode]),
+          subname: `Único Ganador: ${participants[winnerNode].name}`,
+          id: `comp-final`,
+          isWinner: true,
+          mathTooltip: `¡Único Ganador del Torneo! ${participants[winnerNode].name} (100 pts) · 7 descartados (-700 pts)`
+        });
+      }
+    }
+
+    // UPDATE UI COUNTERS & NARRATIVE
+    function updateUI() {
+      // Dots
+      for (let s = 0; s <= 3; s++) {
+        const dot = document.getElementById(`dot${s}`);
+        if (dot) {
+          dot.className = `step-dot ${s === currentStep ? 'active' : ''} ${s < currentStep ? 'past' : ''}`;
+        }
+      }
+
+      // Buttons
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      btnPrev.disabled = currentStep === 0;
+
+      if (currentStep === 0) btnNext.textContent = 'Avanzar a Nivel 1 ▶';
+      else if (currentStep === 1) btnNext.textContent = 'Avanzar a Nivel 2 ▶';
+      else if (currentStep === 2) btnNext.textContent = 'Avanzar a Nivel 3 (Final) ▶';
+      else btnNext.textContent = 'Reiniciar ↺';
+
+      // Odometers
+      const compVal = document.getElementById('compVal');
+      const convVal = document.getElementById('convVal');
+
+      const compPts = [800, 400, 200, 100][currentStep];
+      compVal.textContent = `${compPts} pts`;
+
+      let convPts;
+      if (currentStep === 0) convPts = 800;
+      else if (currentStep === 1) convPts = Math.round(800 * (synergyMultiplier / 2.5));
+      else if (currentStep === 2) convPts = Math.round(800 * (synergyMultiplier / 1.5));
+      else convPts = Math.round(800 * synergyMultiplier);
+
+      convVal.textContent = `${convPts.toLocaleString()} pts`;
+
+      // Winner Banner
+      const winnerBanner = document.getElementById('winnerBanner');
+      const winnerText = document.getElementById('winnerText');
+      if (currentStep >= 3) {
+        winnerBanner.style.display = 'flex';
+        const w = participants[compDecisions.r3];
+        winnerText.textContent = `Ganador Único: ${w.name} (${w.role}) · 7 ideas descartadas`;
+      } else {
+        winnerBanner.style.display = 'none';
+      }
+
+      // Narrative Card
+      const n = NARRATIVE[currentStep];
+      document.getElementById('narrativeIcon').textContent = n.icon;
+      document.getElementById('narrativeTag').textContent = n.tag;
+      
+      if (currentStep === 3) {
+        const w = participants[compDecisions.r3];
+        document.getElementById('narrativeText').innerHTML = `
+          <strong>SimbioCreación:</strong> Los 8 saberes viven en el MPI (100% de co-autoría, ${convPts.toLocaleString()} pts).<br>
+          <span style="color:#ff7b72;"><strong>Costo de Competencia:</strong> Único Ganador: ${w.name} (${w.role}). Se botaron al tacho 7 saberes y el 87.5% de la inteligencia colectiva.</span>
+        `;
+      } else {
+        document.getElementById('narrativeText').innerHTML = n.text;
+      }
+    }
+
+    // SYNERGY FACTOR SWITCHER
+    const SYNERGY_INFO = {
+      1: "Suma Lineal (Aditiva): Mesa común + laptop encima. Dos productos aislados colocados uno al lado del otro (200 pts).",
+      2.5: "Complementariedad Funcional: Mesa Ergonómica Automatizada con sensor de altura y control por app (500 pts).",
+      5: "Salto de Categoría (Océano Azul): Estación Inteligente de Telemedicina Postural y Biometría Laboral (1,000 pts).",
+      25: "Ecosistema Simbiótico Abierto: Red Distribuida Fab Lab: micro-fábricas locales con madera nativa + IA comunitaria (5,000 pts)."
+    };
+
+    document.querySelectorAll('.synergy-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.synergy-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        synergyMultiplier = parseFloat(pill.getAttribute('data-factor'));
+        document.getElementById('synergyDesc').textContent = SYNERGY_INFO[synergyMultiplier];
+        playTone(300 + synergyMultiplier * 40, 'triangle', 0.25);
+        drawTrees();
+      });
+    });
+
+    // VIEW SWITCHER TABS
+    document.querySelectorAll('.view-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const view = tab.getAttribute('data-view');
+        document.body.setAttribute('data-view', view);
+        playTone(440, 'sine', 0.15);
+        if (view === 'combinatoria') {
+          startCombinatorialAnimation();
+        }
+      });
+    });
+
+    // NAVIGATION CONTROLS
+    function advanceStep() {
+      if (currentStep < 3) {
+        currentStep++;
+        playStepSound(currentStep);
+        if (currentStep >= 1) playEliminationSound();
+      } else {
+        currentStep = 0;
+        randomizeCompetition();
+        playStepSound(0);
+      }
+      drawTrees();
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        playStepSound(currentStep);
+        drawTrees();
+      }
+    }
+
+    function resetStep() {
+      currentStep = 0;
+      randomizeCompetition();
+      playTone(220, 'sine', 0.3);
+      drawTrees();
+    }
+
+    document.getElementById('btnNext').addEventListener('click', advanceStep);
+    document.getElementById('btnPrev').addEventListener('click', prevStep);
+    document.getElementById('btnReset').addEventListener('click', resetStep);
+    document.getElementById('btnReroll').addEventListener('click', () => {
+      randomizeCompetition();
+      playTone(550, 'square', 0.2);
+      drawTrees();
+    });
+
+    for (let s = 0; s <= 3; s++) {
+      document.getElementById(`dot${s}`).addEventListener('click', () => {
+        currentStep = s;
+        playStepSound(s);
+        drawTrees();
+      });
+    }
+
+    // KEYBOARD SHORTCUTS
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        advanceStep();
+      } else if (e.code === 'KeyR') {
+        randomizeCompetition();
+        drawTrees();
+      } else if (e.code === 'ArrowRight') {
+        advanceStep();
+      } else if (e.code === 'ArrowLeft') {
+        prevStep();
+      } else if (e.code === 'Digit1') {
+        document.querySelector('.view-tab[data-view="comp"]').click();
+      } else if (e.code === 'Digit2') {
+        document.querySelector('.view-tab[data-view="conv"]').click();
+      } else if (e.code === 'Digit3') {
+        document.querySelector('.view-tab[data-view="split"]').click();
+      } else if (e.code === 'Digit4') {
+        document.querySelector('.view-tab[data-view="combinatoria"]').click();
+      } else if (e.code === 'KeyF') {
+        toggleFullscreen();
+      }
+    });
+
+    // FULLSCREEN
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    document.getElementById('btnFullscreen').addEventListener('click', toggleFullscreen);
+
+    // SOUND TOGGLE
+    const btnSound = document.getElementById('btnSound');
+    btnSound.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      btnSound.textContent = soundEnabled ? '🔊' : '🔇';
+      if (soundEnabled) playTone(440, 'sine', 0.2);
+    });
+
+    // TOOLTIP
+    const tooltip = document.getElementById('synergyTooltip');
+    const tooltipContent = document.getElementById('tooltipContent');
+
+    function showTooltip(html, x, y) {
+      tooltipContent.innerHTML = html;
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+      tooltip.classList.add('show');
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('show');
+    }
+
+    // PARTICIPANTS CONFIG MODAL
+    const modalConfig = document.getElementById('modalConfig');
+    const inputsGrid = document.getElementById('inputsGrid');
+
+    function renderConfigInputs() {
+      inputsGrid.innerHTML = '';
+      participants.forEach((p, i) => {
+        const row = document.createElement('div');
+        row.className = 'input-node-row';
+        row.innerHTML = `
+          <div class="input-node-badge" style="background:${COLORS[i].color};">${COLORS[i].id}</div>
+          <input type="text" class="input-node-text" id="cfg-name-${i}" value="${p.name}" placeholder="Nombre" />
+          <input type="text" class="input-node-role" id="cfg-role-${i}" value="${p.role}" placeholder="Rol/Área" />
+        `;
+        inputsGrid.appendChild(row);
+      });
+    }
+
+    document.getElementById('btnConfig').addEventListener('click', () => {
+      renderConfigInputs();
+      modalConfig.classList.add('open');
+    });
+
+    document.getElementById('btnCloseConfig').addEventListener('click', () => {
+      modalConfig.classList.remove('open');
+    });
+
+    document.querySelectorAll('.btn-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const presetKey = btn.getAttribute('data-preset');
+        if (PRESETS[presetKey]) {
+          participants = JSON.parse(JSON.stringify(PRESETS[presetKey]));
+          renderConfigInputs();
+        }
+      });
+    });
+
+    document.getElementById('btnSaveConfig').addEventListener('click', () => {
+      for (let i = 0; i < 8; i++) {
+        const nameInput = document.getElementById(`cfg-name-${i}`);
+        const roleInput = document.getElementById(`cfg-role-${i}`);
+        if (nameInput) participants[i].name = nameInput.value.trim() || `Persona ${i+1}`;
+        if (roleInput) participants[i].role = roleInput.value.trim() || `Rol ${i+1}`;
+      }
+      localStorage.setItem('simbio_participants_v2', JSON.stringify(participants));
+      modalConfig.classList.remove('open');
+      playTone(523.25, 'triangle', 0.3);
+      drawTrees();
+    });
+
+    // --- COMBINATORIAL VIEW ANIMATION (186 vs 1,073,741,823) ---
+    let combAnimated = false;
+
+    function startCombinatorialAnimation() {
+      const cSilos = document.getElementById('canvasSilos');
+      const cNet = document.getElementById('canvasNetwork');
+      if (!cSilos || !cNet) return;
+
+      const ctxS = cSilos.getContext('2d');
+      const ctxN = cNet.getContext('2d');
+
+      cSilos.width = cSilos.offsetWidth;
+      cSilos.height = cSilos.offsetHeight;
+      cNet.width = cNet.offsetWidth;
+      cNet.height = cNet.offsetHeight;
+
+      // Draw 6 isolated pentagons
+      drawSilosCanvas(ctxS, cSilos.width, cSilos.height);
+
+      // Draw 30 interconnected nodes network
+      drawNetworkCanvas(ctxN, cNet.width, cNet.height);
+
+      // Number odometer roll up
+      const counterEl = document.getElementById('combCount');
+      let start = 186;
+      const target = 1073741823;
+      const duration = 2000;
+      const startTime = performance.now();
+
+      function updateCounter(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 4);
+        const currentVal = Math.floor(start + (target - start) * ease);
+        counterEl.textContent = currentVal.toLocaleString();
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        } else {
+          playChord([523.25, 659.25, 783.99, 1046.50], 'triangle', 0.8);
+        }
+      }
+      requestAnimationFrame(updateCounter);
+    }
+
+    function drawSilosCanvas(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      const cols = 3;
+      const rows = 2;
+      const cellW = w / cols;
+      const cellH = h / rows;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cx = c * cellW + cellW / 2;
+          const cy = r * cellH + cellH / 2;
+          const rad = Math.min(cellW, cellH) * 0.36;
+
+          // Draw barrier box (silo)
+          ctx.strokeStyle = 'rgba(248, 81, 73, 0.35)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(cx - rad * 1.25, cy - rad * 1.25, rad * 2.5, rad * 2.5);
+          ctx.setLineDash([]);
+
+          // 5 vertices (pentagon)
+          const pts = [];
+          for (let p = 0; p < 5; p++) {
+            const angle = (p * 2 * Math.PI) / 5 - Math.PI / 2;
+            pts.push({ x: cx + rad * Math.cos(angle), y: cy + rad * Math.sin(angle) });
+          }
+
+          // Internal connections within the silo
+          ctx.strokeStyle = 'rgba(248, 81, 73, 0.4)';
+          ctx.lineWidth = 1.2;
+          for (let i = 0; i < 5; i++) {
+            for (let j = i + 1; j < 5; j++) {
+              ctx.beginPath();
+              ctx.moveTo(pts[i].x, pts[i].y);
+              ctx.lineTo(pts[j].x, pts[j].y);
+              ctx.stroke();
+            }
+          }
+
+          // Dots
+          pts.forEach((pt, pIdx) => {
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = COLORS[pIdx % 8].color;
+            ctx.fill();
+          });
+        }
+      }
+    }
+
+    function drawNetworkCanvas(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2;
+      const cy = h / 2;
+      const rad = Math.min(w, h) * 0.42;
+      const numNodes = 30;
+      const pts = [];
+
+      for (let i = 0; i < numNodes; i++) {
+        const angle = (i * 2 * Math.PI) / numNodes;
+        pts.push({
+          x: cx + rad * Math.cos(angle),
+          y: cy + rad * Math.sin(angle),
+          color: COLORS[i % 8].color
+        });
+      }
+
+      // Draw rich glowing harmonic web
+      for (let i = 0; i < numNodes; i++) {
+        for (let j = i + 1; j < numNodes; j++) {
+          const dist = (j - i);
+          if (dist === 1 || dist === 2 || dist === 7 || dist === 15) {
+            ctx.strokeStyle = 'rgba(255, 42, 133, 0.22)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Dots with halo
+      pts.forEach(pt => {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = pt.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = pt.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+    }
+
+    // INITIAL LAUNCH
+    drawTrees();
+
+    // Unlock Web Audio on first user interaction
+    window.addEventListener('click', initAudio, { once: true });
+    window.addEventListener('keydown', initAudio, { once: true });
+  </script>
+</body>
+</html>
