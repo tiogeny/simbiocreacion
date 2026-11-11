@@ -11,23 +11,11 @@
   <meta name="theme-color" content="#ff2a85">
   <meta name="description" content="Herramienta interactiva para conferencias y facilitadores de SimbioCreación inspirada en la metodología de Benito Juárez (Fab Lab / Fab City).">
   
-  <!-- Open Graph / Facebook / LinkedIn -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="SimbioCreación: Competencia vs Convergencia Exponencial">
-  <meta property="og:description" content="Demostración visual, matemática y sonora: Torneo por descarte vs Máximo Producto de Integración (MPI).">
-  <meta property="og:image" content="icon.svg">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="SimbioCreación: Competencia vs Convergencia Exponencial">
-  <meta name="twitter:description" content="Demostración visual del teorema de SimbioCreación: 186 vs 1,073,741,823 combinaciones.">
-  <meta name="twitter:image" content="icon.svg">
-
   <style>
     :root {
       --bg-primary: #0a0e14;
       --bg-secondary: #131922;
-      --bg-card: rgba(19, 25, 34, 0.92);
+      --bg-card: rgba(19, 25, 34, 0.94);
       --text-main: #f0f6fc;
       --text-muted: #8b949e;
       --border-color: #21262d;
@@ -46,7 +34,7 @@
     [data-theme="light"] {
       --bg-primary: #f6f8fa;
       --bg-secondary: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card: rgba(255, 255, 255, 0.96);
       --text-main: #1f2328;
       --text-muted: #57606a;
       --border-color: #d0d7de;
@@ -81,7 +69,7 @@
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* Background grid */
+    /* Subtle background grid */
     body::before {
       content: '';
       position: absolute;
@@ -104,11 +92,6 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.25s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #888;
-      font-size: 14px;
     }
     .presentation-curtain.blackout {
       background: #000000;
@@ -121,18 +104,18 @@
       pointer-events: auto;
     }
 
-    /* Top Navigation Header */
+    /* Top Navigation Header (Clean & Simple) */
     header {
       position: relative;
       z-index: 20;
-      height: 58px;
+      height: 54px;
       padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
       background: var(--bg-card);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(12px);
     }
 
     .brand {
@@ -143,11 +126,11 @@
     }
 
     .brand-logo {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: conic-gradient(from 0deg, #FF2E4C, #FF9500, #FFCC00, #34C759, #00C7BE, #007AFF, #AF52DE, #FF2D55, #FF2E4C);
-      box-shadow: 0 0 16px var(--accent-pink-glow);
+      box-shadow: 0 0 14px var(--accent-pink-glow);
       animation: spinSlow 30s linear infinite;
     }
 
@@ -156,7 +139,7 @@
     }
 
     .brand-title {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
       letter-spacing: -0.3px;
       background: linear-gradient(90deg, var(--text-main), var(--text-muted));
@@ -166,10 +149,10 @@
 
     .brand-tag {
       font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 12px;
+      padding: 2px 7px;
+      border-radius: 10px;
       background: rgba(255, 42, 133, 0.15);
-      border: 1px solid rgba(255, 42, 133, 0.4);
+      border: 1px solid rgba(255, 42, 133, 0.35);
       color: var(--accent-pink);
       font-weight: 700;
       text-transform: uppercase;
@@ -232,7 +215,7 @@
       color: var(--accent-gold);
     }
 
-    /* Header Actions */
+    /* Header Actions (Clean, uncluttered) */
     .header-actions {
       display: flex;
       align-items: center;
@@ -244,7 +227,7 @@
       color: var(--text-main);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 6px 12px;
+      padding: 6px 11px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -257,95 +240,18 @@
     .btn:hover {
       background: var(--border-light);
       border-color: var(--text-muted);
-      transform: translateY(-1px);
     }
 
     .btn-primary {
       background: var(--accent-pink);
       border-color: var(--accent-pink);
       color: white;
-      box-shadow: 0 0 12px var(--accent-pink-glow);
+      box-shadow: 0 0 10px var(--accent-pink-glow);
     }
 
     .btn-primary:hover {
       background: #e01e72;
       border-color: #e01e72;
-    }
-
-    .btn-auto.active {
-      background: rgba(57, 211, 83, 0.2);
-      border-color: #39d353;
-      color: #39d353;
-      box-shadow: 0 0 10px rgba(57, 211, 83, 0.4);
-      animation: pulseGlow 1.8s infinite;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 8px rgba(57, 211, 83, 0.3); }
-      50% { box-shadow: 0 0 16px rgba(57, 211, 83, 0.6); }
-    }
-
-    /* Sub-header: Synergy Multiplier Control Bar */
-    .synergy-strip {
-      position: relative;
-      z-index: 15;
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
-      padding: 6px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-    }
-
-    .synergy-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .synergy-title {
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .synergy-pills {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .synergy-pill {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 4px 10px;
-      border-radius: 14px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .synergy-pill:hover {
-      color: var(--text-main);
-      border-color: #58a6ff;
-    }
-
-    .synergy-pill.active {
-      background: rgba(255, 42, 133, 0.2);
-      border-color: var(--accent-pink);
-      color: var(--accent-pink);
-      box-shadow: 0 0 10px var(--accent-pink-glow);
-    }
-
-    .synergy-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-style: italic;
     }
 
     /* Main Canvas Work Area */
@@ -366,14 +272,12 @@
       flex-direction: column;
       position: relative;
       overflow: hidden;
-      transition: flex 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
     }
 
     .pane-comp {
       border-right: 1px solid var(--border-color);
     }
 
-    /* Visibility classes controlled by View Switcher */
     body[data-view="comp"] .pane-comp { flex: 1; display: flex; }
     body[data-view="comp"] .pane-conv { display: none; }
     body[data-view="comp"] .pane-combinatoria { display: none; }
@@ -392,7 +296,7 @@
 
     /* Pane Headers */
     .pane-header {
-      padding: 12px 20px 6px;
+      padding: 10px 20px 4px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -402,11 +306,11 @@
     .pane-title-wrap {
       display: flex;
       align-items: baseline;
-      gap: 10px;
+      gap: 8px;
     }
 
     .pane-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       letter-spacing: -0.2px;
     }
@@ -415,7 +319,7 @@
     .pane-conv .pane-title { color: var(--accent-pink); }
 
     .pane-subtitle {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
     }
 
@@ -423,7 +327,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 4px 12px;
+      padding: 3px 10px;
       text-align: right;
     }
 
@@ -436,15 +340,15 @@
     }
 
     .odometer-value {
-      font-size: 18px;
-      font-weight: 900;
+      font-size: 15px;
+      font-weight: 800;
       font-variant-numeric: tabular-nums;
     }
 
     .pane-comp .odometer-value { color: #ff7b72; }
     .pane-conv .odometer-value {
       color: var(--accent-pink);
-      text-shadow: 0 0 10px var(--accent-pink-glow);
+      text-shadow: 0 0 8px var(--accent-pink-glow);
     }
 
     /* Tree Canvas & SVG containers */
@@ -457,6 +361,7 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      padding-bottom: 60px; /* Space for the bottom presenter bar */
     }
 
     .tree-svg {
@@ -471,40 +376,42 @@
     /* SVG Graphical Elements */
     .tree-path {
       fill: none;
-      transition: stroke-dashoffset 0.8s ease, opacity 0.4s ease;
       stroke-linecap: round;
+      transition: stroke-dashoffset 0.8s ease, opacity 0.4s ease;
     }
 
     .path-solid {
       opacity: 0.95;
-      filter: drop-shadow(0 0 4px rgba(255, 42, 133, 0.4));
+      filter: drop-shadow(0 0 4px rgba(255, 42, 133, 0.3));
     }
 
     .path-dashed-loser {
       stroke: var(--border-light);
       stroke-width: 2px;
       stroke-dasharray: 4 6;
-      opacity: 0.4;
+      opacity: 0.35;
     }
 
+    /* FIX: Zero jump/jitter on hover - no transform scale */
     .node-circle {
       cursor: pointer;
-      transition: transform 0.25s ease, filter 0.25s ease, opacity 0.3s ease;
+      transition: stroke 0.2s ease, stroke-width 0.2s ease, filter 0.2s ease, opacity 0.25s ease;
     }
 
     .node-circle:hover {
-      transform: scale(1.15);
-      filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.7));
+      stroke: #ffffff !important;
+      stroke-width: 3.5px !important;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.85)) !important;
     }
 
     .node-eliminated {
-      opacity: 0.28 !important;
+      opacity: 0.25 !important;
       filter: grayscale(100%) brightness(0.6) !important;
     }
 
     .node-label-initial {
       font-family: var(--font-family);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       fill: #ffffff;
       text-anchor: middle;
@@ -527,16 +434,6 @@
       fill: var(--text-main);
     }
 
-    .sign-badge {
-      font-family: var(--font-family);
-      font-size: 12px;
-      font-weight: 900;
-      dominant-baseline: central;
-    }
-
-    .sign-plus { fill: var(--accent-green); }
-    .sign-minus { fill: var(--text-muted); }
-
     /* Particles Overlay Canvas */
     #particleCanvas {
       position: absolute;
@@ -548,69 +445,19 @@
       z-index: 10;
     }
 
-    /* Storytelling Toast / Narrative Subtitle Card */
-    .narrative-card {
-      position: absolute;
-      bottom: 74px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 25;
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: 10px 20px;
-      max-width: 680px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 15px var(--accent-pink-glow);
-      backdrop-filter: blur(14px);
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      animation: fadeInBottom 0.3s ease;
-    }
-
-    @keyframes fadeInBottom {
-      from { opacity: 0; transform: translate(-50%, 15px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
-    }
-
-    .narrative-icon {
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-
-    .narrative-content {
-      flex: 1;
-    }
-
-    .narrative-step-tag {
-      font-size: 10px;
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: var(--accent-pink);
-      margin-bottom: 2px;
-    }
-
-    .narrative-text {
-      font-size: 12px;
-      line-height: 1.4;
-      color: var(--text-main);
-    }
-
-    /* Presenter Bottom Bar */
+    /* Presenter Bottom Bar (Compact & Never covers the tree) */
     .presenter-bar {
       position: absolute;
-      bottom: 14px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 25;
       background: var(--bg-card);
       backdrop-filter: blur(16px);
       border: 1px solid var(--border-light);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-pink-glow);
-      border-radius: 50px;
-      padding: 6px 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      border-radius: 40px;
+      padding: 5px 12px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -620,15 +467,15 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 0 8px;
+      padding: 0 6px;
     }
 
     .step-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: var(--border-color);
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
       cursor: pointer;
     }
 
@@ -644,30 +491,30 @@
 
     .divider-v {
       width: 1px;
-      height: 22px;
+      height: 20px;
       background: var(--border-color);
     }
 
     /* Key hints */
     .key-hint {
       position: absolute;
-      bottom: 18px;
-      right: 20px;
+      bottom: 15px;
+      right: 18px;
       z-index: 15;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .kbd {
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
-      border-radius: 4px;
-      padding: 2px 6px;
+      border-radius: 3px;
+      padding: 1px 5px;
       font-family: monospace;
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-main);
     }
 
@@ -679,8 +526,8 @@
       border: 1px solid var(--accent-pink);
       box-shadow: 0 8px 24px rgba(255, 42, 133, 0.35);
       border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 12px;
+      padding: 6px 12px;
+      font-size: 11px;
       color: var(--text-main);
       pointer-events: none;
       opacity: 0;
@@ -701,16 +548,16 @@
       flex-direction: column;
       position: relative;
       background: radial-gradient(circle at center, var(--bg-secondary) 0%, var(--bg-primary) 80%);
-      padding: 20px 40px 80px;
+      padding: 16px 36px 60px;
     }
 
     .comb-header {
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .comb-header h2 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       background: linear-gradient(90deg, #FF2E4C, #FFCC00, #34C759, #007AFF, #AF52DE);
       -webkit-background-clip: text;
@@ -718,15 +565,15 @@
     }
 
     .comb-header p {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
     .comb-comparison {
       display: flex;
       flex: 1;
-      gap: 24px;
+      gap: 20px;
       align-items: stretch;
       position: relative;
     }
@@ -735,8 +582,8 @@
       flex: 1;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -745,20 +592,20 @@
 
     .comb-card.active-power {
       border-color: rgba(255, 42, 133, 0.5);
-      box-shadow: 0 0 30px rgba(255, 42, 133, 0.15);
+      box-shadow: 0 0 25px rgba(255, 42, 133, 0.15);
     }
 
     .comb-card-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .comb-stat-huge {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       letter-spacing: -0.5px;
       font-variant-numeric: tabular-nums;
@@ -770,16 +617,16 @@
       color: var(--text-muted);
       margin-top: 4px;
       background: rgba(0,0,0,0.1);
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 3px 6px;
+      border-radius: 5px;
       display: inline-block;
     }
 
     .comb-visual-area {
       flex: 1;
       position: relative;
-      margin-top: 10px;
-      min-height: 220px;
+      margin-top: 8px;
+      min-height: 200px;
     }
 
     /* Modals Overlay */
@@ -806,7 +653,7 @@
       background: var(--bg-secondary);
       border: 1px solid var(--border-light);
       border-radius: 14px;
-      width: 640px;
+      width: 600px;
       max-width: 92%;
       max-height: 90vh;
       display: flex;
@@ -822,7 +669,7 @@
     }
 
     .modal-header {
-      padding: 16px 20px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
@@ -830,7 +677,7 @@
     }
 
     .modal-header h3 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -838,12 +685,12 @@
     }
 
     .modal-body {
-      padding: 20px;
+      padding: 18px;
       overflow-y: auto;
     }
 
     .modal-footer {
-      padding: 14px 20px;
+      padding: 12px 18px;
       border-top: 1px solid var(--border-color);
       display: flex;
       justify-content: flex-end;
@@ -863,7 +710,7 @@
       border: 1px solid var(--border-color);
       color: var(--text-muted);
       border-radius: 20px;
-      padding: 5px 12px;
+      padding: 4px 10px;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -878,7 +725,7 @@
     .inputs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
 
     .input-node-row {
@@ -888,12 +735,12 @@
       background: var(--bg-primary);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 6px 10px;
+      padding: 5px 8px;
     }
 
     .input-node-badge {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -914,11 +761,11 @@
     }
 
     .input-node-role {
-      width: 100px;
+      width: 90px;
       background: rgba(0,0,0,0.15);
       border: 1px solid var(--border-color);
       border-radius: 4px;
-      padding: 2px 6px;
+      padding: 2px 5px;
       color: var(--text-muted);
       font-size: 10px;
       outline: none;
@@ -927,127 +774,32 @@
     /* Winner celebration banner in competition */
     .winner-banner {
       position: absolute;
-      top: 55px;
+      top: 48px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(248, 81, 73, 0.15);
       border: 1px solid rgba(248, 81, 73, 0.4);
       color: #ff7b72;
-      padding: 6px 16px;
+      padding: 5px 14px;
       border-radius: 20px;
       font-size: 11px;
       font-weight: 700;
       display: none;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       z-index: 10;
-    }
-
-    /* MPI Genome & Co-authorship Inspector */
-    .mpi-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .mpi-card {
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .mpi-card-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--accent-pink);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .mpi-pill-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .mpi-pill {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-light);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .mpi-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      margin-top: 10px;
-    }
-
-    .mpi-table th, .mpi-table td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .mpi-table th {
-      color: var(--text-muted);
-      font-weight: 700;
-    }
-
-    /* QR / Share Modal */
-    .share-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      text-align: center;
-    }
-
-    .qr-canvas-box {
-      background: #ffffff;
-      padding: 14px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      display: inline-block;
-    }
-
-    .share-url-row {
-      display: flex;
-      width: 100%;
-      gap: 8px;
-    }
-
-    .share-url-input {
-      flex: 1;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 12px;
-      color: var(--text-main);
-      font-family: monospace;
-      outline: none;
     }
 
     /* Toast Notification */
     .toast {
       position: fixed;
-      top: 70px;
+      top: 64px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
       background: var(--bg-card);
       border: 1px solid var(--accent-pink);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      padding: 10px 20px;
+      padding: 8px 18px;
       border-radius: 30px;
       font-size: 12px;
       font-weight: 700;
@@ -1066,19 +818,16 @@
       opacity: 1;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 900px) {
-      header { padding: 0 10px; }
+      header { padding: 0 8px; }
       .brand-tag { display: none; }
       .view-tab span { display: none; }
-      .synergy-strip { flex-direction: column; align-items: flex-start; gap: 8px; }
       .inputs-grid { grid-template-columns: 1fr; }
       .key-hint { display: none; }
-      .mpi-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body data-view="split" data-theme="dark">
+<body data-view="comp" data-theme="dark">
 
   <!-- PRESENTATION CURTAIN (BLACKOUT / WHITEOUT FOR PRESENTERS) -->
   <div class="presentation-curtain" id="presentationCurtain"></div>
@@ -1095,59 +844,29 @@
 
     <!-- VIEW SWITCHER (CENTER) -->
     <div class="view-switcher">
-      <button class="view-tab" data-view="comp" id="tabComp" title="Ver solo la rama de eliminación">
+      <button class="view-tab active" data-view="comp" id="tabComp" title="Torneo de competencia por eliminación">
         <span>⚔️</span> <span class="tab-label">Competición</span>
       </button>
-      <button class="view-tab" data-view="conv" id="tabConv" title="Ver solo el árbol simbiótico">
+      <button class="view-tab" data-view="conv" id="tabConv" title="Convergencia simbiótica exponencial">
         <span>🌿</span> <span class="tab-label">SimbioCreación</span>
       </button>
-      <button class="view-tab active" data-view="split" id="tabSplit" title="Comparativa simultánea lado a lado">
-        <span>◫</span> <span class="tab-label">Comparativa Split</span>
+      <button class="view-tab" data-view="split" id="tabSplit" title="Comparativa paralela lado a lado">
+        <span>◫</span> <span class="tab-label">Comparativa</span>
       </button>
-      <button class="view-tab" data-view="combinatoria" id="tabComb" title="El poder de 2³⁰-1 combinaciones">
+      <button class="view-tab" data-view="combinatoria" id="tabComb" title="Demostración combinatoria 186 vs 1,073,741,823">
         <span>✨</span> <span class="tab-label">Salto Combinatorio</span>
       </button>
     </div>
 
-    <!-- ACTIONS (RIGHT) -->
+    <!-- ACTIONS (RIGHT) - Clean & Minimal -->
     <div class="header-actions">
-      <button class="btn btn-auto" id="btnAutoPlay" title="Modo Kiosco / Auto-Presentación (A)">▶️ Auto</button>
-      <button class="btn" id="btnTheme" title="Modo Proyector de Alto Contraste (T)">☀️</button>
-      <button class="btn" id="btnLang" title="Cambiar Idioma / Change Language (L)">🌐 ES</button>
-      <button class="btn" id="btnShare" title="Compartir Escenario & Código QR (Q)">🔗</button>
-      <button class="btn" id="btnExport" title="Exportar Reporte en Imagen PNG (E)">📷</button>
-      <button class="btn" id="btnConfig" title="Configurar Nombres de Participantes (P)">👥</button>
+      <button class="btn btn-primary" id="btnConfig" title="Configurar Nombres de los 8 Saberes (P)">👥 Saberes</button>
+      <button class="btn" id="btnTheme" title="Alternar Modo Proyector Claro / Oscuro (T)">☀️</button>
+      <button class="btn" id="btnExport" title="Descargar Reporte PNG (E)">📷</button>
       <button class="btn" id="btnSound" title="Silenciar / Activar Sonido (M/S)">🔊</button>
       <button class="btn" id="btnFullscreen" title="Pantalla Completa (F)">⛶</button>
-      <button class="btn" id="btnHelp" title="Atajos de Teclado y Ayuda (?)">⌨️</button>
     </div>
   </header>
-
-  <!-- SYNERGY STRIP (SUB-HEADER) -->
-  <div class="synergy-strip">
-    <div class="synergy-left">
-      <div class="synergy-title">
-        <span id="synergyTitleText">⚡ Multiplicador Simbiótico (Carpintero 100 + Programador 100):</span>
-      </div>
-      <div class="synergy-pills">
-        <button class="synergy-pill" data-factor="1" id="pillFactor1" title="Suma Lineal (Aditiva)">
-          200 pts (×1 Lineal)
-        </button>
-        <button class="synergy-pill" data-factor="2.5" id="pillFactor25" title="Integración Funcional (Mesa ergonómica motorizada)">
-          500 pts (×2.5 Ensamble)
-        </button>
-        <button class="synergy-pill active" data-factor="5" id="pillFactor5" title="Salto de Categoría (Estación de telemedicina inteligente)">
-          1,000 pts (×5 Categoría)
-        </button>
-        <button class="synergy-pill" data-factor="25" id="pillFactor25x" title="Ecosistema Simbiótico Abierto Fab Lab">
-          5,000 pts (×25 Ecosistema)
-        </button>
-      </div>
-    </div>
-    <div class="synergy-desc" id="synergyDesc">
-      Salto de Categoría: Crean una "Estación de Telemedicina Postural" que no compite con nadie (Océano Azul).
-    </div>
-  </div>
 
   <!-- MAIN WORKSPACE -->
   <main id="mainWorkspace">
@@ -1162,13 +881,13 @@
           <span class="pane-subtitle" id="paneCompSub">(Torneo por Descarte / Silos)</span>
         </div>
         <div class="odometer-box">
-          <div class="odometer-label" id="labelCompVal">Conocimiento Retenido</div>
-          <div class="odometer-value" id="compVal">800 pts</div>
+          <div class="odometer-label" id="labelCompVal">Inteligencia Retenida</div>
+          <div class="odometer-value" id="compVal">8 / 8 saberes (100%)</div>
         </div>
       </div>
 
       <div class="winner-banner" id="winnerBanner">
-        <span>👑</span> <span id="winnerText">Ganador: Carlos (Carpintero)</span>
+        <span>👑</span> <span id="winnerText">Ganador Único: Carlos (Carpintero)</span>
       </div>
 
       <div class="canvas-container">
@@ -1184,8 +903,8 @@
           <span class="pane-subtitle" id="paneConvSub">(Convergencia Exponencial / MPI)</span>
         </div>
         <div class="odometer-box">
-          <div class="odometer-label" id="labelConvVal">Impacto Emergente</div>
-          <div class="odometer-value" id="convVal">800 pts</div>
+          <div class="odometer-label" id="labelConvVal">Sinergias & Conexiones</div>
+          <div class="odometer-value" id="convVal">8 saberes aislados</div>
         </div>
       </div>
 
@@ -1205,8 +924,8 @@
         <!-- SILO CARD -->
         <div class="comb-card">
           <div class="comb-card-title">
-            <span style="color:#ff7b72;" id="combSilosTitle">⚔️ Silos Aislados (6 Pentágonos)</span>
-            <span style="font-size:11px; color:var(--text-muted);" id="combSilosSub">Sin Cruce Inter-grupal</span>
+            <span style="color:#ff7b72;">⚔️ Silos Aislados (6 Pentágonos)</span>
+            <span style="font-size:11px; color:var(--text-muted);">Sin Cruce Inter-grupal</span>
           </div>
           <div class="comb-stat-huge" style="color:#ff7b72;">186</div>
           <div class="comb-formula">6 × (2⁵ - 1) = 6 × 31 = 186 combinaciones</div>
@@ -1218,8 +937,8 @@
         <!-- CONVERGENCE CARD -->
         <div class="comb-card active-power">
           <div class="comb-card-title">
-            <span style="color:var(--accent-pink);" id="combConvTitle">🌿 SimbioCreación Total (Red K₃₀)</span>
-            <span style="font-size:11px; color:var(--accent-gold);" id="combMultTag">¡Multiplicador ×5,772,805!</span>
+            <span style="color:var(--accent-pink);">🌿 SimbioCreación Total (Red K₃₀)</span>
+            <span style="font-size:11px; color:var(--accent-gold);">¡Multiplicador ×5,772,805!</span>
           </div>
           <div class="comb-stat-huge" style="color:var(--accent-gold);" id="combCount">1,073,741,823</div>
           <div class="comb-formula">2³⁰ - 1 = 1,073,741,823 combinaciones posibles</div>
@@ -1230,44 +949,33 @@
       </div>
     </section>
 
-    <!-- STORYTELLING NARRATIVE CARD (SUBTITLE FOR AUDIENCE/MAYORS) -->
-    <div class="narrative-card" id="narrativeCard">
-      <div class="narrative-icon" id="narrativeIcon">🌱</div>
-      <div class="narrative-content">
-        <div class="narrative-step-tag" id="narrativeTag">Nivel 0: Genotipos de Entrada</div>
-        <div class="narrative-text" id="narrativeText">
-          Tenemos 8 participantes con saberes únicos (Carpintería, Software, UX, Biología...). En competencia se aíslan y se preparan para eliminarse. En SimbioCreación se disponen a cruzarse.
-        </div>
-      </div>
-    </div>
-
     <!-- FLOATING SYNERGY TOOLTIP -->
     <div class="synergy-tooltip" id="synergyTooltip">
       <span id="tooltipContent"></span>
     </div>
 
-    <!-- PRESENTER BAR (BOTTOM) -->
+    <!-- PRESENTER BAR (BOTTOM - COMPACT & CENTERED) -->
     <div class="presenter-bar">
       <button class="btn" id="btnPrev" title="Ronda Anterior (← / PageUp)">◀</button>
       
       <div class="step-indicator">
-        <div class="step-dot active" id="dot0" title="Nivel 0"></div>
-        <div class="step-dot" id="dot1" title="Nivel 1"></div>
-        <div class="step-dot" id="dot2" title="Nivel 2"></div>
-        <div class="step-dot" id="dot3" title="Nivel 3"></div>
+        <div class="step-dot active" id="dot0" title="Nivel 0: Saberes de Entrada"></div>
+        <div class="step-dot" id="dot1" title="Nivel 1: Primer Cruce"></div>
+        <div class="step-dot" id="dot2" title="Nivel 2: Fusión de Cuartetos"></div>
+        <div class="step-dot" id="dot3" title="Nivel 3: MPI"></div>
       </div>
 
       <button class="btn btn-primary" id="btnNext" title="Avanzar Ronda (Espacio / → / PageDown)">Avanzar a Nivel 1 ▶</button>
       
       <div class="divider-v"></div>
       
-      <button class="btn" id="btnReroll" title="Nuevo Ganador al Azar y Reiniciar (R)">🎲 Sortear Ganador</button>
-      <button class="btn" id="btnReset" title="Reiniciar al Nivel 0 (Home)">↺</button>
+      <button class="btn" id="btnReroll" title="Nuevo Ganador al Azar y Reiniciar (R)">🎲 Sortear</button>
+      <button class="btn" id="btnReset" title="Reiniciar a Nivel 0">↺</button>
     </div>
 
     <!-- KEYBOARD SHORTCUTS HINT -->
     <div class="key-hint">
-      <span class="kbd">Espacio</span> Avanzar | <span class="kbd">R</span> Sortear | <span class="kbd">B/W</span> Pausa | <span class="kbd">1-4</span> Vistas | <span class="kbd">?</span> Ayuda
+      <span class="kbd">Espacio</span> Avanzar | <span class="kbd">R</span> Sortear | <span class="kbd">B/W</span> Pausa | <span class="kbd">1-4</span> Vistas | <span class="kbd">F</span> Fullscreen
     </div>
   </main>
 
@@ -1277,16 +985,16 @@
     <span id="toastMessage">Notificación</span>
   </div>
 
-  <!-- MODAL 1: PARTICIPANTS CONFIG -->
+  <!-- MODAL: PARTICIPANTS CONFIG -->
   <div class="modal-overlay" id="modalConfig">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="modalConfigTitle">👥 Configurar los 8 Saberes / Participantes</h3>
+        <h3>👥 Configurar los 8 Saberes / Participantes</h3>
         <button class="btn" id="btnCloseConfig">✕</button>
       </div>
       <div class="modal-body">
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;" id="modalConfigSub">
-          Elige una temática rápida con 1 clic o edita en vivo los nombres y especialidades de tu taller:
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+          Elige una temática rápida o escribe los nombres y especialidades de tu taller:
         </p>
 
         <div class="preset-chips">
@@ -1305,354 +1013,9 @@
     </div>
   </div>
 
-  <!-- MODAL 2: MPI GENOME & CO-AUTHORSHIP INSPECTOR -->
-  <div class="modal-overlay" id="modalMpiGenome">
-    <div class="modal-card" style="width: 720px;">
-      <div class="modal-header">
-        <h3 id="modalMpiTitle">🧬 Genoma del Proyecto Simbiótico (MPI)</h3>
-        <button class="btn" id="btnCloseMpi">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="mpi-grid">
-          <div class="mpi-card">
-            <div class="mpi-card-title">🌿 8 Genotipos de Entrada (100% Inclusión)</div>
-            <div class="mpi-pill-list" id="mpiGenotypesList"></div>
-          </div>
-          <div class="mpi-card">
-            <div class="mpi-card-title">⚡ 4 Fisiones de 1er Orden (Parejas)</div>
-            <div class="mpi-pill-list" id="mpiPairsList"></div>
-          </div>
-        </div>
-
-        <div class="mpi-card" style="margin-bottom: 14px;">
-          <div class="mpi-card-title">★ Máximo Producto de Integración (MPI)</div>
-          <p style="font-size:12px; color:var(--text-main); line-height:1.5;" id="mpiPhenotypeSummary">
-            Todos los saberes coexisten de manera indivisible. En caso de fallar o retirar cualquiera de los 8 componentes, el organismo ciberfísico colapsa. La autoría es 100% colectiva.
-          </p>
-        </div>
-
-        <div class="mpi-card">
-          <div class="mpi-card-title">📊 Matriz Comparativa Ética y Matemática</div>
-          <table class="mpi-table">
-            <thead>
-              <tr>
-                <th>Dimensión</th>
-                <th style="color:#ff7b72;">Competencia</th>
-                <th style="color:var(--accent-pink);">SimbioCreación</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Inteligencia Colectiva Retenida</strong></td>
-                <td style="color:#ff7b72;">12.5% (1 de 8)</td>
-                <td style="color:var(--accent-green); font-weight:700;">100% (8 de 8)</td>
-              </tr>
-              <tr>
-                <td><strong>Valor de Impacto Generado</strong></td>
-                <td style="color:#ff7b72;">100 pts (Pérdida de 700 pts)</td>
-                <td style="color:var(--accent-gold); font-weight:700;" id="tableMpiPts">5,000 pts (×25)</td>
-              </tr>
-              <tr>
-                <td><strong>Co-autoría y Apropiación</strong></td>
-                <td style="color:#ff7b72;">1 solo ganador / 7 perdedores</td>
-                <td style="color:var(--accent-pink); font-weight:700;">100% de co-autoría compartida</td>
-              </tr>
-              <tr>
-                <td><strong>Destino de Saberes No Ganadores</strong></td>
-                <td style="color:#ff7b72;">Tacho de basura / Frustración</td>
-                <td style="color:var(--accent-green); font-weight:700;">Genes activos del producto final</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="btnExportFromMpi">📷 Exportar Reporte PNG</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL 3: SHARE & QR CODE -->
-  <div class="modal-overlay" id="modalShare">
-    <div class="modal-card" style="width: 480px;">
-      <div class="modal-header">
-        <h3 id="modalShareTitle">🔗 Compartir Escenario y Código QR</h3>
-        <button class="btn" id="btnCloseShare">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="share-container">
-          <p style="font-size:12px; color:var(--text-muted);" id="modalShareSub">
-            Escanea este código con cualquier cámara móvil para proyectar o explorar exactamente este mismo estado:
-          </p>
-          <div class="qr-canvas-box">
-            <canvas id="qrCanvas" width="220" height="220"></canvas>
-          </div>
-          <div class="share-url-row">
-            <input type="text" class="share-url-input" id="shareUrlInput" readonly />
-            <button class="btn btn-primary" id="btnCopyUrl">Copiar</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" id="btnCloseShareFooter">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL 4: KEYBOARD SHORTCUTS CHEATSHEET -->
-  <div class="modal-overlay" id="modalShortcuts">
-    <div class="modal-card" style="width: 540px;">
-      <div class="modal-header">
-        <h3 id="modalShortcutsTitle">⌨️ Atajos de Teclado y Control del Facilitador</h3>
-        <button class="btn" id="btnCloseShortcuts">✕</button>
-      </div>
-      <div class="modal-body">
-        <table class="mpi-table">
-          <thead>
-            <tr>
-              <th>Tecla</th>
-              <th>Acción para la Conferencia</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="kbd">Espacio</span> o <span class="kbd">→</span> o <span class="kbd">PageDown</span></td>
-              <td>Avanzar a la siguiente ronda pedagógica</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">←</span> o <span class="kbd">PageUp</span></td>
-              <td>Retroceder a la ronda anterior</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">R</span></td>
-              <td>Sortear ganador de competencia al azar y reiniciar</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">B</span> o <span class="kbd">.</span> (Punto)</td>
-              <td>Pantalla en Negro (Blackout) para pausas al hablar</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">W</span></td>
-              <td>Pantalla en Blanco (Whiteout) para proyección reflectiva</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">A</span></td>
-              <td>Activar / Pausar Modo Kiosco (Auto-Play continuo)</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">T</span></td>
-              <td>Alternar Modo Proyector de Alto Contraste (Claro / Oscuro)</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">L</span></td>
-              <td>Cambiar Idioma (Español / English / Português)</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">1</span> - <span class="kbd">4</span></td>
-              <td>Cambiar Vistas (Competición, Simbiosis, Split, Salto Combinatorio)</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">Q</span></td>
-              <td>Abrir Código QR para compartir a la audiencia</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">E</span></td>
-              <td>Descargar Reporte en Imagen PNG (1920×1080)</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">F</span></td>
-              <td>Pantalla Completa</td>
-            </tr>
-            <tr>
-              <td><span class="kbd">M</span> o <span class="kbd">S</span></td>
-              <td>Silenciar / Activar Sonido procedural</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="btnCloseShortcutsFooter">Entendido</button>
-      </div>
-    </div>
-  </div>
-
   <!-- SCRIPT LOGIC -->
   <script>
-    // --- 1. INTERNATIONALIZATION (i18n) ---
-    const I18N = {
-      es: {
-        title: "SimbioCreación: Competencia vs Convergencia Exponencial",
-        brandTag: "Beno Juárez · Fab Lab",
-        tabComp: "Competición",
-        tabConv: "SimbioCreación",
-        tabSplit: "Comparativa Split",
-        tabComb: "Salto Combinatorio",
-        btnAuto: "▶️ Auto",
-        btnAutoPause: "⏸️ Pausar",
-        synergyTitle: "⚡ Multiplicador Simbiótico (Carpintero 100 + Programador 100):",
-        synergyDesc: {
-          1: "Suma Lineal (Aditiva): Mesa común + laptop encima. Dos productos aislados colocados uno al lado del otro (200 pts).",
-          2.5: "Complementariedad Funcional: Mesa Ergonómica Automatizada con sensor de altura y control por app (500 pts).",
-          5: "Salto de Categoría (Océano Azul): Estación Inteligente de Telemedicina Postural y Biometría Laboral (1,000 pts).",
-          25: "Ecosistema Simbiótico Abierto: Red Distribuida Fab Lab: micro-fábricas locales con madera nativa + IA comunitaria (5,000 pts)."
-        },
-        paneCompTitle: "Competencia Tradicional",
-        paneCompSub: "(Torneo por Descarte / Silos)",
-        paneConvTitle: "SimbioCreación",
-        paneConvSub: "(Convergencia Exponencial / MPI)",
-        labelCompVal: "Conocimiento Retenido",
-        labelConvVal: "Impacto Emergente",
-        combTitle: "El Poder Matemático de la SimbioCreación",
-        combSub: "Comparación combinatoria en un taller de 30 personas (6 grupos de 5 en silos vs 30 en convergencia total)",
-        combSilosTitle: "⚔️ Silos Aislados (6 Pentágonos)",
-        combSilosSub: "Sin Cruce Inter-grupal",
-        combConvTitle: "🌿 SimbioCreación Total (Red K₃₀)",
-        combMultTag: "¡Multiplicador ×5,772,805!",
-        btnNext: ["Avanzar a Nivel 1 ▶", "Avanzar a Nivel 2 ▶", "Avanzar a Nivel 3 (Final) ▶", "Reiniciar ↺"],
-        btnReroll: "🎲 Sortear Ganador",
-        btnReset: "↺",
-        toastCopied: "¡Enlace copiado al portapapeles!",
-        toastExported: "¡Reporte PNG descargado exitosamente!",
-        narrative: [
-          {
-            icon: "🌱",
-            tag: "Nivel 0: Saberes de Entrada (Genotipos)",
-            text: "8 saberes diversos y complementarios (madera, código, medicina, etc.). Cada uno posee 100 puntos de valor base. En competencia se aíslan y se preparan para descartarse. En SimbioCreación se alistan para integrarse."
-          },
-          {
-            icon: "⚡",
-            tag: "Nivel 1: Primer Cruce Simbiótico (Parejas)",
-            text: "Fusión Carpintero + Programador: En competencia, uno es eliminado perdiendo el 50% de la inteligencia. En SimbioCreación crean una <strong>Mesa Ergonómica Automatizada</strong> multiplicando el valor hasta 1,000 pts."
-          },
-          {
-            icon: "🧬",
-            tag: "Nivel 2: Intersección de Segundo Orden (Cuartetos)",
-            text: "La mesa motorizada se fusiona con la Biología (materiales biodegradables) y la Medicina (sensores biomecánicos). Se transforma en una <strong>Estación de Salud Laboral Ciberfísica</strong>."
-          },
-          {
-            icon: "★",
-            tag: "Nivel 3: Máximo Producto de Integración (MPI)",
-            text: "Los 8 saberes viven en un solo organismo vivo e indivisible. <strong>100% de co-autoría colectiva</strong>. Mientras la competencia coronó a 1 solo y tiró 700 pts a la basura, aquí el impacto se multiplicó exponencialmente."
-          }
-        ]
-      },
-      en: {
-        title: "SymbioCreation: Competition vs Exponential Convergence",
-        brandTag: "Beno Juárez · Fab Lab",
-        tabComp: "Competition",
-        tabConv: "SymbioCreation",
-        tabSplit: "Split View",
-        tabComb: "Combinatorial Jump",
-        btnAuto: "▶️ Auto",
-        btnAutoPause: "⏸️ Pause",
-        synergyTitle: "⚡ Symbiotic Multiplier (Carpenter 100 + Programmer 100):",
-        synergyDesc: {
-          1: "Linear Sum (Additive): Standard desk + laptop on top. Two isolated products placed side-by-side (200 pts).",
-          2.5: "Functional Integration: Smart Motorized Ergonomic Desk with height sensors and app control (500 pts).",
-          5: "Category Jump (Blue Ocean): Smart Postural Telemedicine & Occupational Biometrics Station (1,000 pts).",
-          25: "Open Symbiotic Ecosystem: Distributed Fab Lab Network: native timber micro-factories + community AI (5,000 pts)."
-        },
-        paneCompTitle: "Traditional Competition",
-        paneCompSub: "(Elimination Tournament / Silos)",
-        paneConvTitle: "SymbioCreation",
-        paneConvSub: "(Exponential Convergence / MPI)",
-        labelCompVal: "Retained Knowledge",
-        labelConvVal: "Emergent Impact",
-        combTitle: "The Mathematical Power of SymbioCreation",
-        combSub: "Combinatorial comparison for a 30-person workshop (6 siloed groups of 5 vs 30 in total convergence)",
-        combSilosTitle: "⚔️ Isolated Silos (6 Pentagons)",
-        combSilosSub: "No Inter-group Cross-over",
-        combConvTitle: "🌿 Total SymbioCreation (K₃₀ Network)",
-        combMultTag: "×5,772,805 Multiplier!",
-        btnNext: ["Advance to Level 1 ▶", "Advance to Level 2 ▶", "Advance to Level 3 (Final) ▶", "Restart ↺"],
-        btnReroll: "🎲 Roll Winner",
-        btnReset: "↺",
-        toastCopied: "Link copied to clipboard!",
-        toastExported: "PNG Report downloaded successfully!",
-        narrative: [
-          {
-            icon: "🌱",
-            tag: "Level 0: Input Genotypes",
-            text: "8 diverse and complementary disciplines (timber, coding, healthcare, etc.). Each holds 100 base points. In competition they isolate to eliminate each other. In SymbioCreation they prepare to cross-pollinate."
-          },
-          {
-            icon: "⚡",
-            tag: "Level 1: First Symbiotic Cross (Pairs)",
-            text: "Carpenter + Programmer fusion: In competition, one is discarded, losing 50% of collective intelligence. In SymbioCreation they forge an <strong>Automated Ergonomic Workstation</strong> multiplying value up to 1,000 pts."
-          },
-          {
-            icon: "🧬",
-            tag: "Level 2: Second-Order Intersection (Quartets)",
-            text: "The motorized desk fuses with Biology (biodegradable materials) and Medicine (biomechanical sensors). It transforms into a <strong>Cyberphysical Occupational Health Station</strong>."
-          },
-          {
-            icon: "★",
-            tag: "Level 3: Maximum Product of Integration (MPI)",
-            text: "All 8 disciplines thrive within one indivisible living organism. <strong>100% collective co-authorship</strong>. While competition crowned 1 and trashed 700 pts, here impact multiplied exponentially."
-          }
-        ]
-      },
-      pt: {
-        title: "SimbioCriação: Competição vs Convergência Exponencial",
-        brandTag: "Beno Juárez · Fab Lab",
-        tabComp: "Competição",
-        tabConv: "SimbioCriação",
-        tabSplit: "Vista Dividida",
-        tabComb: "Salto Combinatório",
-        btnAuto: "▶️ Auto",
-        btnAutoPause: "⏸️ Pausar",
-        synergyTitle: "⚡ Multiplicador Simbiótico (Carpinteiro 100 + Programadora 100):",
-        synergyDesc: {
-          1: "Soma Linear (Aditiva): Mesa comum + laptop em cima. Dois produtos isolados lado a lado (200 pts).",
-          2.5: "Integração Funcional: Mesa Ergonômica Motorizada com sensores de altura e controle por app (500 pts).",
-          5: "Salto de Categoria (Oceano Azul): Estação Inteligente de Telemedicina Postural e Biometria Laboral (1.000 pts).",
-          25: "Ecossistema Simbiótico Aberto: Rede Distribuída Fab Lab: microfábricas locais com madeira nativa + IA comunitária (5.000 pts)."
-        },
-        paneCompTitle: "Competição Tradicional",
-        paneCompSub: "(Torneio por Eliminação / Silos)",
-        paneConvTitle: "SimbioCriação",
-        paneConvSub: "(Convergência Exponencial / MPI)",
-        labelCompVal: "Conhecimento Retido",
-        labelConvVal: "Impacto Emergente",
-        combTitle: "O Poder Matemático da SimbioCriação",
-        combSub: "Comparação combinatória em oficina de 30 pessoas (6 grupos de 5 em silos vs 30 em convergência total)",
-        combSilosTitle: "⚔️ Silos Isolados (6 Pentágonos)",
-        combSilosSub: "Sem Cruzamento Intergrupal",
-        combConvTitle: "🌿 SimbioCriação Total (Rede K₃₀)",
-        combMultTag: "Multiplicador ×5.772.805!",
-        btnNext: ["Avançar para Nível 1 ▶", "Avançar para Nível 2 ▶", "Avançar para Nível 3 (Final) ▶", "Reiniciar ↺"],
-        btnReroll: "🎲 Sortear Vencedor",
-        btnReset: "↺",
-        toastCopied: "Link copiado para a área de transferência!",
-        toastExported: "Relatório PNG baixado com sucesso!",
-        narrative: [
-          {
-            icon: "🌱",
-            tag: "Nível 0: Saberes de Entrada (Genótipos)",
-            text: "8 saberes diversos e complementares (madeira, código, medicina, etc.). Cada um possui 100 pontos base. Na competição isolam-se para eliminação. Na SimbioCriação preparam-se para integração."
-          },
-          {
-            icon: "⚡",
-            tag: "Nível 1: Primeiro Cruzamento Simbiótico (Pares)",
-            text: "Fusão Carpinteiro + Programadora: Na competição, um é eliminado perdendo 50% da inteligência. Na SimbioCriação criam uma <strong>Mesa Ergonômica Automatizada</strong> multiplicando o valor até 1.000 pts."
-          },
-          {
-            icon: "🧬",
-            tag: "Nível 2: Interseção de Segunda Ordem (Quartetos)",
-            text: "A mesa motorizada funde-se com a Biologia (materiais biodegradáveis) e Medicina (sensores biomecânicos). Transforma-se numa <strong>Estação de Saúde Ciberfísica</strong>."
-          },
-          {
-            icon: "★",
-            tag: "Nível 3: Máximo Produto de Integración (MPI)",
-            text: "Os 8 saberes vivem num único organismo vivo indivisível. <strong>100% de co-autoria coletiva</strong>. Enquanto a competição coroou 1 e descartou 700 pts, aqui o impacto multiplicou-se exponencialmente."
-          }
-        ]
-      }
-    };
-
-    let currentLang = localStorage.getItem('simbio_lang') || 'es';
-
-    // --- 2. PALETTE & PRESETS ---
+    // --- 1. PALETTE & PRESETS ---
     const COLORS = [
       { id: 'A', color: '#FF2E4C', defaultName: 'Carlos', defaultRole: 'Carpintero' },
       { id: 'B', color: '#FF9500', defaultName: 'Sofía', defaultRole: 'Programadora' },
@@ -1720,10 +1083,7 @@
     // ACTIVE STATE
     let participants = JSON.parse(localStorage.getItem('simbio_participants_v2')) || [...PRESETS.innovacion];
     let currentStep = 0; // 0, 1, 2, 3
-    let synergyMultiplier = 5.0; // 1, 2.5, 5, 25
     let currentTheme = localStorage.getItem('simbio_theme') || 'dark';
-    let isAutoPlaying = false;
-    let autoPlayTimer = null;
 
     // COMPETITION BRACKET
     let compDecisions = {
@@ -1750,7 +1110,7 @@
 
     // VIRTUAL COORDINATE SPACE FOR SVGs
     const VIRTUAL_WIDTH = 640;
-    const VIRTUAL_HEIGHT = 450;
+    const VIRTUAL_HEIGHT = 440;
 
     // AUDIO SYNTHESIZER
     let audioCtx = null;
@@ -1800,7 +1160,7 @@
       playTone(180, 'sawtooth', 0.4, 0.12);
     }
 
-    // --- 3. PARTICLES ENGINE (PIXEL-PERFECT SCALE FIX) ---
+    // --- 2. PARTICLES ENGINE (ALL 8 COLORS CONVERGE) ---
     let particles = [];
     const pCanvas = document.getElementById('particleCanvas');
     const pCtx = pCanvas.getContext('2d');
@@ -1818,7 +1178,7 @@
         t: Math.random(),
         speed: isAsh ? 0.002 : (0.006 + Math.random() * 0.005),
         color: isAsh ? '#6e7681' : color,
-        size: isAsh ? 1.8 : (2.2 + Math.random() * 1.8),
+        size: isAsh ? 1.8 : (2.4 + Math.random() * 1.8),
         isAsh,
         life: 1.0,
         decay: isAsh ? 0.015 : 0
@@ -1872,20 +1232,20 @@
         if (p.curve.isComp && (currentView === 'conv' || currentView === 'combinatoria')) continue;
         if (!p.curve.isComp && (currentView === 'comp' || currentView === 'combinatoria')) continue;
 
-        // ACCURATE ASPECT-RATIO SCALE & CENTERING MATCHING SVG 'xMidYMid meet'
+        // Accurate aspect ratio scale & centering
         const scale = Math.min(rect.width / VIRTUAL_WIDTH, rect.height / VIRTUAL_HEIGHT);
         const offsetX = rect.left + (rect.width - VIRTUAL_WIDTH * scale) / 2;
         const offsetY = rect.top + (rect.height - VIRTUAL_HEIGHT * scale) / 2;
 
         const screenX = offsetX + pt.x * scale;
         const screenY = offsetY + pt.y * scale;
-        const particleSize = Math.max(1.2, p.size * scale);
+        const particleSize = Math.max(1.4, p.size * scale);
 
         pCtx.save();
         pCtx.beginPath();
         pCtx.arc(screenX, screenY, particleSize, 0, Math.PI * 2);
         pCtx.fillStyle = p.color;
-        pCtx.globalAlpha = p.life * (p.isAsh ? 0.4 : 0.85);
+        pCtx.globalAlpha = p.life * (p.isAsh ? 0.4 : 0.9);
         if (!p.isAsh) {
           pCtx.shadowBlur = 8 * scale;
           pCtx.shadowColor = p.color;
@@ -1898,7 +1258,7 @@
     }
     requestAnimationFrame(loopParticles);
 
-    // --- 4. RENDER TREES ---
+    // --- 3. RENDER TREES ---
     function getInitial(participant) {
       if (!participant || !participant.name) return '?';
       return participant.name.trim().charAt(0).toUpperCase();
@@ -1908,16 +1268,6 @@
       const cy1 = y1 + (y2 - y1) * 0.55;
       const cy2 = y1 + (y2 - y1) * 0.45;
       return "M " + x1 + " " + y1 + " C " + x1 + " " + cy1 + ", " + x2 + " " + cy2 + ", " + x2 + " " + y2;
-    }
-
-    function addSignText(svg, x, y, text, className) {
-      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      t.setAttribute('x', x);
-      t.setAttribute('y', y);
-      t.setAttribute('class', "sign-badge " + className);
-      t.setAttribute('text-anchor', 'middle');
-      t.textContent = text;
-      svg.appendChild(t);
     }
 
     function createStripedCircle(svg, id, colorIndices) {
@@ -1979,7 +1329,7 @@
         const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         halo.setAttribute('cx', cx);
         halo.setAttribute('cy', cy);
-        halo.setAttribute('r', r * 1.45);
+        halo.setAttribute('r', r * 1.4);
         halo.setAttribute('fill', 'none');
         halo.setAttribute('stroke', 'var(--accent-pink)');
         halo.setAttribute('stroke-width', '2');
@@ -2009,6 +1359,7 @@
         g.appendChild(xMark);
       }
 
+      // Initial inside circle (No plus signs or stars!)
       if (initial && !dimmed) {
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', cx);
@@ -2060,7 +1411,8 @@
       svgComp.innerHTML = '';
       svgConv.innerHTML = '';
 
-      const yLevels = [48, 160, 275, 395];
+      // Clean vertical levels giving full room at bottom
+      const yLevels = [42, 145, 255, 365];
       const radius = 17;
 
       const paddingX = VIRTUAL_WIDTH * 0.08;
@@ -2087,13 +1439,14 @@
       renderCompetitionTree(svgComp, { yLevels, radius, xL0, xL1, xL2, xL3 });
 
       updateUI();
-      syncStateToHash();
     }
 
+    // --- CONVERGENCE TREE (SIMBIOCREACIÓN) ---
     function renderConvergenceTree(svg, coords) {
       const yLevels = coords.yLevels, radius = coords.radius;
       const xL0 = coords.xL0, xL1 = coords.xL1, xL2 = coords.xL2, xL3 = coords.xL3;
 
+      // Level 0 -> 1 Branches
       if (currentStep >= 1) {
         for (let i = 0; i < 4; i++) {
           const leftIdx = i * 2;
@@ -2113,16 +1466,12 @@
           pathR.setAttribute('stroke-width', '3.5px');
           svg.appendChild(pathR);
 
-          for (let p = 0; p < 2; p++) {
-            spawnParticle({ x1: xL0[leftIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: false }, COLORS[leftIdx].color);
-            spawnParticle({ x1: xL0[rightIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: false }, COLORS[rightIdx].color);
-          }
-
-          addSignText(svg, xL0[leftIdx] + 12, yLevels[0] + 30, '+', 'sign-plus');
-          addSignText(svg, xL0[rightIdx] - 12, yLevels[0] + 30, '+', 'sign-plus');
+          spawnParticle({ x1: xL0[leftIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: false }, COLORS[leftIdx].color);
+          spawnParticle({ x1: xL0[rightIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: false }, COLORS[rightIdx].color);
         }
       }
 
+      // Level 1 -> 2 Branches
       if (currentStep >= 2) {
         for (let i = 0; i < 2; i++) {
           const leftIdx = i * 2;
@@ -2142,41 +1491,43 @@
           pathR.setAttribute('stroke-width', '5px');
           svg.appendChild(pathR);
 
-          for (let p = 0; p < 3; p++) {
-            spawnParticle({ x1: xL1[leftIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: false }, COLORS[leftIdx * 2 + 1].color);
-            spawnParticle({ x1: xL1[rightIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: false }, COLORS[rightIdx * 2].color);
-          }
-
-          addSignText(svg, xL1[leftIdx] + 18, yLevels[1] + 24, '+', 'sign-plus');
-          addSignText(svg, xL1[rightIdx] - 18, yLevels[1] + 24, '+', 'sign-plus');
+          // Flow all 4 constituent colors
+          const quartetColors = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
+          quartetColors.slice(0, 2).forEach(cIdx => {
+            spawnParticle({ x1: xL1[leftIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: false }, COLORS[cIdx].color);
+          });
+          quartetColors.slice(2, 4).forEach(cIdx => {
+            spawnParticle({ x1: xL1[rightIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: false }, COLORS[cIdx].color);
+          });
         }
       }
 
+      // Level 2 -> 3 Branches (ALL 8 COLORS CONVERGE!)
       if (currentStep >= 3) {
         const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         pathL.setAttribute('d', createSmoothCurve(xL2[0], yLevels[2] + radius, xL3, yLevels[3] - (radius * 1.6)));
         pathL.setAttribute('class', 'tree-path path-solid');
         pathL.setAttribute('stroke', COLORS[1].color);
-        pathL.setAttribute('stroke-width', '7px');
+        pathL.setAttribute('stroke-width', '6px');
         svg.appendChild(pathL);
 
         const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         pathR.setAttribute('d', createSmoothCurve(xL2[1], yLevels[2] + radius, xL3, yLevels[3] - (radius * 1.6)));
         pathR.setAttribute('class', 'tree-path path-solid');
         pathR.setAttribute('stroke', COLORS[5].color);
-        pathR.setAttribute('stroke-width', '7px');
+        pathR.setAttribute('stroke-width', '6px');
         svg.appendChild(pathR);
 
-        for (let p = 0; p < 4; p++) {
-          spawnParticle({ x1: xL2[0], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.6), isComp: false }, COLORS[1].color);
-          spawnParticle({ x1: xL2[1], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.6), isComp: false }, COLORS[5].color);
-        }
-
-        addSignText(svg, xL2[0] + 20, yLevels[2] + 24, '+', 'sign-plus');
-        addSignText(svg, xL2[1] - 20, yLevels[2] + 24, '+', 'sign-plus');
+        // HERE: All 8 colors stream into the final MPI node!
+        [0, 1, 2, 3].forEach(cIdx => {
+          spawnParticle({ x1: xL2[0], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.6), isComp: false }, COLORS[cIdx].color);
+        });
+        [4, 5, 6, 7].forEach(cIdx => {
+          spawnParticle({ x1: xL2[1], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.6), isComp: false }, COLORS[cIdx].color);
+        });
       }
 
-      // Nodes L0
+      // Nodes L0 (Click to edit at Level 0!)
       for (let i = 0; i < 8; i++) {
         drawNode(svg, {
           cx: xL0[i],
@@ -2187,44 +1538,42 @@
           subname: participants[i].name,
           role: participants[i].role,
           id: "conv-l0-" + i,
-          mathTooltip: participants[i].name + " (" + participants[i].role + ") · 100 pts base"
+          mathTooltip: participants[i].name + " (" + participants[i].role + ") · Click para editar",
+          onClick: () => openEditModalForNode(i)
         });
       }
 
-      // Nodes L1
+      // Nodes L1 (Clean 2-color circle with initials e.g. "C+S", no arbitrary + icon)
       if (currentStep >= 1) {
         for (let i = 0; i < 4; i++) {
-          const colorsIdx = [i * 2, i * 2 + 1];
-          const fill = createStripedCircle(svg, "conv-l1-" + i, colorsIdx);
           const pA = participants[i*2];
           const pB = participants[i*2+1];
-          const ptsVal = Math.round(200 * (synergyMultiplier / 2));
+          const colorsIdx = [i * 2, i * 2 + 1];
+          const fill = createStripedCircle(svg, "conv-l1-" + i, colorsIdx);
           drawNode(svg, {
             cx: xL1[i],
             cy: yLevels[1],
             r: radius * 1.2,
             fill: fill,
-            initial: '⊕',
+            initial: getInitial(pA) + getInitial(pB),
             id: "conv-l1-" + i,
-            mathTooltip: pA.name + " ⊕ " + pB.name + " ➔ " + ptsVal + " pts (Factor ×" + (synergyMultiplier / 2).toFixed(1) + ")"
+            mathTooltip: "Fusión: " + pA.name + " (" + pA.role + ") ⊕ " + pB.name + " (" + pB.role + ")"
           });
         }
       }
 
-      // Nodes L2
+      // Nodes L2 (Clean 4-color blend)
       if (currentStep >= 2) {
         for (let i = 0; i < 2; i++) {
           const colorsIdx = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
           const fill = createStripedCircle(svg, "conv-l2-" + i, colorsIdx);
-          const ptsVal = Math.round(400 * synergyMultiplier);
           drawNode(svg, {
             cx: xL2[i],
             cy: yLevels[2],
             r: radius * 1.4,
             fill: fill,
-            initial: '★',
             id: "conv-l2-" + i,
-            mathTooltip: "Cuarteto Integrado ➔ " + ptsVal.toLocaleString() + " pts"
+            mathTooltip: "Cuarteto Integrado (4 saberes sinérgicos)"
           });
         }
       }
@@ -2232,7 +1581,6 @@
       // Nodes L3 (MPI)
       if (currentStep >= 3) {
         const fill = createStripedCircle(svg, "conv-final", [0,1,2,3,4,5,6,7]);
-        const finalPts = Math.round(800 * synergyMultiplier);
         drawNode(svg, {
           cx: xL3,
           cy: yLevels[3],
@@ -2242,12 +1590,12 @@
           subname: 'SimbioCreación (100%)',
           id: "conv-final",
           isMega: true,
-          mathTooltip: "8 Saberes en Simbiosis ➔ " + finalPts.toLocaleString() + " pts (Click para inspeccionar Genoma)",
-          onClick: openMpiGenomeModal
+          mathTooltip: "Máximo Producto de Integración: 8 saberes vivos en el organismo final"
         });
       }
     }
 
+    // --- COMPETITION TREE ---
     function renderCompetitionTree(svg, coords) {
       const yLevels = coords.yLevels, radius = coords.radius;
       const xL0 = coords.xL0, xL1 = coords.xL1, xL2 = coords.xL2, xL3 = coords.xL3;
@@ -2275,9 +1623,6 @@
           svg.appendChild(pathLose);
 
           spawnParticle({ x1: xL0[loser], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius, isComp: true }, '#6e7681', true);
-
-          addSignText(svg, xL0[winner] + (winner === leftIdx ? 12 : -12), yLevels[0] + 30, '+', 'sign-plus');
-          addSignText(svg, xL0[loser] + (loser === leftIdx ? 12 : -12), yLevels[0] + 30, '-', 'sign-minus');
         }
       }
 
@@ -2309,9 +1654,6 @@
           svg.appendChild(pathLose);
 
           spawnParticle({ x1: xL1[loserBranchIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius, isComp: true }, '#6e7681', true);
-
-          addSignText(svg, xL1[winnerBranchIdx] + (isLeftWin ? 18 : -18), yLevels[1] + 24, '+', 'sign-plus');
-          addSignText(svg, xL1[loserBranchIdx] + (isLeftWin ? -18 : 18), yLevels[1] + 24, '-', 'sign-minus');
         }
       }
 
@@ -2325,7 +1667,7 @@
         pathWin.setAttribute('d', createSmoothCurve(xL2[isLeftWin ? 0 : 1], yLevels[2] + radius, xL3, yLevels[3] - radius * 1.5));
         pathWin.setAttribute('class', 'tree-path path-solid');
         pathWin.setAttribute('stroke', COLORS[ultimateWinner].color);
-        pathWin.setAttribute('stroke-width', '7px');
+        pathWin.setAttribute('stroke-width', '6px');
         svg.appendChild(pathWin);
 
         spawnParticle({ x1: xL2[isLeftWin ? 0 : 1], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - radius * 1.5, isComp: true }, COLORS[ultimateWinner].color);
@@ -2350,7 +1692,8 @@
           role: participants[i].role,
           id: "comp-l0-" + i,
           dimmed: isEliminated,
-          mathTooltip: participants[i].name + " (" + participants[i].role + ") " + (isEliminated ? '· ¡DESCARTADO! (-100 pts)' : '· Avanza a ronda 2')
+          mathTooltip: participants[i].name + " (" + participants[i].role + ") " + (isEliminated ? '· ¡DESCARTADO!' : '· Pasa a ronda 2'),
+          onClick: () => openEditModalForNode(i)
         });
       }
 
@@ -2366,7 +1709,7 @@
             initial: getInitial(participants[winnerNode]),
             id: "comp-l1-" + i,
             dimmed: isEliminated,
-            mathTooltip: "Ganador: " + participants[winnerNode].name + (isEliminated ? '· ¡Eliminado en Semifinal!' : '')
+            mathTooltip: "Ganador llave: " + participants[winnerNode].name + (isEliminated ? ' · Eliminado en semifinal' : '')
           });
         }
       }
@@ -2383,7 +1726,7 @@
             initial: getInitial(participants[winnerNode]),
             id: "comp-l2-" + i,
             dimmed: isEliminated,
-            mathTooltip: "Finalista: " + participants[winnerNode].name + (isEliminated ? '· Subcampeón (Descartado)' : '')
+            mathTooltip: "Finalista: " + participants[winnerNode].name + (isEliminated ? ' · Subcampeón (descartado)' : '')
           });
         }
       }
@@ -2399,36 +1742,14 @@
           subname: "Único Ganador: " + participants[winnerNode].name,
           id: "comp-final",
           isWinner: true,
-          mathTooltip: "¡Ganador del Torneo! " + participants[winnerNode].name + " (100 pts) · 7 descartados (-700 pts)"
+          mathTooltip: "¡Único Ganador! " + participants[winnerNode].name + " · 7 saberes eliminados"
         });
       }
     }
 
-    // --- 5. UI UPDATES & TEXT TRANSLATIONS ---
+    // --- 4. UI METRICS & TEXT (EMERGENT & MATHEMATICAL) ---
     function updateUI() {
-      const t = I18N[currentLang] || I18N.es;
-
-      document.getElementById('paneCompTitle').textContent = t.paneCompTitle;
-      document.getElementById('paneCompSub').textContent = t.paneCompSub;
-      document.getElementById('paneConvTitle').textContent = t.paneConvTitle;
-      document.getElementById('paneConvSub').textContent = t.paneConvSub;
-      document.getElementById('labelCompVal').textContent = t.labelCompVal;
-      document.getElementById('labelConvVal').textContent = t.labelConvVal;
-      document.getElementById('synergyTitleText').textContent = t.synergyTitle;
-      document.getElementById('synergyDesc').textContent = t.synergyDesc[synergyMultiplier];
-
-      document.querySelector('#tabComp .tab-label').textContent = t.tabComp;
-      document.querySelector('#tabConv .tab-label').textContent = t.tabConv;
-      document.querySelector('#tabSplit .tab-label').textContent = t.tabSplit;
-      document.querySelector('#tabComb .tab-label').textContent = t.tabComb;
-
-      document.getElementById('combTitle').textContent = t.combTitle;
-      document.getElementById('combSub').textContent = t.combSub;
-      document.getElementById('combSilosTitle').textContent = t.combSilosTitle;
-      document.getElementById('combSilosSub').textContent = t.combSilosSub;
-      document.getElementById('combConvTitle').textContent = t.combConvTitle;
-      document.getElementById('combMultTag').textContent = t.combMultTag;
-
+      // Step Dots
       for (let s = 0; s <= 3; s++) {
         const dot = document.getElementById("dot" + s);
         if (dot) {
@@ -2436,50 +1757,47 @@
         }
       }
 
+      // Buttons
       const btnPrev = document.getElementById('btnPrev');
       const btnNext = document.getElementById('btnNext');
       btnPrev.disabled = currentStep === 0;
-      btnNext.textContent = t.btnNext[currentStep];
 
+      const nextTexts = ["Avanzar a Nivel 1 ▶", "Avanzar a Nivel 2 ▶", "Avanzar a Nivel 3 (Final) ▶", "Reiniciar ↺"];
+      btnNext.textContent = nextTexts[currentStep];
+
+      // MATHEMATICAL EMERGENT METRICS (No arbitrary "points")
       const compVal = document.getElementById('compVal');
       const convVal = document.getElementById('convVal');
 
-      const compPts = [800, 400, 200, 100][currentStep];
-      compVal.textContent = compPts + " pts";
+      const compMetrics = [
+        "8 / 8 saberes (100%)",
+        "4 / 8 saberes (50% descartado)",
+        "2 / 8 saberes (75% descartado)",
+        "1 / 8 saberes (87.5% descartado)"
+      ];
+      compVal.textContent = compMetrics[currentStep];
 
-      let convPts;
-      if (currentStep === 0) convPts = 800;
-      else if (currentStep === 1) convPts = Math.round(800 * (synergyMultiplier / 2.5));
-      else if (currentStep === 2) convPts = Math.round(800 * (synergyMultiplier / 1.5));
-      else convPts = Math.round(800 * synergyMultiplier);
+      const convMetrics = [
+        "8 saberes base (Aislados)",
+        "4 fusiones sinérgicas",
+        "2 clústeres integrados",
+        "MPI: 255 conexiones (100% Co-autoría)"
+      ];
+      convVal.textContent = convMetrics[currentStep];
 
-      convVal.textContent = convPts.toLocaleString() + " pts";
-
+      // Winner Banner
       const winnerBanner = document.getElementById('winnerBanner');
       const winnerText = document.getElementById('winnerText');
       if (currentStep >= 3) {
         winnerBanner.style.display = 'flex';
         const w = participants[compDecisions.r3];
-        winnerText.textContent = "Ganador Único: " + w.name + " (" + w.role + ") · 7 ideas descartadas";
+        winnerText.textContent = "Ganador Único: " + w.name + " (" + w.role + ") · 7 saberes desechados";
       } else {
         winnerBanner.style.display = 'none';
       }
-
-      const n = t.narrative[currentStep];
-      document.getElementById('narrativeIcon').textContent = n.icon;
-      document.getElementById('narrativeTag').textContent = n.tag;
-      
-      if (currentStep === 3) {
-        const w = participants[compDecisions.r3];
-        document.getElementById('narrativeText').innerHTML = 
-          "<strong>SimbioCreación:</strong> 100% de co-autoría colectiva (" + convPts.toLocaleString() + " pts).<br>" +
-          "<span style=\"color:#ff7b72;\"><strong>Costo de Competencia:</strong> Único Ganador: " + w.name + " (" + w.role + "). Se botó al tacho el 87.5% de la inteligencia colectiva.</span>";
-      } else {
-        document.getElementById('narrativeText').innerHTML = n.text;
-      }
     }
 
-    // --- 6. NAVIGATION & PRESENTATION CONTROLS ---
+    // --- 5. NAVIGATION CONTROLS ---
     function advanceStep() {
       if (currentStep < 3) {
         currentStep++;
@@ -2525,216 +1843,32 @@
       });
     }
 
-    // --- 7. AUTO-PLAY / KIOSK MODE ---
-    function toggleAutoPlay() {
-      isAutoPlaying = !isAutoPlaying;
-      const btn = document.getElementById('btnAutoPlay');
-      const t = I18N[currentLang] || I18N.es;
-      if (isAutoPlaying) {
-        btn.classList.add('active');
-        btn.textContent = t.btnAutoPause;
-        autoPlayTimer = setInterval(advanceStep, 5500);
-        showToast("▶️ Modo Kiosco Activado (Avance automático cada 5.5s)");
-      } else {
-        btn.classList.remove('active');
-        btn.textContent = t.btnAuto;
-        clearInterval(autoPlayTimer);
-        autoPlayTimer = null;
-        showToast("⏸️ Modo Kiosco Pausado");
-      }
-    }
-    document.getElementById('btnAutoPlay').addEventListener('click', toggleAutoPlay);
-
-    // --- 8. THEME TOGGLE (PROJECTION HIGH CONTRAST) ---
-    function setTheme(theme) {
-      currentTheme = theme;
-      document.body.setAttribute('data-theme', theme);
-      localStorage.setItem('simbio_theme', theme);
-      document.getElementById('btnTheme').textContent = theme === 'light' ? '🌙' : '☀️';
-      drawTrees();
-      if (document.body.getAttribute('data-view') === 'combinatoria') {
-        resizeAndDrawCombinatorial();
-      }
-    }
-
-    function toggleTheme() {
-      setTheme(currentTheme === 'light' ? 'dark' : 'light');
-    }
-    document.getElementById('btnTheme').addEventListener('click', toggleTheme);
-    setTheme(currentTheme);
-
-    // --- 9. LANGUAGE SELECTOR ---
-    const LANG_ORDER = ['es', 'en', 'pt'];
-    function setLanguage(lang) {
-      if (!I18N[lang]) lang = 'es';
-      currentLang = lang;
-      localStorage.setItem('simbio_lang', lang);
-      document.getElementById('btnLang').textContent = "🌐 " + lang.toUpperCase();
-      updateUI();
-    }
-
-    document.getElementById('btnLang').addEventListener('click', () => {
-      const idx = LANG_ORDER.indexOf(currentLang);
-      const nextLang = LANG_ORDER[(idx + 1) % LANG_ORDER.length];
-      setLanguage(nextLang);
-      showToast("Idioma: " + nextLang.toUpperCase());
-      drawTrees();
-    });
-
-    // --- 10. CURTAIN (BLACKOUT / WHITEOUT FOR PRESENTERS) ---
-    const curtain = document.getElementById('presentationCurtain');
-    function toggleBlackout() {
-      if (curtain.classList.contains('blackout')) {
-        curtain.classList.remove('blackout');
-      } else {
-        curtain.classList.remove('whiteout');
-        curtain.classList.add('blackout');
-      }
-    }
-
-    function toggleWhiteout() {
-      if (curtain.classList.contains('whiteout')) {
-        curtain.classList.remove('whiteout');
-      } else {
-        curtain.classList.remove('blackout');
-        curtain.classList.add('whiteout');
-      }
-    }
-
-    curtain.addEventListener('click', () => {
-      curtain.classList.remove('blackout', 'whiteout');
-    });
-
-    // --- 11. KEYBOARD SHORTCUTS & CLICKER REMOTE HANDLER ---
-    window.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT') return;
-
-      if (e.code === 'Escape') {
-        curtain.classList.remove('blackout', 'whiteout');
-        closeAllModals();
-        return;
-      }
-
-      if (e.code === 'Space' || e.code === 'ArrowRight' || e.code === 'PageDown') {
-        e.preventDefault();
-        advanceStep();
-      } else if (e.code === 'ArrowLeft' || e.code === 'PageUp') {
-        e.preventDefault();
-        prevStep();
-      } else if (e.code === 'KeyB' || e.code === 'Period') {
-        e.preventDefault();
-        toggleBlackout();
-      } else if (e.code === 'KeyW') {
-        e.preventDefault();
-        toggleWhiteout();
-      } else if (e.code === 'Home') {
-        resetStep();
-      } else if (e.code === 'End') {
-        currentStep = 3;
-        drawTrees();
-      } else if (e.code === 'KeyR') {
-        randomizeCompetition();
-        drawTrees();
-      } else if (e.code === 'KeyA') {
-        toggleAutoPlay();
-      } else if (e.code === 'KeyT') {
-        toggleTheme();
-      } else if (e.code === 'KeyL') {
-        document.getElementById('btnLang').click();
-      } else if (e.code === 'Digit1') {
-        document.querySelector('.view-tab[data-view="comp"]').click();
-      } else if (e.code === 'Digit2') {
-        document.querySelector('.view-tab[data-view="conv"]').click();
-      } else if (e.code === 'Digit3') {
-        document.querySelector('.view-tab[data-view="split"]').click();
-      } else if (e.code === 'Digit4') {
-        document.querySelector('.view-tab[data-view="combinatoria"]').click();
-      } else if (e.code === 'KeyF') {
-        toggleFullscreen();
-      } else if (e.code === 'KeyM' || e.code === 'KeyS') {
-        document.getElementById('btnSound').click();
-      } else if (e.code === 'KeyQ') {
-        openShareModal();
-      } else if (e.code === 'KeyE') {
-        exportReportPng();
-      } else if (e.code === 'KeyP') {
-        document.getElementById('btnConfig').click();
-      } else if (e.code === 'Slash' || e.code === 'KeyH') {
-        openShortcutsModal();
-      }
-    });
-
-    // --- 12. TOUCH SWIPE GESTURES ---
-    let touchStartX = 0;
-    let touchStartY = 0;
-    const workspace = document.getElementById('mainWorkspace');
-
-    workspace.addEventListener('touchstart', (e) => {
-      initAudio();
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
-
-    workspace.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].screenX;
-      const touchEndY = e.changedTouches[0].screenY;
-      const deltaX = touchEndX - touchStartX;
-      const deltaY = touchEndY - touchStartY;
-
-      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 45) {
-        if (deltaX < 0) {
-          advanceStep();
-        } else {
-          prevStep();
-        }
-      }
-    }, { passive: true });
-
-    // --- 13. FULLSCREEN & SOUND TOGGLES ---
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-    document.getElementById('btnFullscreen').addEventListener('click', toggleFullscreen);
-
-    const btnSound = document.getElementById('btnSound');
-    btnSound.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      btnSound.textContent = soundEnabled ? '🔊' : '🔇';
-      if (soundEnabled) playTone(440, 'sine', 0.2);
-    });
-
-    // --- 14. SYNERGY FACTOR SWITCHER ---
-    document.querySelectorAll('.synergy-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('.synergy-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        synergyMultiplier = parseFloat(pill.getAttribute('data-factor'));
-        const t = I18N[currentLang] || I18N.es;
-        document.getElementById('synergyDesc').textContent = t.synergyDesc[synergyMultiplier];
-        playTone(300 + synergyMultiplier * 40, 'triangle', 0.25);
-        drawTrees();
-      });
-    });
-
-    // --- 15. VIEW SWITCHER TABS & COMBINATORIAL CANVAS DYNAMIC RESIZE ---
+    // --- 6. VIEW SWITCHER (STARTS FROM STEP 0 ON VIEW CHANGE) ---
     document.querySelectorAll('.view-tab').forEach(tab => {
       tab.addEventListener('click', () => {
+        const prevView = document.body.getAttribute('data-view');
+        const nextView = tab.getAttribute('data-view');
+
         document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        const view = tab.getAttribute('data-view');
-        document.body.setAttribute('data-view', view);
-        playTone(440, 'sine', 0.15);
-        if (view === 'combinatoria') {
-          resizeAndDrawCombinatorial();
+        document.body.setAttribute('data-view', nextView);
+
+        // When switching between competition and convergence: start from level 0!
+        if (prevView !== nextView) {
+          currentStep = 0;
+          if (nextView === 'comp') randomizeCompetition();
         }
-        syncStateToHash();
+
+        playTone(440, 'sine', 0.15);
+        if (nextView === 'combinatoria') {
+          resizeAndDrawCombinatorial();
+        } else {
+          drawTrees();
+        }
       });
     });
 
+    // --- 7. COMBINATORIAL VIEW ---
     function resizeAndDrawCombinatorial() {
       const cSilos = document.getElementById('canvasSilos');
       const cNet = document.getElementById('canvasNetwork');
@@ -2769,10 +1903,8 @@
 
     function drawSilosCanvas(ctx, w, h) {
       ctx.clearRect(0, 0, w, h);
-      const cols = 3;
-      const rows = 2;
-      const cellW = w / cols;
-      const cellH = h / rows;
+      const cols = 3, rows = 2;
+      const cellW = w / cols, cellH = h / rows;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -2815,8 +1947,7 @@
 
     function drawNetworkCanvas(ctx, w, h) {
       ctx.clearRect(0, 0, w, h);
-      const cx = w / 2;
-      const cy = h / 2;
+      const cx = w / 2, cy = h / 2;
       const rad = Math.min(w, h) * 0.42;
       const numNodes = 30;
       const pts = [];
@@ -2877,17 +2008,139 @@
       requestAnimationFrame(updateCounter);
     }
 
-    // --- 16. TOAST NOTIFICATION ---
+    // --- 8. THEME TOGGLE (LIGHT / DARK) ---
+    function setTheme(theme) {
+      currentTheme = theme;
+      document.body.setAttribute('data-theme', theme);
+      localStorage.setItem('simbio_theme', theme);
+      document.getElementById('btnTheme').textContent = theme === 'light' ? '🌙' : '☀️';
+      drawTrees();
+      if (document.body.getAttribute('data-view') === 'combinatoria') {
+        resizeAndDrawCombinatorial();
+      }
+    }
+    document.getElementById('btnTheme').addEventListener('click', () => {
+      setTheme(currentTheme === 'light' ? 'dark' : 'light');
+    });
+    setTheme(currentTheme);
+
+    // --- 9. KEYBOARD & CLICKER SHORTCUTS ---
+    const curtain = document.getElementById('presentationCurtain');
+    function toggleBlackout() {
+      if (curtain.classList.contains('blackout')) {
+        curtain.classList.remove('blackout');
+      } else {
+        curtain.classList.remove('whiteout');
+        curtain.classList.add('blackout');
+      }
+    }
+
+    function toggleWhiteout() {
+      if (curtain.classList.contains('whiteout')) {
+        curtain.classList.remove('whiteout');
+      } else {
+        curtain.classList.remove('blackout');
+        curtain.classList.add('whiteout');
+      }
+    }
+
+    curtain.addEventListener('click', () => {
+      curtain.classList.remove('blackout', 'whiteout');
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+
+      if (e.code === 'Escape') {
+        curtain.classList.remove('blackout', 'whiteout');
+        modalConfig.classList.remove('open');
+        return;
+      }
+
+      if (e.code === 'Space' || e.code === 'ArrowRight' || e.code === 'PageDown') {
+        e.preventDefault();
+        advanceStep();
+      } else if (e.code === 'ArrowLeft' || e.code === 'PageUp') {
+        e.preventDefault();
+        prevStep();
+      } else if (e.code === 'KeyB' || e.code === 'Period') {
+        e.preventDefault();
+        toggleBlackout();
+      } else if (e.code === 'KeyW') {
+        e.preventDefault();
+        toggleWhiteout();
+      } else if (e.code === 'KeyR') {
+        randomizeCompetition();
+        drawTrees();
+      } else if (e.code === 'KeyT') {
+        document.getElementById('btnTheme').click();
+      } else if (e.code === 'Digit1') {
+        document.querySelector('.view-tab[data-view="comp"]').click();
+      } else if (e.code === 'Digit2') {
+        document.querySelector('.view-tab[data-view="conv"]').click();
+      } else if (e.code === 'Digit3') {
+        document.querySelector('.view-tab[data-view="split"]').click();
+      } else if (e.code === 'Digit4') {
+        document.querySelector('.view-tab[data-view="combinatoria"]').click();
+      } else if (e.code === 'KeyF') {
+        toggleFullscreen();
+      } else if (e.code === 'KeyM' || e.code === 'KeyS') {
+        document.getElementById('btnSound').click();
+      } else if (e.code === 'KeyP') {
+        document.getElementById('btnConfig').click();
+      } else if (e.code === 'KeyE') {
+        exportReportPng();
+      }
+    });
+
+    // Touch Swipe Detection
+    let touchStartX = 0, touchStartY = 0;
+    const workspace = document.getElementById('mainWorkspace');
+    workspace.addEventListener('touchstart', (e) => {
+      initAudio();
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    workspace.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 45) {
+        if (deltaX < 0) advanceStep();
+        else prevStep();
+      }
+    }, { passive: true });
+
+    // Fullscreen & Sound
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    document.getElementById('btnFullscreen').addEventListener('click', toggleFullscreen);
+
+    const btnSound = document.getElementById('btnSound');
+    btnSound.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      btnSound.textContent = soundEnabled ? '🔊' : '🔇';
+      if (soundEnabled) playTone(440, 'sine', 0.2);
+    });
+
+    // --- 10. TOAST NOTIFICATIONS & TOOLTIPS ---
     function showToast(message, icon) {
       icon = icon || 'ℹ️';
       const toast = document.getElementById('toastNotification');
       document.getElementById('toastIcon').textContent = icon;
       document.getElementById('toastMessage').textContent = message;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2600);
+      setTimeout(() => toast.classList.remove('show'), 2400);
     }
 
-    // --- 17. TOOLTIPS ---
     const tooltip = document.getElementById('synergyTooltip');
     const tooltipContent = document.getElementById('tooltipContent');
 
@@ -2902,26 +2155,33 @@
       tooltip.classList.remove('show');
     }
 
-    // --- 18. MODALS MANAGEMENT ---
-    function closeAllModals() {
-      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
-    }
-
-    // PARTICIPANTS MODAL
+    // --- 11. PARTICIPANTS CONFIG MODAL ---
     const modalConfig = document.getElementById('modalConfig');
     const inputsGrid = document.getElementById('inputsGrid');
 
-    function renderConfigInputs() {
+    function renderConfigInputs(highlightIndex) {
       inputsGrid.innerHTML = '';
       participants.forEach((p, i) => {
         const row = document.createElement('div');
         row.className = 'input-node-row';
+        if (highlightIndex === i) {
+          row.style.borderColor = 'var(--accent-pink)';
+        }
         row.innerHTML = 
           '<div class="input-node-badge" style="background:' + COLORS[i].color + ';">' + COLORS[i].id + '</div>' +
           '<input type="text" class="input-node-text" id="cfg-name-' + i + '" value="' + p.name + '" placeholder="Nombre" />' +
           '<input type="text" class="input-node-role" id="cfg-role-' + i + '" value="' + p.role + '" placeholder="Rol" />';
         inputsGrid.appendChild(row);
       });
+    }
+
+    function openEditModalForNode(idx) {
+      renderConfigInputs(idx);
+      modalConfig.classList.add('open');
+      setTimeout(() => {
+        const input = document.getElementById('cfg-name-' + idx);
+        if (input) input.focus();
+      }, 100);
     }
 
     document.getElementById('btnConfig').addEventListener('click', () => {
@@ -2951,404 +2211,10 @@
       modalConfig.classList.remove('open');
       playTone(523.25, 'triangle', 0.3);
       drawTrees();
-      showToast("Participantes guardados");
+      showToast("Saberes guardados exitosamente", "👥");
     });
 
-    // MPI GENOME MODAL
-    const modalMpi = document.getElementById('modalMpiGenome');
-    function openMpiGenomeModal() {
-      const genotypesList = document.getElementById('mpiGenotypesList');
-      const pairsList = document.getElementById('mpiPairsList');
-      const tableMpiPts = document.getElementById('tableMpiPts');
-
-      genotypesList.innerHTML = '';
-      participants.forEach((p, i) => {
-        const pill = document.createElement('div');
-        pill.className = 'mpi-pill';
-        pill.innerHTML = '<span style="width:10px; height:10px; border-radius:50%; background:' + COLORS[i].color + '; display:inline-block;"></span> <strong>' + p.name + '</strong> (' + p.role + ')';
-        genotypesList.appendChild(pill);
-      });
-
-      pairsList.innerHTML = '';
-      for (let i = 0; i < 4; i++) {
-        const p1 = participants[i * 2];
-        const p2 = participants[i * 2 + 1];
-        const pill = document.createElement('div');
-        pill.className = 'mpi-pill';
-        pill.innerHTML = '⚡ <strong>' + p1.name + '</strong> ⊕ <strong>' + p2.name + '</strong>';
-        pairsList.appendChild(pill);
-      }
-
-      const finalPts = Math.round(800 * synergyMultiplier);
-      tableMpiPts.textContent = finalPts.toLocaleString() + " pts (×" + synergyMultiplier + ")";
-
-      playChord([392, 523.25, 659.25, 783.99], 'triangle', 0.6);
-      modalMpi.classList.add('open');
-    }
-
-    document.getElementById('btnCloseMpi').addEventListener('click', () => modalMpi.classList.remove('open'));
-    document.getElementById('btnExportFromMpi').addEventListener('click', () => {
-      modalMpi.classList.remove('open');
-      exportReportPng();
-    });
-
-    // SHORTCUTS MODAL
-    const modalShortcuts = document.getElementById('modalShortcuts');
-    function openShortcutsModal() {
-      modalShortcuts.classList.add('open');
-    }
-    document.getElementById('btnHelp').addEventListener('click', openShortcutsModal);
-    document.getElementById('btnCloseShortcuts').addEventListener('click', () => modalShortcuts.classList.remove('open'));
-    document.getElementById('btnCloseShortcutsFooter').addEventListener('click', () => modalShortcuts.classList.remove('open'));
-
-    // --- 19. EMBEDDED ZERO-DEPENDENCY QR CODE GENERATOR (KAZUHIKO ARASE) ---
-    const MiniQR = (function() {
-      function QR8bitByte(data) { this.mode = 4; this.data = data; }
-      QR8bitByte.prototype = {
-        getLength: function() { return this.data.length; },
-        write: function(buffer) {
-          for (let i = 0; i < this.data.length; i++) buffer.put(this.data.charCodeAt(i), 8);
-        }
-      };
-
-      const QRUtil = {
-        PATTERN_POSITION_TABLE: [
-          [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50], [6, 30, 54]
-        ],
-        G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-        G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
-        G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
-        getBCHTypeInfo: function(d) {
-          let b = d << 10;
-          while (QRUtil.getBCHDigit(b) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
-            b ^= (QRUtil.G15 << (QRUtil.getBCHDigit(b) - QRUtil.getBCHDigit(QRUtil.G15)));
-          }
-          return ((d << 10) | b) ^ QRUtil.G15_MASK;
-        },
-        getBCHTypeNumber: function(d) {
-          let b = d << 12;
-          while (QRUtil.getBCHDigit(b) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
-            b ^= (QRUtil.G18 << (QRUtil.getBCHDigit(b) - QRUtil.getBCHDigit(QRUtil.G18)));
-          }
-          return (d << 12) | b;
-        },
-        getBCHDigit: function(d) {
-          let count = 0;
-          while (d !== 0) { count++; d >>>= 1; }
-          return count;
-        },
-        getPatternPosition: function(type) { return QRUtil.PATTERN_POSITION_TABLE[type - 1] || []; },
-        getMask: function(maskPattern, i, j) {
-          switch (maskPattern) {
-            case 0: return (i + j) % 2 === 0;
-            case 1: return i % 2 === 0;
-            case 2: return j % 3 === 0;
-            case 3: return (i + j) % 3 === 0;
-            case 4: return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 === 0;
-            case 5: return (i * j) % 2 + (i * j) % 3 === 0;
-            case 6: return ((i * j) % 2 + (i * j) % 3) % 2 === 0;
-            case 7: return ((i * j) % 3 + (i + j) % 2) % 2 === 0;
-            default: return false;
-          }
-        },
-        getErrorCorrectPolynomial: function(len) {
-          let a = new QRPolynomial([1], 0);
-          for (let i = 0; i < len; i++) a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0));
-          return a;
-        },
-        getLengthInBits: function(mode, type) { return (1 <= type && type < 10) ? 8 : 16; },
-        getLostPoint: function(qr) {
-          const count = qr.getModuleCount();
-          let lost = 0;
-          for (let r = 0; r < count; r++) {
-            for (let c = 0; c < count; c++) {
-              let same = 0;
-              const dark = qr.isDark(r, c);
-              for (let dr = -1; dr <= 1; dr++) {
-                if (r + dr < 0 || count <= r + dr) continue;
-                for (let dc = -1; dc <= 1; dc++) {
-                  if (c + dc < 0 || count <= c + dc) continue;
-                  if (dr === 0 && dc === 0) continue;
-                  if (dark === qr.isDark(r + dr, c + dc)) same++;
-                }
-              }
-              if (same > 5) lost += (3 + same - 5);
-            }
-          }
-          return lost;
-        }
-      };
-
-      const QRMath = {
-        glog: function(n) { return QRMath.LOG_TABLE[n]; },
-        gexp: function(n) {
-          while (n < 0) n += 255;
-          while (n >= 256) n -= 255;
-          return QRMath.EXP_TABLE[n];
-        },
-        EXP_TABLE: new Array(256),
-        LOG_TABLE: new Array(256)
-      };
-      for (let i = 0; i < 8; i++) QRMath.EXP_TABLE[i] = 1 << i;
-      for (let i = 8; i < 256; i++) QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i-4] ^ QRMath.EXP_TABLE[i-5] ^ QRMath.EXP_TABLE[i-6] ^ QRMath.EXP_TABLE[i-8];
-      for (let i = 0; i < 255; i++) QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]] = i;
-
-      function QRPolynomial(num, shift) {
-        let offset = 0;
-        while (offset < num.length && num[offset] === 0) offset++;
-        this.num = new Array(num.length - offset + shift);
-        for (let i = 0; i < num.length - offset; i++) this.num[i] = num[i + offset];
-        for (let i = num.length - offset; i < this.num.length; i++) this.num[i] = 0;
-      }
-      QRPolynomial.prototype = {
-        get: function(i) { return this.num[i]; },
-        getLength: function() { return this.num.length; },
-        multiply: function(e) {
-          const num = new Array(this.getLength() + e.getLength() - 1).fill(0);
-          for (let i = 0; i < this.getLength(); i++) {
-            for (let j = 0; j < e.getLength(); j++) num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)));
-          }
-          return new QRPolynomial(num, 0);
-        },
-        mod: function(e) {
-          if (this.getLength() - e.getLength() < 0) return this;
-          const ratio = QRMath.glog(this.get(0)) - QRMath.glog(e.get(0));
-          const num = new Array(this.getLength());
-          for (let i = 0; i < this.getLength(); i++) num[i] = this.get(i);
-          for (let i = 0; i < e.getLength(); i++) num[i] ^= QRMath.gexp(QRMath.glog(e.get(i)) + ratio);
-          return new QRPolynomial(num, 0).mod(e);
-        }
-      };
-
-      function QRRSBlock(total, data) { this.totalCount = total; this.dataCount = data; }
-      QRRSBlock.RS_BLOCK_TABLE = [
-        [1, 26, 16], [1, 44, 28], [1, 70, 44], [2, 50, 32], [2, 67, 43], [4, 43, 27], [4, 49, 31], [2, 60, 38, 2, 61, 39], [3, 58, 36, 2, 59, 37], [4, 69, 43, 1, 70, 44]
-      ];
-      QRRSBlock.getRSBlocks = function(type) {
-        const table = QRRSBlock.RS_BLOCK_TABLE[type - 1] || QRRSBlock.RS_BLOCK_TABLE[0];
-        const list = [];
-        for (let i = 0; i < table.length; i += 3) {
-          const count = table[i], total = table[i+1], data = table[i+2];
-          for (let j = 0; j < count; j++) list.push(new QRRSBlock(total, data));
-        }
-        return list;
-      };
-
-      function QRBitBuffer() { this.buffer = []; this.length = 0; }
-      QRBitBuffer.prototype = {
-        put: function(num, len) {
-          for (let i = 0; i < len; i++) this.putBit(((num >>> (len - i - 1)) & 1) === 1);
-        },
-        putBit: function(bit) {
-          const idx = Math.floor(this.length / 8);
-          if (this.buffer.length <= idx) this.buffer.push(0);
-          if (bit) this.buffer[idx] |= (0x80 >>> (this.length % 8));
-          this.length++;
-        }
-      };
-
-      function QRCode() {
-        this.typeNumber = 4;
-        this.modules = null;
-        this.moduleCount = 0;
-        this.dataList = [];
-      }
-      QRCode.prototype = {
-        addData: function(d) { this.dataList.push(new QR8bitByte(d)); },
-        isDark: function(r, c) { return this.modules[r][c]; },
-        getModuleCount: function() { return this.moduleCount; },
-        make: function() {
-          for (let t = 1; t <= 10; t++) {
-            const blocks = QRRSBlock.getRSBlocks(t);
-            let totalData = 0;
-            blocks.forEach(b => totalData += b.dataCount);
-            let bits = 4 + QRUtil.getLengthInBits(4, t);
-            this.dataList.forEach(d => bits += d.getLength() * 8);
-            if (bits <= totalData * 8) { this.typeNumber = t; break; }
-          }
-          this.makeImpl(false, 0);
-        },
-        makeImpl: function(test, maskPattern) {
-          this.moduleCount = this.typeNumber * 4 + 17;
-          this.modules = Array.from({ length: this.moduleCount }, () => new Array(this.moduleCount).fill(null));
-          this.setupPositionProbePattern(0, 0);
-          this.setupPositionProbePattern(this.moduleCount - 7, 0);
-          this.setupPositionProbePattern(0, this.moduleCount - 7);
-          this.setupPositionAdjustPattern();
-          this.setupTimingPattern();
-          this.setupTypeInfo(test, maskPattern);
-          if (this.typeNumber >= 7) this.setupTypeNumber(test);
-          this.mapData(QRCode.createData(this.typeNumber, this.dataList), maskPattern);
-        },
-        setupPositionProbePattern: function(row, col) {
-          for (let r = -1; r <= 7; r++) {
-            if (row + r < 0 || this.moduleCount <= row + r) continue;
-            for (let c = -1; c <= 7; c++) {
-              if (col + c < 0 || this.moduleCount <= col + c) continue;
-              this.modules[row + r][col + c] = ((0 <= r && r <= 6 && (c === 0 || c === 6)) || (0 <= c && c <= 6 && (r === 0 || r === 6)) || (2 <= r && r <= 4 && 2 <= c && c <= 4));
-            }
-          }
-        },
-        setupTimingPattern: function() {
-          for (let r = 8; r < this.moduleCount - 8; r++) if (this.modules[r][6] === null) this.modules[r][6] = (r % 2 === 0);
-          for (let c = 8; c < this.moduleCount - 8; c++) if (this.modules[6][c] === null) this.modules[6][c] = (c % 2 === 0);
-        },
-        setupPositionAdjustPattern: function() {
-          const pos = QRUtil.getPatternPosition(this.typeNumber);
-          for (let i = 0; i < pos.length; i++) {
-            for (let j = 0; j < pos.length; j++) {
-              const r = pos[i], c = pos[j];
-              if (this.modules[r][c] !== null) continue;
-              for (let dr = -2; dr <= 2; dr++) {
-                for (let dc = -2; dc <= 2; dc++) {
-                  this.modules[r + dr][c + dc] = (dr === -2 || dr === 2 || dc === -2 || dc === 2 || (dr === 0 && dc === 0));
-                }
-              }
-            }
-          }
-        },
-        setupTypeNumber: function(test) {
-          const bits = QRUtil.getBCHTypeNumber(this.typeNumber);
-          for (let i = 0; i < 18; i++) {
-            const mod = (!test && ((bits >> i) & 1) === 1);
-            this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 11] = mod;
-            this.modules[i % 3 + this.moduleCount - 11][Math.floor(i / 3)] = mod;
-          }
-        },
-        setupTypeInfo: function(test, maskPattern) {
-          const bits = QRUtil.getBCHTypeInfo((0 << 3) | maskPattern);
-          for (let i = 0; i < 15; i++) {
-            const mod = (!test && ((bits >> i) & 1) === 1);
-            if (i < 6) this.modules[i][8] = mod;
-            else if (i < 8) this.modules[i + 1][8] = mod;
-            else this.modules[this.moduleCount - 15 + i][8] = mod;
-
-            if (i < 8) this.modules[8][this.moduleCount - i - 1] = mod;
-            else if (i < 9) this.modules[8][15 - i] = mod;
-            else this.modules[8][15 - i - 1] = mod;
-          }
-          this.modules[this.moduleCount - 8][8] = !test;
-        },
-        mapData: function(data, maskPattern) {
-          let inc = -1, row = this.moduleCount - 1, bitIndex = 7, byteIndex = 0;
-          for (let col = this.moduleCount - 1; col > 0; col -= 2) {
-            if (col === 6) col--;
-            while (true) {
-              for (let c = 0; c < 2; c++) {
-                if (this.modules[row][col - c] === null) {
-                  let dark = false;
-                  if (byteIndex < data.length) dark = (((data[byteIndex] >>> bitIndex) & 1) === 1);
-                  if (QRUtil.getMask(maskPattern, row, col - c)) dark = !dark;
-                  this.modules[row][col - c] = dark;
-                  bitIndex--;
-                  if (bitIndex === -1) { byteIndex++; bitIndex = 7; }
-                }
-              }
-              row += inc;
-              if (row < 0 || this.moduleCount <= row) { row -= inc; inc = -inc; break; }
-            }
-          }
-        }
-      };
-
-      QRCode.createData = function(type, dataList) {
-        const blocks = QRRSBlock.getRSBlocks(type);
-        const buffer = new QRBitBuffer();
-        dataList.forEach(d => {
-          buffer.put(d.mode, 4);
-          buffer.put(d.getLength(), QRUtil.getLengthInBits(d.mode, type));
-          d.write(buffer);
-        });
-        let total = 0;
-        blocks.forEach(b => total += b.dataCount);
-        if (buffer.length + 4 <= total * 8) buffer.put(0, 4);
-        while (buffer.length % 8 !== 0) buffer.putBit(false);
-        while (buffer.length < total * 8) {
-          buffer.put(0xEC, 8);
-          if (buffer.length < total * 8) buffer.put(0x11, 8);
-        }
-        return QRCode.createBytes(buffer, blocks);
-      };
-
-      QRCode.createBytes = function(buffer, blocks) {
-        let offset = 0, maxDc = 0, maxEc = 0;
-        const dcdata = new Array(blocks.length), ecdata = new Array(blocks.length);
-        for (let r = 0; r < blocks.length; r++) {
-          const dc = blocks[r].dataCount, ec = blocks[r].totalCount - dc;
-          maxDc = Math.max(maxDc, dc); maxEc = Math.max(maxEc, ec);
-          dcdata[r] = new Array(dc);
-          for (let i = 0; i < dc; i++) dcdata[r][i] = 0xff & buffer.buffer[i + offset];
-          offset += dc;
-          const rsPoly = QRUtil.getErrorCorrectPolynomial(ec);
-          const rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
-          const modPoly = rawPoly.mod(rsPoly);
-          ecdata[r] = new Array(rsPoly.getLength() - 1);
-          for (let i = 0; i < ecdata[r].length; i++) {
-            const idx = i + modPoly.getLength() - ecdata[r].length;
-            ecdata[r][i] = (idx >= 0) ? modPoly.get(idx) : 0;
-          }
-        }
-        let total = 0;
-        blocks.forEach(b => total += b.totalCount);
-        const data = new Array(total);
-        let index = 0;
-        for (let i = 0; i < maxDc; i++) for (let r = 0; r < blocks.length; r++) if (i < dcdata[r].length) data[index++] = dcdata[r][i];
-        for (let i = 0; i < maxEc; i++) for (let r = 0; r < blocks.length; r++) if (i < ecdata[r].length) data[index++] = ecdata[r][i];
-        return data;
-      };
-
-      return {
-        renderToCanvas: function(canvas, text) {
-          const qr = new QRCode();
-          qr.addData(text);
-          qr.make();
-          const count = qr.getModuleCount();
-          const ctx = canvas.getContext('2d');
-          const size = canvas.width;
-          const cellSize = size / (count + 4);
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, size, size);
-          ctx.fillStyle = '#0a0e14';
-          for (let r = 0; r < count; r++) {
-            for (let c = 0; c < count; c++) {
-              if (qr.isDark(r, c)) {
-                ctx.fillRect((c + 2) * cellSize, (r + 2) * cellSize, cellSize + 0.5, cellSize + 0.5);
-              }
-            }
-          }
-        }
-      };
-    })();
-
-    // --- 20. SHARE & QR CODE MODAL ---
-    const modalShare = document.getElementById('modalShare');
-    function openShareModal() {
-      syncStateToHash();
-      const currentUrl = window.location.href;
-      document.getElementById('shareUrlInput').value = currentUrl;
-      const qrCanvas = document.getElementById('qrCanvas');
-      try {
-        MiniQR.renderToCanvas(qrCanvas, currentUrl);
-      } catch (e) {
-        console.warn('QR error:', e);
-      }
-      modalShare.classList.add('open');
-    }
-
-    document.getElementById('btnShare').addEventListener('click', openShareModal);
-    document.getElementById('btnCloseShare').addEventListener('click', () => modalShare.classList.remove('open'));
-    document.getElementById('btnCloseShareFooter').addEventListener('click', () => modalShare.classList.remove('open'));
-
-    document.getElementById('btnCopyUrl').addEventListener('click', () => {
-      const input = document.getElementById('shareUrlInput');
-      input.select();
-      navigator.clipboard.writeText(input.value).then(() => {
-        const t = I18N[currentLang] || I18N.es;
-        showToast(t.toastCopied, '✅');
-      });
-    });
-
-    // --- 21. HIGH-RES PNG REPORT EXPORTER ---
+    // --- 12. HIGH-RES PNG REPORT EXPORTER ---
     function exportReportPng() {
       const expCanvas = document.createElement('canvas');
       expCanvas.width = 1920;
@@ -3361,15 +2227,6 @@
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, expCanvas.width, expCanvas.height);
 
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < 1920; x += 40) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1080); ctx.stroke();
-      }
-      for (let y = 0; y < 1080; y += 40) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1920, y); ctx.stroke();
-      }
-
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 44px system-ui, -apple-system, sans-serif';
       ctx.fillText('SimbioCreación: Competencia vs Convergencia Exponencial', 80, 90);
@@ -3378,10 +2235,9 @@
       ctx.font = 'bold 20px system-ui, sans-serif';
       ctx.fillText('Metodología creada por Benito "Beno" Juárez Vélez · Fab Lab Lima / Red Fab City', 80, 130);
 
-      const convPts = Math.round(800 * synergyMultiplier);
       const winner = participants[compDecisions.r3];
 
-      // Card Left
+      // Card Left: Competencia
       ctx.fillStyle = 'rgba(248, 81, 73, 0.08)';
       ctx.strokeStyle = 'rgba(248, 81, 73, 0.35)';
       ctx.lineWidth = 2;
@@ -3391,37 +2247,37 @@
       ctx.stroke();
 
       ctx.fillStyle = '#ff7b72';
-      ctx.font = 'bold 30px system-ui, sans-serif';
+      ctx.font = 'bold 28px system-ui, sans-serif';
       ctx.fillText('⚔️ Competencia Tradicional (Torneo por Descarte)', 120, 240);
 
       ctx.fillStyle = '#8b949e';
       ctx.font = '18px system-ui, sans-serif';
-      ctx.fillText('Modelo hegemónico de silos donde solo 1 gana y el resto es eliminado', 120, 275);
+      ctx.fillText('Modelo de silos: solo 1 gana y el 87.5% de los saberes son eliminados', 120, 275);
 
       ctx.fillStyle = '#ff7b72';
-      ctx.font = 'bold 80px system-ui, sans-serif';
-      ctx.fillText('100 pts', 120, 390);
+      ctx.font = 'bold 70px system-ui, sans-serif';
+      ctx.fillText('1 de 8 Saberes', 120, 380);
 
       ctx.fillStyle = '#f85149';
       ctx.font = 'bold 22px system-ui, sans-serif';
-      ctx.fillText('❌ 87.5% de Inteligencia Descartada (-700 pts)', 120, 440);
+      ctx.fillText('❌ 87.5% de Inteligencia Colectiva Descartada', 120, 430);
 
       ctx.fillStyle = '#c9d1d9';
       ctx.font = '20px system-ui, sans-serif';
-      ctx.fillText("👑 Ganador Coronado: " + winner.name + " (" + winner.role + ")", 120, 500);
+      ctx.fillText("👑 Ganador Único: " + winner.name + " (" + winner.role + ")", 120, 490);
 
       ctx.fillStyle = '#8b949e';
       ctx.font = '16px system-ui, sans-serif';
-      ctx.fillText('Saberes Desechados al Tacho:', 120, 560);
+      ctx.fillText('Saberes Desechados al Tacho:', 120, 550);
       let listIdx = 0;
       participants.forEach((p, i) => {
         if (i !== compDecisions.r3) {
-          ctx.fillText("• " + p.name + " (" + p.role + ") - Descartado en ronda de torneo", 140, 600 + listIdx * 34);
+          ctx.fillText("• " + p.name + " (" + p.role + ") - Descartado", 140, 590 + listIdx * 34);
           listIdx++;
         }
       });
 
-      // Card Right
+      // Card Right: SimbioCreación
       ctx.fillStyle = 'rgba(255, 42, 133, 0.08)';
       ctx.strokeStyle = 'rgba(255, 42, 133, 0.5)';
       ctx.lineWidth = 2;
@@ -3431,104 +2287,59 @@
       ctx.stroke();
 
       ctx.fillStyle = '#ff2a85';
-      ctx.font = 'bold 30px system-ui, sans-serif';
+      ctx.font = 'bold 28px system-ui, sans-serif';
       ctx.fillText('🌿 SimbioCreación (Máximo Producto de Integración)', 1040, 240);
 
       ctx.fillStyle = '#8b949e';
       ctx.font = '18px system-ui, sans-serif';
-      ctx.fillText('Convergencia biológica y tecnológica: 100% de saberes integrados', 1040, 275);
+      ctx.fillText('Convergencia sinérgica: 100% de saberes integrados indivisiblemente', 1040, 275);
 
       ctx.fillStyle = '#f1e05a';
-      ctx.font = 'bold 80px system-ui, sans-serif';
-      ctx.fillText(convPts.toLocaleString() + " pts", 1040, 390);
+      ctx.font = 'bold 70px system-ui, sans-serif';
+      ctx.fillText('8 de 8 Saberes', 1040, 380);
 
       ctx.fillStyle = '#3fb950';
       ctx.font = 'bold 22px system-ui, sans-serif';
-      ctx.fillText("✨ Multiplicador Simbiótico ×" + synergyMultiplier + " (Salto de Categoría)", 1040, 440);
+      ctx.fillText("✨ 255 Estados Sinérgicos Emergentes (2⁸ - 1)", 1040, 430);
 
       ctx.fillStyle = '#c9d1d9';
       ctx.font = '20px system-ui, sans-serif';
-      ctx.fillText('🌟 100% Co-autoría Colectiva (0% Descarte)', 1040, 500);
+      ctx.fillText('🌟 100% Co-autoría Colectiva (0% Descarte)', 1040, 490);
 
       ctx.fillStyle = '#8b949e';
       ctx.font = '16px system-ui, sans-serif';
-      ctx.fillText('Saberes Vivos en el MPI (Organismo Ciberfísico):', 1040, 560);
+      ctx.fillText('Saberes Integrados en el MPI:', 1040, 550);
       participants.forEach((p, i) => {
         ctx.fillStyle = COLORS[i].color;
         ctx.beginPath();
-        ctx.arc(1050, 595 + i * 34, 7, 0, Math.PI * 2);
+        ctx.arc(1050, 585 + i * 34, 7, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(p.name + " (" + p.role + ") - Co-autor integrado en el MPI", 1070, 600 + i * 34);
+        ctx.fillText(p.name + " (" + p.role + ") - Co-autor del MPI", 1070, 590 + i * 34);
       });
 
       ctx.fillStyle = '#57606a';
       ctx.font = '16px system-ui, sans-serif';
       ctx.fillText('Teorema SimbioCreación: 6 silos = 186 combinaciones vs Red K30 = 1,073,741,823 combinaciones (+5,772,805×).', 80, 1020);
-      ctx.fillText('Generado con https://tiogeny.github.io/simbiocreacion/', 1320, 1020);
 
       const link = document.createElement('a');
       link.download = "SimbioCreacion_Reporte_Nivel" + currentStep + ".png";
       link.href = expCanvas.toDataURL('image/png');
       link.click();
-
-      const t = I18N[currentLang] || I18N.es;
-      showToast(t.toastExported, '📷');
+      showToast("Reporte PNG descargado exitosamente", "📷");
     }
     document.getElementById('btnExport').addEventListener('click', exportReportPng);
 
-    // --- 22. URL HASH SYNC & DEEP LINKING ---
-    function syncStateToHash() {
-      const view = document.body.getAttribute('data-view') || 'split';
-      const hash = "#view=" + view + "&step=" + currentStep + "&mult=" + synergyMultiplier + "&theme=" + currentTheme + "&lang=" + currentLang;
-      if (window.location.hash !== hash) {
-        history.replaceState(null, '', hash);
-      }
-    }
-
-    function loadStateFromHash() {
-      const hash = window.location.hash.substring(1);
-      if (!hash) return;
-      const params = new URLSearchParams(hash);
-
-      if (params.has('view')) {
-        const v = params.get('view');
-        const tab = document.querySelector('.view-tab[data-view="' + v + '"]');
-        if (tab) tab.click();
-      }
-      if (params.has('step')) {
-        currentStep = Math.min(3, Math.max(0, parseInt(params.get('step'), 10) || 0));
-      }
-      if (params.has('mult')) {
-        const m = parseFloat(params.get('mult'));
-        const pill = document.querySelector('.synergy-pill[data-factor="' + m + '"]');
-        if (pill) pill.click();
-      }
-      if (params.has('theme')) {
-        setTheme(params.get('theme'));
-      }
-      if (params.has('lang')) {
-        setLanguage(params.get('lang'));
-      }
-    }
-
-    // --- 23. SERVICE WORKER REGISTRATION (OFFLINE PWA) ---
+    // --- 13. PWA SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then((reg) => {
-          console.log('PWA ServiceWorker registered:', reg.scope);
-        }).catch((err) => {
-          console.warn('PWA ServiceWorker registration failed:', err);
-        });
+        navigator.serviceWorker.register('sw.js').catch(() => {});
       });
     }
 
-    // --- 24. INITIAL LAUNCH ---
-    setLanguage(currentLang);
-    loadStateFromHash();
+    // Launch
     drawTrees();
-
     window.addEventListener('click', initAudio, { once: true });
     window.addEventListener('keydown', initAudio, { once: true });
     window.addEventListener('touchstart', initAudio, { once: true });
