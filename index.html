@@ -830,7 +830,7 @@
     }
   </style>
 </head>
-<body data-view="conv">
+<body data-view="comp">
 
   <!-- =========================================================================
        HEADER: SIMBIOCREACIÓN OFFICIAL BRAND & CONTROLS
@@ -855,10 +855,10 @@
 
     <!-- VIEW TABS -->
     <div class="view-switcher">
-      <button class="view-tab" data-view="comp" id="tabComp" title="Torneo por eliminación / descarte">
+      <button class="view-tab active" data-view="comp" id="tabComp" title="Torneo por eliminación / descarte">
         <span>⚔️</span> <span class="tab-label">Competición</span>
       </button>
-      <button class="view-tab active" data-view="conv" id="tabConv" title="Convergencia exponencial de saberes">
+      <button class="view-tab" data-view="conv" id="tabConv" title="Convergencia exponencial de saberes">
         <span>🌿</span> <span class="tab-label">SimbioCreación</span>
       </button>
       <button class="view-tab" data-view="split" id="tabSplit" title="Comparación lado a lado">
@@ -945,12 +945,12 @@
       <div class="comb-controls">
         <span style="font-size:12px; font-weight:700; color:var(--text-muted);">Personas en Sala:</span>
         <div class="people-buttons">
-          <button class="btn-pstep" data-people="5">5</button>
+          <button class="btn-pstep active" data-people="5">5</button>
           <button class="btn-pstep" data-people="10">10</button>
           <button class="btn-pstep" data-people="15">15</button>
           <button class="btn-pstep" data-people="20">20</button>
           <button class="btn-pstep" data-people="25">25</button>
-          <button class="btn-pstep active" data-people="30">30</button>
+          <button class="btn-pstep" data-people="30">30</button>
         </div>
         <button class="btn btn-primary" id="btnRunAnimation" title="Ver animación paso a paso de las 31 combinaciones">⚡ Animar las 31 Ideas</button>
       </div>
@@ -1300,36 +1300,41 @@
       return "M " + x1 + " " + y1 + " C " + cx1 + " " + cy1 + ", " + cx2 + " " + cy2 + ", " + x2 + " " + y2;
     }
 
-    // Adds SVG native animated flowing dots (Genes de Innovación) along any path
-    function appendSvgFlowingParticles(svg, pathD, color, count = 2, durSec = 3.5) {
+    // Adds SVG native animated flowing dots (Genes/Saberes) along any path
+    function appendSvgFlowingParticles(svg, pathD, color, count = 2, durSec = 2.6) {
+      let defs = svg.querySelector('defs');
+      if (!defs) {
+        defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        svg.prepend(defs);
+      }
+
+      // Unique path definition inside defs for reliable cross-browser referencing
+      const pathId = "pflow-" + Math.random().toString(36).substr(2, 9);
+      const refPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      refPath.setAttribute('id', pathId);
+      refPath.setAttribute('d', pathD);
+      defs.appendChild(refPath);
+
       for (let p = 0; p < count; p++) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('r', '2.8');
+        circle.setAttribute('r', '3.6');
         circle.setAttribute('fill', color);
-        circle.setAttribute('opacity', '0.9');
-        circle.setAttribute('filter', 'drop-shadow(0 0 3px ' + color + ')');
-
-        const mpath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
-        const pathId = "pflow-" + Math.random().toString(36).substr(2, 9);
-        
-        // Define temporary hidden path for mpath reference
-        const refPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        refPath.setAttribute('id', pathId);
-        refPath.setAttribute('d', pathD);
-        refPath.setAttribute('fill', 'none');
-        refPath.setAttribute('stroke', 'none');
-        svg.appendChild(refPath);
+        circle.setAttribute('stroke', '#ffffff');
+        circle.setAttribute('stroke-width', '0.8');
+        circle.setAttribute('opacity', '0.95');
 
         const animMotion = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
         animMotion.setAttribute('repeatCount', 'indefinite');
-        animMotion.setAttribute('dur', (durSec + (p * 0.4)) + 's');
+        animMotion.setAttribute('dur', (durSec + (p * 0.45)) + 's');
         animMotion.setAttribute('begin', (-p * (durSec / count)) + 's');
         animMotion.setAttribute('rotate', 'auto');
 
-        const mpathRef = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
-        mpathRef.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + pathId);
-        animMotion.appendChild(mpathRef);
-
+        const mpath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
+        // Support standard href and legacy xlink:href for 100% SVG compatibility
+        mpath.setAttribute('href', '#' + pathId);
+        mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + pathId);
+        
+        animMotion.appendChild(mpath);
         circle.appendChild(animMotion);
         svg.appendChild(circle);
       }
@@ -1587,12 +1592,12 @@
         pathR.setAttribute('stroke-width', '6.5px');
         svg.appendChild(pathR);
 
-        // Streams of all 8 colors alive into final node
+        // Streams of ALL 8 COLORS flowing alive into final core node
         [0, 1, 2, 3].forEach((cIdx, i) => {
-          appendSvgFlowingParticles(svg, dL, COLORS[cIdx].color, 1, 3.4 + i * 0.2);
+          appendSvgFlowingParticles(svg, dL, COLORS[cIdx].color, 2, 2.5 + i * 0.3);
         });
         [4, 5, 6, 7].forEach((cIdx, i) => {
-          appendSvgFlowingParticles(svg, dR, COLORS[cIdx].color, 1, 3.4 + i * 0.2);
+          appendSvgFlowingParticles(svg, dR, COLORS[cIdx].color, 2, 2.5 + i * 0.3);
         });
       }
 
@@ -2033,7 +2038,7 @@
     }
 
     // --- 7. SALTO COMBINATORIO WITH REAL-TIME ANIMATED COMBINATIONS ---
-    let simPeopleCount = 30;
+    let simPeopleCount = 5;
     let animTickerInterval = null;
 
     function setPeopleCount(num) {
@@ -2654,7 +2659,7 @@
 
       // Initial Render
       setTheme(currentTheme);
-      setPeopleCount(30);
+      setPeopleCount(5);
       updateUI();
     });
   </script>
