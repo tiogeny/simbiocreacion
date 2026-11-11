@@ -616,7 +616,12 @@
       min-height: 270px;
       border-radius: 10px;
       overflow: hidden;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+    }
+    [data-theme="light"] .comb-canvas-wrap {
+      background: #f8fafc;
+      border-color: rgba(0, 0, 0, 0.08);
     }
     .comb-canvas {
       width: 100%;
@@ -692,6 +697,19 @@
       font-family: monospace;
       font-size: 11px;
       color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    [data-theme="light"] .comb-chip {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .comb-chip.active-highlight {
+      background: rgba(230, 0, 102, 0.18) !important;
+      border-color: var(--accent-pink) !important;
+      color: var(--accent-pink) !important;
+      transform: scale(1.04);
+      font-weight: 700;
     }
 
     /* =========================================================================
@@ -934,7 +952,7 @@
           <button class="btn-pstep" data-people="25">25</button>
           <button class="btn-pstep active" data-people="30">30</button>
         </div>
-        <button class="btn btn-primary" id="btnRunAnimation">⚡ Animar las 31 Ideas</button>
+        <button class="btn btn-primary" id="btnRunAnimation" title="Ver animación paso a paso de las 31 combinaciones">⚡ Animar las 31 Ideas</button>
       </div>
     </div>
 
@@ -1122,7 +1140,7 @@
         { 
           title: "Mueble Automatizado", 
           role: "Carpintería + Programación",
-          desc: "Al unirse Carpintero ($100) y Programadora ($100), no generan $200 lineales: crean una mesa regulable con memoria digital valorizada en miles.",
+          desc: "Al unirse Carpintero (100 de valor) y Programadora (100 de valor), no generan 200 lineales: crean una mesa regulable con memoria digital valorizada en miles.",
           impact: "Multiplicador de Valor: 10x frente a ideas aisladas"
         },
         { 
@@ -2023,6 +2041,34 @@
       document.querySelectorAll('.btn-pstep').forEach(btn => {
         btn.classList.toggle('active', parseInt(btn.dataset.people) === num);
       });
+
+      // El botón de animación de las 31 ideas SOLO se muestra cuando hay 5 personas seleccionadas
+      const btnAnim = document.getElementById('btnRunAnimation');
+      if (btnAnim) {
+        btnAnim.style.display = (num === 5) ? 'inline-flex' : 'none';
+      }
+
+      // Detener animación previa si cambia de número de personas
+      if (animTickerInterval) {
+        clearInterval(animTickerInterval);
+        animTickerInterval = null;
+        networkAnimationActiveNodes = [];
+        currentAnimationGroupLabel = "";
+      }
+
+      const tickerText = document.getElementById('combTickerText');
+      const tickerProg = document.getElementById('combTickerProgress');
+      if (num === 5) {
+        tickerText.textContent = "💡 Pulsa 'Animar las 31 Ideas' para ver cómo se forman paso a paso desde 1 saber hasta 5 saberes (A, B, C, D, E).";
+        tickerProg.textContent = "31 combinaciones totales";
+        // Mostrar automáticamente el desglose con 5 personas para mayor claridad didáctica
+        document.getElementById('breakdownContent').classList.add('show');
+        document.getElementById('toggleArrow').textContent = '▲';
+      } else {
+        tickerText.textContent = "Comparativa: " + num + " personas organizadas en mesas aisladas vs red abierta de SimbioCreación.";
+        tickerProg.textContent = Math.pow(2, num) - 1 + " combinaciones";
+      }
+
       updateCombinatorialSim();
     }
 
@@ -2065,11 +2111,13 @@
     function drawIsolatedGroupsCanvas(ctx, width, height, numGroups) {
       ctx.clearRect(0, 0, width, height);
 
+      const isLight = (currentTheme === 'light');
       const cols = numGroups <= 3 ? numGroups : 3;
       const rows = Math.ceil(numGroups / cols);
       const padX = 20, padY = 20;
       const cellW = (width - padX * 2) / cols;
       const cellH = (height - padY * 2) / rows;
+      const letterNames = ["A", "B", "C", "D", "E"];
 
       for (let g = 0; g < numGroups; g++) {
         const col = g % cols;
@@ -2079,16 +2127,16 @@
         const radius = Math.min(cellW, cellH) * 0.35;
 
         // Bounding Table Box
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+        ctx.strokeStyle = isLight ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
         ctx.setLineDash([4, 4]);
         ctx.strokeRect(padX + col * cellW + 6, padY + row * cellH + 6, cellW - 12, cellH - 12);
         ctx.setLineDash([]);
 
         // Label
-        ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-        ctx.font = "9px sans-serif";
+        ctx.fillStyle = isLight ? "#656d76" : "rgba(255, 255, 255, 0.6)";
+        ctx.font = "bold 10px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("Mesa " + (g + 1) + " (31 comb.)", centerX, centerY - radius - 8);
+        ctx.fillText("Mesa " + (g + 1) + " (31 comb.)", centerX, centerY - radius - 10);
 
         // 5 Nodes
         const pts = [];
@@ -2097,13 +2145,14 @@
           pts.push({
             x: centerX + Math.cos(angle) * radius,
             y: centerY + Math.sin(angle) * radius,
-            color: COLORS[(g * 5 + i) % COLORS.length].color
+            color: COLORS[(g * 5 + i) % COLORS.length].color,
+            letter: letterNames[i]
           });
         }
 
         // Internal lines (Isolated)
-        ctx.strokeStyle = "rgba(248, 81, 73, 0.25)";
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = isLight ? "rgba(248, 81, 73, 0.35)" : "rgba(248, 81, 73, 0.3)";
+        ctx.lineWidth = 1.2;
         for (let i = 0; i < pts.length; i++) {
           for (let j = i + 1; j < pts.length; j++) {
             ctx.beginPath();
@@ -2113,23 +2162,38 @@
           }
         }
 
+        // Draw Nodes with letter
         pts.forEach(p => {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, numGroups === 1 ? 7 : 4.5, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
           ctx.fill();
+          ctx.strokeStyle = isLight ? "#ffffff" : "#000000";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          if (numGroups === 1) {
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 9px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(p.letter, p.x, p.y);
+          }
         });
       }
     }
 
     let networkAnimationActiveNodes = [];
+    let currentAnimationGroupLabel = "";
 
     function drawSymbioticNetworkCanvas(ctx, width, height, N) {
       ctx.clearRect(0, 0, width, height);
 
+      const isLight = (currentTheme === 'light');
       const centerX = width / 2;
       const centerY = height / 2;
-      const radius = Math.min(width, height) * 0.42;
+      const radius = Math.min(width, height) * 0.40;
+      const letterNames = ["A", "B", "C", "D", "E"];
 
       const pts = [];
       for (let i = 0; i < N; i++) {
@@ -2137,24 +2201,25 @@
         pts.push({
           x: centerX + Math.cos(angle) * radius,
           y: centerY + Math.sin(angle) * radius,
-          color: COLORS[i % COLORS.length].color
+          color: COLORS[i % COLORS.length].color,
+          letter: (i < 5) ? letterNames[i] : (i + 1).toString()
         });
       }
 
-      // Radial Core Glow
-      const gradCenter = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, radius * 0.8);
-      gradCenter.addColorStop(0, "rgba(230, 0, 102, 0.15)");
+      // Center glow
+      const gradCenter = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, radius * 0.85);
+      gradCenter.addColorStop(0, isLight ? "rgba(230, 0, 102, 0.08)" : "rgba(230, 0, 102, 0.2)");
       gradCenter.addColorStop(1, "transparent");
       ctx.fillStyle = gradCenter;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius * 0.8, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, radius * 0.85, 0, Math.PI * 2);
       ctx.fill();
 
-      // Transversal network lines
-      ctx.lineWidth = 0.6;
+      // Transversal network background lines
+      ctx.lineWidth = 0.8;
       for (let i = 0; i < N; i++) {
         for (let j = i + 1; j < N; j++) {
-          ctx.strokeStyle = "rgba(230, 0, 102, 0.08)";
+          ctx.strokeStyle = isLight ? "rgba(230, 0, 102, 0.12)" : "rgba(230, 0, 102, 0.15)";
           ctx.beginPath();
           ctx.moveTo(pts[i].x, pts[i].y);
           ctx.lineTo(pts[j].x, pts[j].y);
@@ -2162,40 +2227,73 @@
         }
       }
 
-      // Highlight active animation cross
-      if (networkAnimationActiveNodes.length > 1) {
-        ctx.strokeStyle = "#00d2ff";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        for (let i = 0; i < networkAnimationActiveNodes.length; i++) {
-          const p = pts[networkAnimationActiveNodes[i] % N];
-          if (i === 0) ctx.moveTo(p.x, p.y);
-          else ctx.lineTo(p.x, p.y);
+      // Highlight active combination polygon/lines
+      if (networkAnimationActiveNodes.length > 0) {
+        if (networkAnimationActiveNodes.length > 1) {
+          ctx.strokeStyle = "#00d2ff";
+          ctx.lineWidth = 3;
+          ctx.fillStyle = "rgba(0, 210, 255, 0.12)";
+          ctx.beginPath();
+          for (let i = 0; i < networkAnimationActiveNodes.length; i++) {
+            const p = pts[networkAnimationActiveNodes[i] % N];
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+          }
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
         }
-        ctx.closePath();
-        ctx.stroke();
+
+        // Draw central badge with the current combination being created
+        if (currentAnimationGroupLabel) {
+          ctx.fillStyle = isLight ? "rgba(255, 255, 255, 0.95)" : "rgba(16, 22, 34, 0.92)";
+          ctx.strokeStyle = "var(--accent-pink)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.roundRect(centerX - 95, centerY - 22, 190, 44, 10);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "var(--accent-pink)";
+          ctx.font = "bold 13px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(currentAnimationGroupLabel, centerX, centerY);
+        }
       }
 
       // Draw all nodes
       pts.forEach((p, idx) => {
-        ctx.beginPath();
         const isHighlight = networkAnimationActiveNodes.includes(idx);
-        ctx.arc(p.x, p.y, isHighlight ? 7 : 4.5, 0, Math.PI * 2);
-        ctx.fillStyle = isHighlight ? "#ffffff" : p.color;
+        const nodeRadius = (N <= 5) ? (isHighlight ? 12 : 9) : (isHighlight ? 7 : 4.5);
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, nodeRadius, 0, Math.PI * 2);
+        ctx.fillStyle = isHighlight ? "#e60066" : p.color;
         ctx.fill();
-        ctx.strokeStyle = isHighlight ? "#00d2ff" : "#ffffff";
-        ctx.lineWidth = isHighlight ? 2 : 1;
+        ctx.strokeStyle = isHighlight ? "#00d2ff" : (isLight ? "#ffffff" : "#1f2328");
+        ctx.lineWidth = isHighlight ? 2.5 : 1.2;
         ctx.stroke();
+
+        // Print Letters A, B, C, D, E inside or beside node
+        if (N <= 5) {
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 11px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(p.letter, p.x, p.y);
+        }
       });
     }
 
-    // ANIMATION ENGINE: Generates and flashes the 31 emergent combinations in real-time
+    // ANIMATION ENGINE: Paso a paso con ritmo didáctico pausado (700ms por idea)
+    // Agrupa pedagógicamente: 5 individuales -> 10 parejas -> 10 tríos -> 5 cuartetos -> 1 total
     function runCombinatorialAnimation() {
       if (animTickerInterval) clearInterval(animTickerInterval);
 
-      // Generate all 31 non-empty subsets of {A,B,C,D,E}
       const names = ["A", "B", "C", "D", "E"];
-      const combinations = [];
+      const rawCombinations = [];
+
       for (let i = 1; i < (1 << 5); i++) {
         const subset = [];
         const indices = [];
@@ -2205,32 +2303,53 @@
             indices.push(b);
           }
         }
-        combinations.push({ text: subset.join("+"), indices: indices });
+        rawCombinations.push({ 
+          text: subset.join(""), 
+          indices: indices, 
+          size: subset.length 
+        });
       }
+
+      // Ordenar por tamaño pedagógico: individuales (size 1), duplas (size 2), tríos (size 3), cuartetos (size 4), quinteto (size 5)
+      rawCombinations.sort((a, b) => a.size - b.size || a.text.localeCompare(b.text));
 
       let step = 0;
       const tickerText = document.getElementById('combTickerText');
       const tickerProg = document.getElementById('combTickerProgress');
 
+      // Ritmo didáctico: 750ms para permitir lectura y observación del ponente
       animTickerInterval = setInterval(() => {
-        if (step >= combinations.length) {
+        if (step >= rawCombinations.length) {
           clearInterval(animTickerInterval);
-          tickerText.textContent = "⭐ ¡Las 31 combinaciones emergentes fueron generadas con éxito!";
+          animTickerInterval = null;
+          tickerText.textContent = "⭐ ¡Las 31 combinaciones emergentes fueron generadas en vivo!";
           tickerProg.textContent = "31 / 31 completadas";
-          networkAnimationActiveNodes = [];
+          currentAnimationGroupLabel = "¡31 Ideas Emergentes!";
+          networkAnimationActiveNodes = [0, 1, 2, 3, 4];
           updateCombinatorialSim();
           return;
         }
 
-        const curr = combinations[step];
-        tickerText.textContent = "💡 Idea #" + (step + 1) + ": Saber [" + curr.text + "] interconectado";
-        tickerProg.textContent = (step + 1) + " / 31 combinaciones emergentes";
+        const curr = rawCombinations[step];
+        const groupTypes = {
+          1: "Saber Individual",
+          2: "Cruce en Dupla",
+          3: "Sinergia de Trío",
+          4: "Integración de Cuarteto",
+          5: "Convergencia Total"
+        };
+
+        const typeLabel = groupTypes[curr.size] || "Combinación";
+        tickerText.textContent = "💡 Idea #" + (step + 1) + " (" + typeLabel + "): [" + curr.text + "]";
+        tickerProg.textContent = (step + 1) + " / 31 ideas creadas";
+        
+        currentAnimationGroupLabel = "Idea #" + (step + 1) + ": " + curr.text;
         networkAnimationActiveNodes = curr.indices;
 
-        playTone(320 + step * 18, 'sine', 0.08, 0.06);
+        playTone(280 + curr.size * 90, 'sine', 0.14, 0.08);
         updateCombinatorialSim();
         step++;
-      }, 180);
+      }, 750);
     }
 
     // --- 8. RICH POPUP TOOLTIP ENGINE ---
