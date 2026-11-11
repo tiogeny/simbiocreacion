@@ -7,7 +7,7 @@
 
   <!-- PWA meta tags -->
   <meta name="description" content="Herramienta interactiva y pedagógica de SimbioCreación para talleres y conferencias. Modelo de convergencia exponencial vs competencia tradicional." />
-  <meta name="theme-color" content="#0d1117" />
+  <meta name="theme-color" content="#0a0e14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="manifest.json" />
@@ -17,7 +17,7 @@
     :root {
       --bg-primary: #0a0e14;
       --bg-secondary: #101622;
-      --bg-card: rgba(16, 22, 34, 0.85);
+      --bg-card: rgba(16, 22, 34, 0.88);
       --bg-card-hover: rgba(26, 35, 54, 0.95);
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-accent: rgba(230, 0, 102, 0.4);
@@ -32,9 +32,6 @@
       --accent-green: #2ecc71;
       --accent-red: #f85149;
       
-      --comp-accent: #f85149;
-      --conv-accent: #2ecc71;
-
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       --header-h: 58px;
       --bottom-h: 68px;
@@ -43,9 +40,9 @@
     [data-theme="light"] {
       --bg-primary: #f6f8fa;
       --bg-secondary: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-card: rgba(255, 255, 255, 0.94);
       --bg-card-hover: rgba(243, 244, 246, 0.98);
-      --border-subtle: rgba(0, 0, 0, 0.1);
+      --border-subtle: rgba(0, 0, 0, 0.08);
       --border-accent: rgba(230, 0, 102, 0.3);
       --text-main: #1f2328;
       --text-muted: #656d76;
@@ -73,7 +70,7 @@
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* BACKGROUND GRID PATTERN */
+    /* GRID BACKGROUND */
     body::before {
       content: "";
       position: absolute;
@@ -88,11 +85,11 @@
     }
 
     /* =========================================================================
-       1. HEADER STYLING WITH OFFICIAL LOGO
+       1. HEADER WITH OFFICIAL LOGO
        ========================================================================= */
     header {
       position: relative;
-      z-index: 20;
+      z-index: 30;
       height: var(--header-h);
       background: var(--bg-card);
       backdrop-filter: blur(12px);
@@ -251,10 +248,8 @@
       flex-direction: column;
       padding: 10px 16px 4px 16px;
       overflow: hidden;
-      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
-    /* PANE HEADERS & METRICS */
     .pane-header {
       display: flex;
       align-items: flex-start;
@@ -278,7 +273,7 @@
       margin-top: 2px;
     }
 
-    /* TRAVELING PROGRESS CARD (IMAGE 1 STYLE) */
+    /* METRIC CARDS (IMAGE 1 STYLE) */
     .metric-bubble {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -307,7 +302,7 @@
     .pane-comp .metric-bubble-value { color: #ff7b72; }
     .pane-conv .metric-bubble-value { color: var(--accent-pink); }
 
-    /* SVG CANVAS CONTAINER WITH 16:9 RATIO */
+    /* CANVAS CONTAINERS */
     .canvas-container {
       flex: 1;
       width: 100%;
@@ -325,14 +320,6 @@
       overflow: visible;
     }
 
-    /* PARTICLE CANVAS OVERLAY */
-    #particleCanvas {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 15;
-    }
-
     /* SVG ELEMENTS */
     .tree-path {
       fill: none;
@@ -345,10 +332,10 @@
       cursor: pointer;
     }
     .node-circle {
-      transition: stroke 0.2s ease, filter 0.2s ease;
+      transition: r 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.2s ease, filter 0.2s ease;
     }
-    .node-circle:hover {
-      filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+    .node-group:hover .node-circle {
+      filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
     }
     .node-eliminated {
       opacity: 0.3;
@@ -365,14 +352,14 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
     .node-name-label {
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 700;
       fill: var(--text-main);
       text-anchor: middle;
       pointer-events: none;
     }
     .node-role-label {
-      font-size: 8.5px;
+      font-size: 9px;
       font-weight: 500;
       fill: var(--text-muted);
       text-anchor: middle;
@@ -401,12 +388,49 @@
       transform: translateY(0);
     }
 
+    /* POPUP TOOLTIP FOR NODES (CLEAN AND NO TEXT OVERLAP) */
+    .node-tooltip {
+      position: absolute;
+      z-index: 50;
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      pointer-events: none;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      display: none;
+      max-width: 280px;
+      line-height: 1.4;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .node-tooltip strong {
+      display: block;
+      color: var(--accent-pink);
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+    .node-tooltip .tt-role {
+      color: var(--accent-cyan);
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .node-tooltip .tt-impact {
+      font-size: 11px;
+      color: var(--accent-gold);
+      margin-top: 6px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 4px;
+    }
+
     /* =========================================================================
        3. BOTTOM CONTROLS & TIMELINE
        ========================================================================= */
     .bottom-bar {
       position: relative;
-      z-index: 20;
+      z-index: 30;
       height: var(--bottom-h);
       background: var(--bg-card);
       backdrop-filter: blur(12px);
@@ -469,7 +493,6 @@
       font-size: 14px;
     }
 
-    /* KEY SHORTCUTS */
     .key-shortcuts {
       font-size: 11px;
       color: var(--text-faint);
@@ -485,7 +508,7 @@
     }
 
     /* =========================================================================
-       4. PANE: SALTO COMBINATORIO
+       4. PANE: SALTO COMBINATORIO WITH LIVE ANIMATION
        ========================================================================= */
     #paneComb {
       display: none;
@@ -499,7 +522,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
       gap: 12px;
     }
@@ -516,10 +539,9 @@
     .comb-controls {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
-    /* Discrete selector buttons for 5, 10, 15, 20, 25, 30 */
     .people-buttons {
       display: flex;
       background: rgba(0, 0, 0, 0.35);
@@ -553,7 +575,7 @@
       grid-template-columns: 1fr 1.35fr;
       gap: 16px;
       flex: 1;
-      min-height: 420px;
+      min-height: 400px;
     }
 
     .comb-card {
@@ -591,7 +613,7 @@
     .comb-canvas-wrap {
       flex: 1;
       position: relative;
-      min-height: 280px;
+      min-height: 270px;
       border-radius: 10px;
       overflow: hidden;
       background: rgba(0, 0, 0, 0.2);
@@ -602,9 +624,31 @@
       display: block;
     }
 
-    /* 5-PERSON STEP DEMONSTRATOR ACCORDION */
+    /* LIVE COMBINATORIAL ANIMATION TICKER & OVERLAY */
+    .comb-ticker-wrap {
+      margin-top: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .comb-ticker-text {
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--accent-pink);
+      font-weight: 700;
+    }
+    .comb-ticker-progress {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* 5-PERSON STEP DEMONSTRATOR */
     .math-breakdown-box {
-      margin-top: 14px;
+      margin-top: 12px;
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
@@ -656,7 +700,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(8px);
       z-index: 100;
       display: none;
@@ -729,22 +773,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* TOOLTIP POPUP */
-    .node-tooltip {
-      position: absolute;
-      z-index: 50;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 11px;
-      pointer-events: none;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-      display: none;
-      max-width: 240px;
-    }
-
-    /* SPLIT VIEW SPECIFIC */
+    /* SPLIT VIEW */
     body[data-view="comp"] .pane-conv { display: none; }
     body[data-view="conv"] .pane-comp { display: none; }
     body[data-view="split"] .pane-comp, body[data-view="split"] .pane-conv { display: flex; }
@@ -786,20 +815,18 @@
 <body data-view="conv">
 
   <!-- =========================================================================
-       HEADER: SIMBIOCREACION OFFICIAL BRAND & NAVIGATION
+       HEADER: SIMBIOCREACIÓN OFFICIAL BRAND & CONTROLS
        ========================================================================= -->
   <header>
     <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación">
       <!-- Vector Logo: 5 interconnected nodes & SimbioCreación logotype -->
       <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="44" stroke="rgba(255,255,255,0.12)" stroke-width="4" stroke-dasharray="4 4"/>
-        <!-- 5 Nodes of Co-Creation around a center -->
         <circle cx="50" cy="20" r="10" fill="#9aa4b2" />
         <circle cx="78" cy="40" r="10" fill="#9aa4b2" />
         <circle cx="68" cy="74" r="10" fill="#e60066" />
         <circle cx="32" cy="74" r="10" fill="#e60066" />
         <circle cx="22" cy="40" r="10" fill="#9aa4b2" />
-        <!-- Core C ring -->
         <circle cx="50" cy="50" r="17" stroke="#e60066" stroke-width="6" fill="none" stroke-dasharray="80 30" stroke-linecap="round" />
       </svg>
       
@@ -840,11 +867,9 @@
   </header>
 
   <!-- =========================================================================
-       MAIN WORKSPACE (CANVAS DE ARBOLES)
+       MAIN WORKSPACE (TREE CANVASES)
        ========================================================================= -->
   <main class="workspace" id="mainWorkspace">
-    <canvas id="particleCanvas"></canvas>
-
     <!-- PANE 1: COMPETENCIA TRADICIONAL -->
     <section class="pane pane-comp" id="paneComp">
       <div class="pane-header">
@@ -856,7 +881,6 @@
           </div>
         </div>
 
-        <!-- Traveling Metric Card (Image 1 style) -->
         <div class="metric-bubble" id="metricCardComp">
           <div class="metric-bubble-label">Inteligencia Retenida</div>
           <div class="metric-bubble-value" id="compVal">8 / 8 saberes (100%)</div>
@@ -877,7 +901,6 @@
           <p>Convergencia exponencial de saberes · 100% Co-autoría</p>
         </div>
 
-        <!-- Metric Card for SymbioCreation -->
         <div class="metric-bubble" id="metricCardConv">
           <div class="metric-bubble-label">Convergencia de Saberes</div>
           <div class="metric-bubble-value" id="convVal">8 saberes individuales</div>
@@ -892,7 +915,7 @@
   </main>
 
   <!-- =========================================================================
-       PANE: SALTO COMBINATORIO (ISOLATED GROUPS VS SYMBIOTIC NETWORK)
+       PANE: SALTO COMBINATORIO WITH LIVE ANIMATION
        ========================================================================= -->
   <section id="paneComb">
     <div class="comb-header">
@@ -911,11 +934,17 @@
           <button class="btn-pstep" data-people="25">25</button>
           <button class="btn-pstep active" data-people="30">30</button>
         </div>
-        <button class="btn btn-primary" id="btnTestCross">🎲 Probar Cruce de Saberes</button>
+        <button class="btn btn-primary" id="btnRunAnimation">⚡ Animar las 31 Ideas</button>
       </div>
     </div>
 
-    <div class="comb-grid">
+    <!-- Live Animation Ticker -->
+    <div class="comb-ticker-wrap">
+      <div class="comb-ticker-text" id="combTickerText">💡 Selecciona "Animar las 31 Ideas" para ver cómo emergen los cruces en directo</div>
+      <div class="comb-ticker-progress" id="combTickerProgress">31 combinaciones en total</div>
+    </div>
+
+    <div class="comb-grid" style="margin-top:10px;">
       <!-- Card 1: Grupos Aislados -->
       <div class="comb-card">
         <div class="comb-card-header">
@@ -932,7 +961,7 @@
           <canvas class="comb-canvas" id="canvasSilos"></canvas>
         </div>
         <div style="font-size:11px; color:#ff7b72; margin-top:10px;">
-          ⚠️ <strong>Aislamiento Creativo:</strong> Cada mesa crea en su silo sin interactuar. Los cruces entre mesas son imposibles.
+          ⚠️ <strong>Aislamiento Creativo:</strong> Las ideas mueren encerradas en cada mesa. No hay cruces transversales.
         </div>
       </div>
 
@@ -961,12 +990,12 @@
     <div class="math-breakdown-box" id="mathBreakdown5">
       <div class="math-breakdown-header" id="toggleBreakdown">
         <div class="math-breakdown-title">
-          <span>🔍</span> <span>¿Cómo surgen exactamente las 31 combinaciones con 5 personas? (Ver desglose)</span>
+          <span>🔍</span> <span>¿Cómo surgen exactamente las 31 combinaciones con 5 personas? (Ver desglose completo)</span>
         </div>
         <span style="font-size:12px; color:var(--text-muted);" id="toggleArrow">▼</span>
       </div>
       <div class="math-breakdown-content" id="breakdownContent">
-        <p>Cuando 5 personas con saberes distintos ((A, B, C, D, E)) dialogan en red libre, el espacio combinatorio no es una suma lineal de 5 ideas, sino <strong>31 posibilidades emergentes</strong>:</p>
+        <p>Cuando 5 saberes distintos ((A, B, C, D, E)) dialogan en red abierta, el espacio de posibilidades no es la suma de 5 ideas, sino <strong>31 soluciones emergentes</strong>:</p>
         <div class="comb-list-grid">
           <div class="comb-chip"><strong>1 saber (5):</strong><br>A, B, C, D, E</div>
           <div class="comb-chip"><strong>Parejas (10):</strong><br>AB, AC, AD, AE, BC, BD, BE, CD, CE, DE</div>
@@ -974,7 +1003,7 @@
           <div class="comb-chip"><strong>Cuartetos (5):</strong><br>ABCD, ABCE, ABDE, ACDE, BCDE</div>
           <div class="comb-chip" style="border-color:var(--accent-pink); background:rgba(230,0,102,0.1);"><strong>Integración Total (1):</strong><br>ABCDE</div>
         </div>
-        <p style="margin-top:8px; font-size:11px; color:var(--text-muted);">Fórmula general: ( sum_{k=1}^{N} inom{N}{k} = 2^N - 1 = 2^5 - 1 = 31 ).</p>
+        <p style="margin-top:8px; font-size:11px; color:var(--text-muted);">Fórmula matemática: ( \sum_{k=1}^{N} \binom{N}{k} = 2^N - 1 = 2^5 - 1 = 31 ).</p>
       </div>
     </div>
   </section>
@@ -1012,7 +1041,7 @@
     </div>
   </footer>
 
-  <!-- TOOLTIP POPUP -->
+  <!-- POPUP TOOLTIP FOR NODES -->
   <div class="node-tooltip" id="nodeTooltip"></div>
 
   <!-- TOAST NOTIFICATION -->
@@ -1032,11 +1061,11 @@
       </div>
       <div class="modal-body">
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
-          Elige un caso predefinido o escribe los nombres y disciplinas reales de los participantes de tu taller:
+          Elige un caso predefinido o escribe los nombres y disciplinas reales de tu taller:
         </p>
 
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn" id="presetInnovacion">🪵 Caso Guiado: Carpintero + Software</button>
+          <button class="btn" id="presetInnovacion">🪵 Caso: Carpintero + Software</button>
           <button class="btn" id="presetGobierno">🏛️ Caso: Gestión Pública</button>
           <button class="btn" id="presetFablab">🔬 Caso: Fab Lab Maker</button>
         </div>
@@ -1054,56 +1083,86 @@
        APPLICATION LOGIC
        ========================================================================= -->
   <script>
-    // --- 1. PRESETS & STATE ---
+    // --- 1. DATA PRESETS & NARRATIVE DETAILS ---
     const PRESETS = {
       innovacion: [
-        { name: "Carlos", role: "Carpintero" },
-        { name: "Sofía", role: "Programadora" },
-        { name: "Diego", role: "Diseñador UX" },
-        { name: "Elena", role: "Bióloga" },
-        { name: "Mateo", role: "Mecatrónico" },
-        { name: "Lucía", role: "Médica" },
-        { name: "Javier", role: "Finanzas" },
-        { name: "Valeria", role: "Comunidad" }
+        { name: "Carlos", role: "Carpintero", desc: "Mueble tradicional de madera" },
+        { name: "Sofía", role: "Programadora", desc: "Código de automatización y firmware" },
+        { name: "Diego", role: "Diseñador UX", desc: "Diseño ergonómico y experiencia física" },
+        { name: "Elena", role: "Bióloga", desc: "Biomateriales y sostenibilidad" },
+        { name: "Mateo", role: "Mecatrónico", desc: "Motores, actuadores y robótica" },
+        { name: "Lucía", role: "Médica", desc: "Salud ocupacional y prevención" },
+        { name: "Javier", role: "Finanzas", desc: "Modelo circular y viabilidad económica" },
+        { name: "Valeria", role: "Comunidad", desc: "Apropiación social y territorio" }
       ],
       gobierno: [
-        { name: "Salud", role: "Prevención" },
-        { name: "Educación", role: "Digital" },
-        { name: "Seguridad", role: "Ciudadana" },
-        { name: "Transporte", role: "Movilidad" },
-        { name: "Ambiente", role: "Residuos" },
-        { name: "Presupuesto", role: "Hacienda" },
-        { name: "Cultura", role: "Identidad" },
-        { name: "Innovación", role: "Modernización" }
+        { name: "Salud", role: "Prevención", desc: "Red hospitalaria primaria" },
+        { name: "Educación", role: "Digital", desc: "Alfabetización y escuelas" },
+        { name: "Seguridad", role: "Ciudadana", desc: "Vigilancia comunitaria" },
+        { name: "Transporte", role: "Movilidad", desc: "Rutas integradas" },
+        { name: "Ambiente", role: "Residuos", desc: "Reciclaje y economía circular" },
+        { name: "Presupuesto", role: "Hacienda", desc: "Inversión pública" },
+        { name: "Cultura", role: "Identidad", desc: "Patrimonio barrial" },
+        { name: "Innovación", role: "Modernización", desc: "Gobierno abierto" }
       ],
       fablab: [
-        { name: "Impresión 3D", role: "Prototipado" },
-        { name: "Corte Láser", role: "Estructuras" },
-        { name: "Sensores IoT", role: "Electrónica" },
-        { name: "Bioplásticos", role: "Materiales" },
-        { name: "Robótica", role: "Automatización" },
-        { name: "Programación", role: "Firmware" },
-        { name: "Diseño 3D", role: "Modelado" },
-        { name: "Impacto Local", role: "Comunidad" }
+        { name: "Impresión 3D", role: "Prototipado", desc: "Fabricación aditiva" },
+        { name: "Corte Láser", role: "Estructuras", desc: "Ensambles y corte plano" },
+        { name: "Sensores IoT", role: "Electrónica", desc: "Sensórica conectada" },
+        { name: "Bioplásticos", role: "Materiales", desc: "Polímeros orgánicos" },
+        { name: "Robótica", role: "Automatización", desc: "Cinemática y control" },
+        { name: "Programación", role: "Firmware", desc: "Sistemas embebidos" },
+        { name: "Diseño 3D", role: "Modelado", desc: "CAD paramétrico" },
+        { name: "Impacto Local", role: "Comunidad", desc: "Fabricación distribuida" }
       ]
     };
 
-    // Rich narrative explanations for the guided case (Carpintero + Programadora)
     const GUIDED_CASE_NARRATIVES = {
       level1: [
-        { title: "Mueble Automatizado", desc: "Carpintería + Programación: Mesa de trabajo regulable con firmware" },
-        { title: "Bio-Mobiliario Ergonómico", desc: "Diseño UX + Biología: Superficies táctiles con biomateriales sostenibles" },
-        { title: "Sistema Postural Sensado", desc: "Mecatrónica + Medicina: Sensores que cuidan la ergonomía del usuario" },
-        { title: "Modelo Sostenible Abierto", desc: "Finanzas + Comunidad: Economía circular y fabricación distribuida" }
+        { 
+          title: "Mueble Automatizado", 
+          role: "Carpintería + Programación",
+          desc: "Al unirse Carpintero ($100) y Programadora ($100), no generan $200 lineales: crean una mesa regulable con memoria digital valorizada en miles.",
+          impact: "Multiplicador de Valor: 10x frente a ideas aisladas"
+        },
+        { 
+          title: "Bio-Mobiliario Ergonómico", 
+          role: "Diseño UX + Biología",
+          desc: "Superficies táctiles adaptativas fabricadas con biomateriales biodegradables locales.",
+          impact: "Sostenibilidad de ciclo cerrado"
+        },
+        { 
+          title: "Sistema Postural Sensado", 
+          role: "Mecatrónica + Medicina",
+          desc: "Sensores biomecánicos que detectan fatiga y corrigen la postura en tiempo real.",
+          impact: "Prevención médica activa"
+        },
+        { 
+          title: "Modelo Sostenible Abierto", 
+          role: "Finanzas + Comunidad",
+          desc: "Ecosistema de micro-financiamiento y distribución barrial de código abierto.",
+          impact: "Autonomía comunitaria"
+        }
       ],
       level2: [
-        { title: "Estación de Trabajo Inteligente", desc: "Mueble sensado + biomateriales: hardware, código y diseño en un solo producto" },
-        { title: "Ecosistema de Salud y Accesibilidad", desc: "Mecatrónica, medicina y economía local garantizando viabilidad comunitaria" }
+        { 
+          title: "Estación de Trabajo Inteligente", 
+          role: "Hardware + Software + Biomateriales",
+          desc: "Integración de la mesa automatizada con biomateriales y diseño adaptativo integral.",
+          impact: "Salto Cualitativo: Producto de alta gama accesible"
+        },
+        { 
+          title: "Ecosistema de Salud y Accesibilidad", 
+          role: "Mecatrónica + Salud + Economía Circular",
+          desc: "Mobiliario inteligente preventivo con viabilidad financiera local.",
+          impact: "Impacto sistémico en bienestar laboral"
+        }
       ],
       level3: {
-        title: "Creación Colectiva",
-        subtitle: "Estación Ergonómica Inteligente y Circular",
-        desc: "Solución integral: Estructura de madera local, sensórica biomédica, firmware abierto, materiales bio-sostenibles y modelo distribuido de fabricación comunitaria."
+        title: "Creación Colectiva Integral",
+        role: "Estación Ergonómica Inteligente y Circular",
+        desc: "Solución completa: Madera local, sensores posturales, firmware libre, bio-superficies y producción en red distribuida.",
+        impact: "100% de Co-autoría · Los 8 saberes presentes en el producto final"
       }
     };
 
@@ -1118,30 +1177,27 @@
       { id: "c7", color: "#f778ba" }  // Rosa
     ];
 
-    let participants = JSON.parse(localStorage.getItem('simbio_participants_v3')) || [...PRESETS.innovacion];
+    let participants = JSON.parse(localStorage.getItem('simbio_participants_v4')) || [...PRESETS.innovacion];
     let isGuidedMode = true;
     let currentStep = 0; // 0, 1, 2, 3
     let currentTheme = localStorage.getItem('simbio_theme') || 'dark';
 
-    // Competition state: which nodes survive
-    let compDecisions = {
-      r1: [0, 2, 4, 6],
-      r2: [0, 4],
-      r3: 0
-    };
+    // COMPETITION RANDOMIZATION ENGINE (GUARANTEES FRESH WINNERS ACROSS RUNS)
+    let compDecisions = { r1: [0, 2, 4, 6], r2: [0, 4], r3: 0 };
 
     function randomizeCompetition() {
+      // True random brackets
       const r1 = [
-        Math.random() > 0.5 ? 0 : 1,
-        Math.random() > 0.5 ? 2 : 3,
-        Math.random() > 0.5 ? 4 : 5,
-        Math.random() > 0.5 ? 6 : 7
+        Math.random() < 0.5 ? 0 : 1,
+        Math.random() < 0.5 ? 2 : 3,
+        Math.random() < 0.5 ? 4 : 5,
+        Math.random() < 0.5 ? 6 : 7
       ];
       const r2 = [
-        Math.random() > 0.5 ? r1[0] : r1[1],
-        Math.random() > 0.5 ? r1[2] : r1[3]
+        Math.random() < 0.5 ? r1[0] : r1[1],
+        Math.random() < 0.5 ? r1[2] : r1[3]
       ];
-      const r3 = Math.random() > 0.5 ? r2[0] : r2[1];
+      const r3 = Math.random() < 0.5 ? r2[0] : r2[1];
       compDecisions = { r1, r2, r3 };
     }
     randomizeCompetition();
@@ -1151,12 +1207,8 @@
     let soundEnabled = true;
 
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playTone(freq, type = 'sine', duration = 0.15, gain = 0.1) {
@@ -1190,74 +1242,15 @@
       if (step === 3) playChord([523, 659, 784, 1046], 0.6);
     }
 
-    // --- 3. PARTICLES ENGINE (ALL 8 COLORS FLOW TO CORE) ---
-    let particles = [];
-    const pCanvas = document.getElementById('particleCanvas');
-    const pCtx = pCanvas.getContext('2d');
-
-    function resizeCanvas() {
-      pCanvas.width = window.innerWidth;
-      pCanvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function spawnParticle(curve, color, isEliminated = false) {
-      particles.push({
-        x1: curve.x1, y1: curve.y1,
-        x2: curve.x2, y2: curve.y2,
-        cx1: curve.cx1, cy1: curve.cy1,
-        cx2: curve.cx2, cy2: curve.cy2,
-        t: 0,
-        speed: 0.007 + Math.random() * 0.008,
-        color: color,
-        r: 2.2 + Math.random() * 1.5,
-        alpha: 0.9,
-        isEliminated: isEliminated
-      });
-    }
-
-    function evalBezier(p0, p1, p2, p3, t) {
-      const u = 1 - t;
-      const tt = t * t;
-      const uu = u * u;
-      const uuu = uu * u;
-      const ttt = tt * t;
-      return uuu * p0 + 3 * uu * t * p1 + 3 * u * tt * p2 + ttt * p3;
-    }
-
-    function loopParticles() {
-      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.t += p.speed;
-        if (p.t >= 1) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        const curX = evalBezier(p.x1, p.cx1, p.cx2, p.x2, p.t);
-        const curY = evalBezier(p.y1, p.cy1, p.cy2, p.y2, p.t);
-
-        pCtx.beginPath();
-        pCtx.arc(curX, curY, p.r, 0, Math.PI * 2);
-        pCtx.fillStyle = p.color;
-        pCtx.globalAlpha = p.alpha * (1 - p.t * 0.3);
-        pCtx.fill();
-        pCtx.globalAlpha = 1;
-      }
-      requestAnimationFrame(loopParticles);
-    }
-    requestAnimationFrame(loopParticles);
-
-    // --- 4. TREE RENDERER (SVG ENGINE) ---
+    // --- 3. INLINE SVG TREE ENGINE WITH ANIMATED PARTICLES & CLEAN LABELS ---
     const VIRTUAL_WIDTH = 640;
     const VIRTUAL_HEIGHT = 430;
 
     function getTreeCoordinates() {
-      // Y Levels adjusted upwards to give generous breathing room at the bottom
-      const yLevels = [38, 132, 235, 335];
-      const radius = 17;
+      // Y levels spaced to avoid collisions with popups or bottom bar
+      const yLevels = [38, 134, 235, 335];
+      // Node sizes: L0=17, L1=22, L2=27, L3=34 (Exponential visual growth of emergent value)
+      const radii = [17, 22, 27, 34];
 
       const paddingX = VIRTUAL_WIDTH * 0.08;
       const stepX = (VIRTUAL_WIDTH - 2 * paddingX) / 7;
@@ -1277,7 +1270,7 @@
 
       const xL3 = (xL2[0] + xL2[1]) / 2;
 
-      return { yLevels, radius, xL0, xL1, xL2, xL3 };
+      return { yLevels, radii, xL0, xL1, xL2, xL3 };
     }
 
     function createSmoothCurve(x1, y1, x2, y2) {
@@ -1289,8 +1282,43 @@
       return "M " + x1 + " " + y1 + " C " + cx1 + " " + cy1 + ", " + cx2 + " " + cy2 + ", " + x2 + " " + y2;
     }
 
-    // Dynamic Multi-color Gradients for Lines and Multi-color Striped Circles
-    function createMultiGradient(svg, id, colorArray, x1 = "0%", y1 = "0%", x2 = "100%", y2 = "100%") {
+    // Adds SVG native animated flowing dots (Genes de Innovación) along any path
+    function appendSvgFlowingParticles(svg, pathD, color, count = 2, durSec = 3.5) {
+      for (let p = 0; p < count; p++) {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('r', '2.8');
+        circle.setAttribute('fill', color);
+        circle.setAttribute('opacity', '0.9');
+        circle.setAttribute('filter', 'drop-shadow(0 0 3px ' + color + ')');
+
+        const mpath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
+        const pathId = "pflow-" + Math.random().toString(36).substr(2, 9);
+        
+        // Define temporary hidden path for mpath reference
+        const refPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        refPath.setAttribute('id', pathId);
+        refPath.setAttribute('d', pathD);
+        refPath.setAttribute('fill', 'none');
+        refPath.setAttribute('stroke', 'none');
+        svg.appendChild(refPath);
+
+        const animMotion = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+        animMotion.setAttribute('repeatCount', 'indefinite');
+        animMotion.setAttribute('dur', (durSec + (p * 0.4)) + 's');
+        animMotion.setAttribute('begin', (-p * (durSec / count)) + 's');
+        animMotion.setAttribute('rotate', 'auto');
+
+        const mpathRef = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
+        mpathRef.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + pathId);
+        animMotion.appendChild(mpathRef);
+
+        circle.appendChild(animMotion);
+        svg.appendChild(circle);
+      }
+    }
+
+    // Dynamic Multi-color Gradients for Lines
+    function createMultiGradient(svg, id, colorArray) {
       let defs = svg.querySelector('defs');
       if (!defs) {
         defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -1301,10 +1329,10 @@
 
       grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
       grad.setAttribute('id', id);
-      grad.setAttribute('x1', x1);
-      grad.setAttribute('y1', y1);
-      grad.setAttribute('x2', x2);
-      grad.setAttribute('y2', y2);
+      grad.setAttribute('x1', '0%');
+      grad.setAttribute('y1', '0%');
+      grad.setAttribute('x2', '100%');
+      grad.setAttribute('y2', '100%');
 
       const step = 100 / (colorArray.length - 1 || 1);
       colorArray.forEach((col, idx) => {
@@ -1317,6 +1345,7 @@
       return "url(#" + id + ")";
     }
 
+    // Striped circle with animated rotating gradient (living pie sectors)
     function createStripedCircle(svg, id, colorIndices) {
       let defs = svg.querySelector('defs');
       if (!defs) {
@@ -1351,7 +1380,7 @@
     }
 
     function drawNode(svg, opts) {
-      const { cx, cy, r, fill, initial, subname, role, id, dimmed, isWinner, isMega, mathTooltip, onClick, innerIcon } = opts;
+      const { cx, cy, r, fill, initial, subname, role, id, dimmed, isWinner, isMega, modalData, onClick, innerIcon } = opts;
 
       const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       g.setAttribute('class', 'node-group');
@@ -1410,7 +1439,7 @@
         const iconText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         iconText.setAttribute('x', cx);
         iconText.setAttribute('y', cy + 1);
-        iconText.setAttribute('font-size', isMega ? '18' : '12');
+        iconText.setAttribute('font-size', isMega ? '18' : '13');
         iconText.setAttribute('text-anchor', 'middle');
         iconText.setAttribute('dominant-baseline', 'central');
         iconText.textContent = innerIcon;
@@ -1424,7 +1453,7 @@
         g.appendChild(text);
       }
 
-      // Labels below the node
+      // Compact, non-overlapping label (clean presentation)
       if (subname) {
         const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         nameText.setAttribute('x', cx);
@@ -1436,132 +1465,141 @@
         if (role) {
           const roleText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           roleText.setAttribute('x', cx);
-          roleText.setAttribute('y', cy + r + 23);
+          roleText.setAttribute('y', cy + r + 24);
           roleText.setAttribute('class', 'node-role-label');
           roleText.textContent = role;
           g.appendChild(roleText);
         }
       }
 
-      // Hover Tooltip
-      if (mathTooltip) {
-        circle.addEventListener('mouseenter', (e) => showTooltip(e, mathTooltip));
-        circle.addEventListener('mouseleave', hideTooltip);
+      // Rich Hover Tooltip with impact calculations
+      if (modalData) {
+        circle.addEventListener('mouseenter', (e) => showNodeTooltip(e, modalData));
+        circle.addEventListener('mouseleave', hideNodeTooltip);
       }
 
       svg.appendChild(g);
     }
 
-    // --- 5. RENDER SIMBIOCREACIÓN TREE (MULTICOLOR HARMONY) ---
+    // --- 4. RENDER SIMBIOCREACIÓN TREE ---
     function renderConvergenceTree(svg, coords) {
-      const { yLevels, radius, xL0, xL1, xL2, xL3 } = coords;
+      const { yLevels, radii, xL0, xL1, xL2, xL3 } = coords;
 
-      // Level 0 -> 1 Branches (Pairs)
+      // Branches L0 -> L1
       if (currentStep >= 1) {
         for (let i = 0; i < 4; i++) {
           const lIdx = i * 2;
           const rIdx = i * 2 + 1;
+          const dL = createSmoothCurve(xL0[lIdx], yLevels[0] + radii[0], xL1[i], yLevels[1] - radii[1]);
+          const dR = createSmoothCurve(xL0[rIdx], yLevels[0] + radii[0], xL1[i], yLevels[1] - radii[1]);
 
           const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathL.setAttribute('d', createSmoothCurve(xL0[lIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathL.setAttribute('d', dL);
           pathL.setAttribute('class', 'tree-path');
           pathL.setAttribute('stroke', COLORS[lIdx].color);
           pathL.setAttribute('stroke-width', '3.5px');
           svg.appendChild(pathL);
 
           const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathR.setAttribute('d', createSmoothCurve(xL0[rIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathR.setAttribute('d', dR);
           pathR.setAttribute('class', 'tree-path');
           pathR.setAttribute('stroke', COLORS[rIdx].color);
           pathR.setAttribute('stroke-width', '3.5px');
           svg.appendChild(pathR);
 
-          spawnParticle({ x1: xL0[lIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius }, COLORS[lIdx].color);
-          spawnParticle({ x1: xL0[rIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius }, COLORS[rIdx].color);
+          // Flowing saberes dots
+          appendSvgFlowingParticles(svg, dL, COLORS[lIdx].color, 2, 2.8);
+          appendSvgFlowingParticles(svg, dR, COLORS[rIdx].color, 2, 2.8);
         }
       }
 
-      // Level 1 -> 2 Branches (Team Integration with 4-color blend)
+      // Branches L1 -> L2 (Multicolor gradients)
       if (currentStep >= 2) {
         for (let i = 0; i < 2; i++) {
           const lIdx = i * 2;
           const rIdx = i * 2 + 1;
 
-          // Multi-color gradients for the branches
           const gradL = createMultiGradient(svg, "grad-conv-branch-1L-" + i, [COLORS[lIdx * 2].color, COLORS[lIdx * 2 + 1].color]);
           const gradR = createMultiGradient(svg, "grad-conv-branch-1R-" + i, [COLORS[rIdx * 2].color, COLORS[rIdx * 2 + 1].color]);
 
+          const dL = createSmoothCurve(xL1[lIdx], yLevels[1] + radii[1], xL2[i], yLevels[2] - radii[2]);
+          const dR = createSmoothCurve(xL1[rIdx], yLevels[1] + radii[1], xL2[i], yLevels[2] - radii[2]);
+
           const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathL.setAttribute('d', createSmoothCurve(xL1[lIdx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathL.setAttribute('d', dL);
           pathL.setAttribute('class', 'tree-path');
           pathL.setAttribute('stroke', gradL);
           pathL.setAttribute('stroke-width', '5px');
           svg.appendChild(pathL);
 
           const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathR.setAttribute('d', createSmoothCurve(xL1[rIdx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathR.setAttribute('d', dR);
           pathR.setAttribute('class', 'tree-path');
           pathR.setAttribute('stroke', gradR);
           pathR.setAttribute('stroke-width', '5px');
           svg.appendChild(pathR);
 
-          // Flow all 4 colors through the branches
-          const teamColors = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
-          teamColors.slice(0, 2).forEach(cIdx => {
-            spawnParticle({ x1: xL1[lIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius }, COLORS[cIdx].color);
-          });
-          teamColors.slice(2, 4).forEach(cIdx => {
-            spawnParticle({ x1: xL1[rIdx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius }, COLORS[cIdx].color);
-          });
+          // Flow all 4 saberes through the branches
+          appendSvgFlowingParticles(svg, dL, COLORS[lIdx * 2].color, 1, 3.2);
+          appendSvgFlowingParticles(svg, dL, COLORS[lIdx * 2 + 1].color, 1, 3.2);
+          appendSvgFlowingParticles(svg, dR, COLORS[rIdx * 2].color, 1, 3.2);
+          appendSvgFlowingParticles(svg, dR, COLORS[rIdx * 2 + 1].color, 1, 3.2);
         }
       }
 
-      // Level 2 -> 3 Branches (ALL 8 COLORS CONVERGE!)
+      // Branches L2 -> L3 (All 8 saberes flowing to core)
       if (currentStep >= 3) {
-        // Dynamic multi-color streams from both teams
         const gradL3_L = createMultiGradient(svg, "grad-conv-L3-L", [COLORS[0].color, COLORS[1].color, COLORS[2].color, COLORS[3].color]);
         const gradL3_R = createMultiGradient(svg, "grad-conv-L3-R", [COLORS[4].color, COLORS[5].color, COLORS[6].color, COLORS[7].color]);
 
+        const dL = createSmoothCurve(xL2[0], yLevels[2] + radii[2], xL3, yLevels[3] - radii[3]);
+        const dR = createSmoothCurve(xL2[1], yLevels[2] + radii[2], xL3, yLevels[3] - radii[3]);
+
         const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathL.setAttribute('d', createSmoothCurve(xL2[0], yLevels[2] + radius, xL3, yLevels[3] - (radius * 1.45)));
+        pathL.setAttribute('d', dL);
         pathL.setAttribute('class', 'tree-path');
         pathL.setAttribute('stroke', gradL3_L);
         pathL.setAttribute('stroke-width', '6.5px');
         svg.appendChild(pathL);
 
         const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathR.setAttribute('d', createSmoothCurve(xL2[1], yLevels[2] + radius, xL3, yLevels[3] - (radius * 1.45)));
+        pathR.setAttribute('d', dR);
         pathR.setAttribute('class', 'tree-path');
         pathR.setAttribute('stroke', gradL3_R);
         pathR.setAttribute('stroke-width', '6.5px');
         svg.appendChild(pathR);
 
-        // All 8 colors stream into the final core node
-        [0, 1, 2, 3].forEach(cIdx => {
-          spawnParticle({ x1: xL2[0], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.45) }, COLORS[cIdx].color);
+        // Streams of all 8 colors alive into final node
+        [0, 1, 2, 3].forEach((cIdx, i) => {
+          appendSvgFlowingParticles(svg, dL, COLORS[cIdx].color, 1, 3.4 + i * 0.2);
         });
-        [4, 5, 6, 7].forEach(cIdx => {
-          spawnParticle({ x1: xL2[1], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - (radius * 1.45) }, COLORS[cIdx].color);
+        [4, 5, 6, 7].forEach((cIdx, i) => {
+          appendSvgFlowingParticles(svg, dR, COLORS[cIdx].color, 1, 3.4 + i * 0.2);
         });
       }
 
-      // --- DRAW NODES ---
-      // Level 0 (Base 8 individual nodes)
+      // --- NODES SIMBIOCREACIÓN ---
+      // Level 0 (r = 17)
       for (let i = 0; i < 8; i++) {
         drawNode(svg, {
           cx: xL0[i],
           cy: yLevels[0],
-          r: radius,
+          r: radii[0],
           fill: COLORS[i].color,
           initial: participants[i].name.charAt(0).toUpperCase(),
           subname: participants[i].name,
           role: participants[i].role,
           id: "conv-l0-" + i,
-          mathTooltip: "Saber individual: " + participants[i].name + " (" + participants[i].role + ")"
+          modalData: {
+            title: participants[i].name + " · " + participants[i].role,
+            role: "Saber Individual de Base",
+            desc: participants[i].desc || "Capacidad y experiencia específica del participante.",
+            impact: "Impacto Individual: 1 saber aislado"
+          }
         });
       }
 
-      // Level 1 (4 Duplas Co-creadas)
+      // Level 1 (r = 22)
       if (currentStep >= 1) {
         for (let i = 0; i < 4; i++) {
           const lIdx = i * 2;
@@ -1570,94 +1608,123 @@
           const initials = participants[lIdx].name.charAt(0) + participants[rIdx].name.charAt(0);
 
           let subnameText = "Dupla " + (i + 1);
-          let roleText = "Co-creación 2 saberes";
-          let tooltip = "Dupla: " + participants[lIdx].name + " + " + participants[rIdx].name;
+          let roleText = participants[lIdx].role + " + " + participants[rIdx].role;
+          let modalData = {
+            title: "Dupla " + (i + 1) + ": " + participants[lIdx].name + " + " + participants[rIdx].name,
+            role: roleText,
+            desc: "Co-creación directa combinando 2 saberes complementarios.",
+            impact: "Impacto Emergente: " + (i === 0 ? "10x multiplicador de valor" : "Sinergia dual comprobada")
+          };
 
           if (isGuidedMode) {
             const gCase = GUIDED_CASE_NARRATIVES.level1[i];
             subnameText = gCase.title;
-            roleText = participants[lIdx].role + " + " + participants[rIdx].role;
-            tooltip = gCase.desc;
+            modalData = {
+              title: gCase.title,
+              role: gCase.role,
+              desc: gCase.desc,
+              impact: gCase.impact
+            };
           }
 
           drawNode(svg, {
             cx: xL1[i],
             cy: yLevels[1],
-            r: radius * 1.18,
+            r: radii[1],
             fill: fill,
             initial: initials,
             subname: subnameText,
             role: roleText,
             id: "conv-l1-" + i,
-            mathTooltip: tooltip
+            modalData: modalData
           });
         }
       }
 
-      // Level 2 (2 Equipos Integrados)
+      // Level 2 (r = 27)
       if (currentStep >= 2) {
         for (let i = 0; i < 2; i++) {
           const teamColors = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
           const fill = createStripedCircle(svg, "conv-l2-" + i, teamColors);
 
           let subnameText = "Equipo Integrado " + (i + 1);
-          let roleText = "4 saberes combinados";
-          let tooltip = "Integración de 4 disciplinas complementarias";
+          let roleText = "4 saberes transversales";
+          let modalData = {
+            title: subnameText,
+            role: roleText,
+            desc: "Integración de 4 disciplinas. El producto trasciende el alcance de una sola mesa.",
+            impact: "Impacto Sistémico: 15 combinaciones activas"
+          };
 
           if (isGuidedMode) {
             const gCase = GUIDED_CASE_NARRATIVES.level2[i];
             subnameText = gCase.title;
-            roleText = i === 0 ? "Hardware + Software + Materiales" : "Mecatrónica + Salud + Comunidad";
-            tooltip = gCase.desc;
+            roleText = gCase.role;
+            modalData = {
+              title: gCase.title,
+              role: gCase.role,
+              desc: gCase.desc,
+              impact: gCase.impact
+            };
           }
 
           drawNode(svg, {
             cx: xL2[i],
             cy: yLevels[2],
-            r: radius * 1.35,
+            r: radii[2],
             fill: fill,
             innerIcon: "✦",
             subname: subnameText,
             role: roleText,
             id: "conv-l2-" + i,
-            mathTooltip: tooltip
+            modalData: modalData
           });
         }
       }
 
-      // Level 3: CREACIÓN COLECTIVA FINAL (NO MPI)
+      // Level 3: CREACIÓN COLECTIVA FINAL (r = 34, Maximum Emergent Impact)
       if (currentStep >= 3) {
         const fill = createStripedCircle(svg, "conv-final", [0, 1, 2, 3, 4, 5, 6, 7]);
-        
         let subnameText = "Creación Colectiva";
         let roleText = "100% Co-autoría (8/8 saberes)";
-        let tooltip = "Integración simbiótica total de la sala";
+        let modalData = {
+          title: subnameText,
+          role: roleText,
+          desc: "Solución integradora total de la sala donde todo participante es autor.",
+          impact: "255 combinaciones posibles integradas · 0% de talento descartado"
+        };
 
         if (isGuidedMode) {
           subnameText = GUIDED_CASE_NARRATIVES.level3.title;
-          roleText = GUIDED_CASE_NARRATIVES.level3.subtitle;
-          tooltip = GUIDED_CASE_NARRATIVES.level3.desc;
+          roleText = GUIDED_CASE_NARRATIVES.level3.role;
+          modalData = {
+            title: GUIDED_CASE_NARRATIVES.level3.title,
+            role: GUIDED_CASE_NARRATIVES.level3.role,
+            desc: GUIDED_CASE_NARRATIVES.level3.desc,
+            impact: GUIDED_CASE_NARRATIVES.level3.impact
+          };
         }
 
         drawNode(svg, {
           cx: xL3,
           cy: yLevels[3],
-          r: radius * 1.65,
+          r: radii[3],
           fill: fill,
           innerIcon: "⭐",
           subname: subnameText,
           role: roleText,
           id: "conv-final",
           isMega: true,
-          mathTooltip: tooltip
+          modalData: modalData
         });
       }
     }
 
-    // --- 6. RENDER COMPETITION TREE (CONSTANT NODE SIZE, DESCARTE REAL) ---
+    // --- 5. RENDER COMPETITION TREE (CONSTANT RADIUS = 17) ---
     function renderCompetitionTree(svg, coords) {
-      const { yLevels, radius, xL0, xL1, xL2, xL3 } = coords;
+      const { yLevels, radii, xL0, xL1, xL2, xL3 } = coords;
       const { r1, r2, r3 } = compDecisions;
+      const radius = radii[0]; // Constant size: does not grow
 
       // Branches L0 -> L1
       if (currentStep >= 1) {
@@ -1665,17 +1732,18 @@
           const winnerIdx = r1[i];
           const loserIdx = (winnerIdx % 2 === 0) ? winnerIdx + 1 : winnerIdx - 1;
 
-          // Winner branch (Solid)
+          const dW = createSmoothCurve(xL0[winnerIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius);
+          const dL = createSmoothCurve(xL0[loserIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius);
+
           const pathW = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathW.setAttribute('d', createSmoothCurve(xL0[winnerIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathW.setAttribute('d', dW);
           pathW.setAttribute('class', 'tree-path');
           pathW.setAttribute('stroke', COLORS[winnerIdx].color);
           pathW.setAttribute('stroke-width', '3.5px');
           svg.appendChild(pathW);
 
-          // Loser branch (Eliminated dashed)
           const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathL.setAttribute('d', createSmoothCurve(xL0[loserIdx], yLevels[0] + radius, xL1[i], yLevels[1] - radius));
+          pathL.setAttribute('d', dL);
           pathL.setAttribute('class', 'tree-path');
           pathL.setAttribute('stroke', '#484f58');
           pathL.setAttribute('stroke-width', '1.5px');
@@ -1683,7 +1751,7 @@
           pathL.setAttribute('opacity', '0.4');
           svg.appendChild(pathL);
 
-          spawnParticle({ x1: xL0[winnerIdx], y1: yLevels[0] + radius, x2: xL1[i], y2: yLevels[1] - radius }, COLORS[winnerIdx].color);
+          appendSvgFlowingParticles(svg, dW, COLORS[winnerIdx].color, 1, 3);
         }
       }
 
@@ -1694,15 +1762,18 @@
           const loserL1_Idx = (winnerL1_Idx === i * 2) ? (i * 2 + 1) : (i * 2);
           const origWinnerIdx = r2[i];
 
+          const dW = createSmoothCurve(xL1[winnerL1_Idx], yLevels[1] + radius, xL2[i], yLevels[2] - radius);
+          const dL = createSmoothCurve(xL1[loserL1_Idx], yLevels[1] + radius, xL2[i], yLevels[2] - radius);
+
           const pathW = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathW.setAttribute('d', createSmoothCurve(xL1[winnerL1_Idx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathW.setAttribute('d', dW);
           pathW.setAttribute('class', 'tree-path');
           pathW.setAttribute('stroke', COLORS[origWinnerIdx].color);
           pathW.setAttribute('stroke-width', '4px');
           svg.appendChild(pathW);
 
           const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pathL.setAttribute('d', createSmoothCurve(xL1[loserL1_Idx], yLevels[1] + radius, xL2[i], yLevels[2] - radius));
+          pathL.setAttribute('d', dL);
           pathL.setAttribute('class', 'tree-path');
           pathL.setAttribute('stroke', '#484f58');
           pathL.setAttribute('stroke-width', '1.5px');
@@ -1710,7 +1781,7 @@
           pathL.setAttribute('opacity', '0.4');
           svg.appendChild(pathL);
 
-          spawnParticle({ x1: xL1[winnerL1_Idx], y1: yLevels[1] + radius, x2: xL2[i], y2: yLevels[2] - radius }, COLORS[origWinnerIdx].color);
+          appendSvgFlowingParticles(svg, dW, COLORS[origWinnerIdx].color, 1, 3.2);
         }
       }
 
@@ -1719,15 +1790,18 @@
         const winnerL2_Idx = (r3 === r2[0]) ? 0 : 1;
         const loserL2_Idx = (winnerL2_Idx === 0) ? 1 : 0;
 
+        const dW = createSmoothCurve(xL2[winnerL2_Idx], yLevels[2] + radius, xL3, yLevels[3] - radius);
+        const dL = createSmoothCurve(xL2[loserL2_Idx], yLevels[2] + radius, xL3, yLevels[3] - radius);
+
         const pathW = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathW.setAttribute('d', createSmoothCurve(xL2[winnerL2_Idx], yLevels[2] + radius, xL3, yLevels[3] - radius));
+        pathW.setAttribute('d', dW);
         pathW.setAttribute('class', 'tree-path');
         pathW.setAttribute('stroke', COLORS[r3].color);
         pathW.setAttribute('stroke-width', '5px');
         svg.appendChild(pathW);
 
         const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathL.setAttribute('d', createSmoothCurve(xL2[loserL2_Idx], yLevels[2] + radius, xL3, yLevels[3] - radius));
+        pathL.setAttribute('d', dL);
         pathL.setAttribute('class', 'tree-path');
         pathL.setAttribute('stroke', '#484f58');
         pathL.setAttribute('stroke-width', '1.5px');
@@ -1735,10 +1809,10 @@
         pathL.setAttribute('opacity', '0.4');
         svg.appendChild(pathL);
 
-        spawnParticle({ x1: xL2[winnerL2_Idx], y1: yLevels[2] + radius, x2: xL3, y2: yLevels[3] - radius }, COLORS[r3].color);
+        appendSvgFlowingParticles(svg, dW, COLORS[r3].color, 2, 2.8);
       }
 
-      // --- DRAW COMPETITION NODES (CONSTANT RADIUS = 17) ---
+      // --- NODES COMPETICIÓN (CONSTANT SIZE r = 17) ---
       // Level 0
       for (let i = 0; i < 8; i++) {
         let isEliminated = false;
@@ -1746,14 +1820,19 @@
         drawNode(svg, {
           cx: xL0[i],
           cy: yLevels[0],
-          r: radius, // Fixed radius
+          r: radius,
           fill: COLORS[i].color,
           initial: participants[i].name.charAt(0).toUpperCase(),
           subname: participants[i].name,
           role: participants[i].role,
           id: "comp-l0-" + i,
           dimmed: isEliminated,
-          mathTooltip: participants[i].name + (isEliminated ? " (Descartado)" : " (Activo)")
+          modalData: {
+            title: participants[i].name + " (" + participants[i].role + ")",
+            role: isEliminated ? "Saber Descartado" : "Saber Activo",
+            desc: isEliminated ? "Idea eliminada en fase de grupos. No aporta a la solución final." : "Pasa a la siguiente ronda del torneo.",
+            impact: isEliminated ? "Pérdida de Conocimiento Colectivo" : "Sobreviviente de grupo"
+          }
         });
       }
 
@@ -1766,14 +1845,19 @@
           drawNode(svg, {
             cx: xL1[i],
             cy: yLevels[1],
-            r: radius, // Fixed radius
+            r: radius,
             fill: COLORS[winnerOrig].color,
             initial: participants[winnerOrig].name.charAt(0).toUpperCase(),
             subname: participants[winnerOrig].name,
             role: participants[winnerOrig].role,
             id: "comp-l1-" + i,
             dimmed: isEliminated,
-            mathTooltip: participants[winnerOrig].name + " gana su mesa"
+            modalData: {
+              title: participants[winnerOrig].name + " gana mesa " + (i + 1),
+              role: "Ganador de Duelo",
+              desc: "Avanza eliminando al compañero de mesa.",
+              impact: "50% de las ideas descartadas"
+            }
           });
         }
       }
@@ -1787,14 +1871,19 @@
           drawNode(svg, {
             cx: xL2[i],
             cy: yLevels[2],
-            r: radius, // Fixed radius
+            r: radius,
             fill: COLORS[winnerOrig].color,
             initial: participants[winnerOrig].name.charAt(0).toUpperCase(),
             subname: participants[winnerOrig].name,
             role: participants[winnerOrig].role,
             id: "comp-l2-" + i,
             dimmed: isEliminated,
-            mathTooltip: participants[winnerOrig].name + " clasifica a final"
+            modalData: {
+              title: participants[winnerOrig].name + " clasifica a final",
+              role: "Semifinalista",
+              desc: "75% de los talentos ya han sido eliminados de la sala.",
+              impact: "Silos activos: 0 sinergias cruzadas"
+            }
           });
         }
       }
@@ -1804,14 +1893,19 @@
         drawNode(svg, {
           cx: xL3,
           cy: yLevels[3],
-          r: radius, // Fixed radius
+          r: radius,
           fill: COLORS[r3].color,
           initial: participants[r3].name.charAt(0).toUpperCase(),
           subname: participants[r3].name,
           role: participants[r3].role + " (Ganador Único)",
           id: "comp-final",
           isWinner: true,
-          mathTooltip: "Único ganador: " + participants[r3].name + ". 7 saberes fueron descartados."
+          modalData: {
+            title: "Ganador Único: " + participants[r3].name,
+            role: participants[r3].role,
+            desc: "7 de 8 saberes han sido eliminados. El 87.5% de la inteligencia del equipo se perdió.",
+            impact: "Costo de Competencia: Cero integración sistémica"
+          }
         });
       }
     }
@@ -1828,9 +1922,8 @@
       renderConvergenceTree(svgConv, coords);
     }
 
-    // --- 7. UI SYNC & TRAVELING PROGRESS CARD (IMAGE 1) ---
+    // --- 6. UI UPDATE & PROGRESSION ---
     function updateUI() {
-      // Step descriptions
       const stepTexts = [
         "8 Saberes Individuales en Sala",
         "Nivel 1: Diálogo y Creación en Duplas",
@@ -1855,7 +1948,7 @@
         btnNext.classList.add('btn-primary');
       }
 
-      // Competition Metric Card (Travels dynamically with exact % loss)
+      // Traveling card: Competencia
       const compVal = document.getElementById('compVal');
       const compFormula = document.getElementById('compFormula');
       const winnerBanner = document.getElementById('winnerBanner');
@@ -1877,7 +1970,7 @@
         winnerBanner.classList.remove('show');
       }
 
-      // SymbioCreation Metric Card (Convergence count)
+      // Traveling card: SimbioCreación
       const convVal = document.getElementById('convVal');
       const convFormula = document.getElementById('convFormula');
 
@@ -1899,6 +1992,8 @@
         currentStep++;
       } else {
         currentStep = 0;
+        // Re-randomize when starting a fresh cycle so winners vary
+        randomizeCompetition();
       }
       playStepSound(currentStep);
       updateUI();
@@ -1914,12 +2009,14 @@
 
     function resetStep() {
       currentStep = 0;
+      randomizeCompetition();
       playStepSound(0);
       updateUI();
     }
 
-    // --- 8. SALTO COMBINATORIO SIMULATOR (5, 10, 15, 20, 25, 30) ---
+    // --- 7. SALTO COMBINATORIO WITH REAL-TIME ANIMATED COMBINATIONS ---
     let simPeopleCount = 30;
+    let animTickerInterval = null;
 
     function setPeopleCount(num) {
       simPeopleCount = num;
@@ -1950,14 +2047,10 @@
       ctxS.scale(dpr, dpr);
       ctxN.scale(dpr, dpr);
 
-      // Calculations: Isolated tables of 5
       const numGroups = Math.floor(simPeopleCount / 5);
-      const isolatedComb = numGroups * (Math.pow(2, 5) - 1); // Each table only has 2^5 - 1 = 31
-
-      // SymbioCreation: Full Network 2^N - 1
+      const isolatedComb = numGroups * (Math.pow(2, 5) - 1);
       const symbioticComb = Math.pow(2, simPeopleCount) - 1;
 
-      // Update Badges
       document.getElementById('groupsCountBadge').textContent = numGroups + " mesas de 5 personas aisladas";
       document.getElementById('isolatedCombVal').textContent = isolatedComb.toLocaleString('en-US');
       document.getElementById('symbioticCombVal').textContent = symbioticComb.toLocaleString('en-US');
@@ -1965,10 +2058,7 @@
       const multiplier = Math.round(symbioticComb / isolatedComb);
       document.getElementById('multiplierBadge').textContent = "Multiplicador ×" + multiplier.toLocaleString('en-US');
 
-      // Draw Isolated Tables
       drawIsolatedGroupsCanvas(ctxS, wS, hS, numGroups);
-
-      // Draw Connected Network
       drawSymbioticNetworkCanvas(ctxN, wN, hN, simPeopleCount);
     }
 
@@ -1996,11 +2086,11 @@
 
         // Label
         ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-        ctx.font = "9px " + getComputedStyle(document.body).fontFamily;
+        ctx.font = "9px sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("Mesa " + (g + 1) + " (31 comb.)", centerX, centerY - radius - 8);
 
-        // 5 Nodes in a circle
+        // 5 Nodes
         const pts = [];
         for (let i = 0; i < 5; i++) {
           const angle = (i * 2 * Math.PI / 5) - Math.PI / 2;
@@ -2023,7 +2113,6 @@
           }
         }
 
-        // Draw Nodes
         pts.forEach(p => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
@@ -2032,6 +2121,8 @@
         });
       }
     }
+
+    let networkAnimationActiveNodes = [];
 
     function drawSymbioticNetworkCanvas(ctx, width, height, N) {
       ctx.clearRect(0, 0, width, height);
@@ -2050,7 +2141,7 @@
         });
       }
 
-      // Core glow in the center
+      // Radial Core Glow
       const gradCenter = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, radius * 0.8);
       gradCenter.addColorStop(0, "rgba(230, 0, 102, 0.15)");
       gradCenter.addColorStop(1, "transparent");
@@ -2071,33 +2162,163 @@
         }
       }
 
-      // Draw all N nodes
-      pts.forEach(p => {
+      // Highlight active animation cross
+      if (networkAnimationActiveNodes.length > 1) {
+        ctx.strokeStyle = "#00d2ff";
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
+        for (let i = 0; i < networkAnimationActiveNodes.length; i++) {
+          const p = pts[networkAnimationActiveNodes[i] % N];
+          if (i === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // Draw all nodes
+      pts.forEach((p, idx) => {
+        ctx.beginPath();
+        const isHighlight = networkAnimationActiveNodes.includes(idx);
+        ctx.arc(p.x, p.y, isHighlight ? 7 : 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = isHighlight ? "#ffffff" : p.color;
         ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = isHighlight ? "#00d2ff" : "#ffffff";
+        ctx.lineWidth = isHighlight ? 2 : 1;
         ctx.stroke();
       });
     }
 
-    // Cross-Table Test Interaction
-    function testCrossInteraction() {
-      const gA = Math.floor(Math.random() * (simPeopleCount / 5)) + 1;
-      let gB = Math.floor(Math.random() * (simPeopleCount / 5)) + 1;
-      if (gA === gB) gB = (gB % (simPeopleCount / 5)) + 1;
+    // ANIMATION ENGINE: Generates and flashes the 31 emergent combinations in real-time
+    function runCombinatorialAnimation() {
+      if (animTickerInterval) clearInterval(animTickerInterval);
 
-      const roles = ["Carpintería", "Programación", "Biología", "UX Design", "Finanzas", "Salud"];
-      const rA = roles[Math.floor(Math.random() * roles.length)];
-      const rB = roles[Math.floor(Math.random() * roles.length)];
+      // Generate all 31 non-empty subsets of {A,B,C,D,E}
+      const names = ["A", "B", "C", "D", "E"];
+      const combinations = [];
+      for (let i = 1; i < (1 << 5); i++) {
+        const subset = [];
+        const indices = [];
+        for (let b = 0; b < 5; b++) {
+          if ((i >> b) & 1) {
+            subset.push(names[b]);
+            indices.push(b);
+          }
+        }
+        combinations.push({ text: subset.join("+"), indices: indices });
+      }
 
-      showToast("🎲 Prueba de Cruce: " + rA + " (Mesa " + gA + ") + " + rB + " (Mesa " + gB + ")");
-      playTone(580, 'triangle', 0.25, 0.15);
+      let step = 0;
+      const tickerText = document.getElementById('combTickerText');
+      const tickerProg = document.getElementById('combTickerProgress');
+
+      animTickerInterval = setInterval(() => {
+        if (step >= combinations.length) {
+          clearInterval(animTickerInterval);
+          tickerText.textContent = "⭐ ¡Las 31 combinaciones emergentes fueron generadas con éxito!";
+          tickerProg.textContent = "31 / 31 completadas";
+          networkAnimationActiveNodes = [];
+          updateCombinatorialSim();
+          return;
+        }
+
+        const curr = combinations[step];
+        tickerText.textContent = "💡 Idea #" + (step + 1) + ": Saber [" + curr.text + "] interconectado";
+        tickerProg.textContent = (step + 1) + " / 31 combinaciones emergentes";
+        networkAnimationActiveNodes = curr.indices;
+
+        playTone(320 + step * 18, 'sine', 0.08, 0.06);
+        updateCombinatorialSim();
+        step++;
+      }, 180);
     }
 
-    // --- 9. VIEW SWITCHING & THEMES ---
+    // --- 8. RICH POPUP TOOLTIP ENGINE ---
+    const tooltipEl = document.getElementById('nodeTooltip');
+    function showNodeTooltip(e, data) {
+      tooltipEl.innerHTML = 
+        '<strong>' + data.title + '</strong>' +
+        '<div class="tt-role">' + data.role + '</div>' +
+        '<div>' + data.desc + '</div>' +
+        '<div class="tt-impact">✨ ' + data.impact + '</div>';
+      tooltipEl.style.display = 'block';
+      tooltipEl.style.left = (e.pageX + 14) + "px";
+      tooltipEl.style.top = (e.pageY + 14) + "px";
+    }
+    function hideNodeTooltip() {
+      tooltipEl.style.display = 'none';
+    }
+
+    // --- 9. FULL HI-RES PNG EXPORT (HTML2CANVAS / SVG TO IMAGE) ---
+    async function exportFullPng() {
+      showToast('📸 Generando captura limpia en alta resolución...');
+      
+      const activeView = document.body.getAttribute('data-view');
+      const canvas = document.createElement('canvas');
+      canvas.width = 1920;
+      canvas.height = 1080;
+      const ctx = canvas.getContext('2d');
+
+      // Theme background
+      ctx.fillStyle = currentTheme === 'light' ? '#ffffff' : '#0a0e14';
+      ctx.fillRect(0, 0, 1920, 1080);
+
+      // Grid watermark
+      ctx.fillStyle = currentTheme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
+      for (let x = 0; x < 1920; x += 40) {
+        ctx.fillRect(x, 0, 1, 1080);
+      }
+      for (let y = 0; y < 1080; y += 40) {
+        ctx.fillRect(0, y, 1920, 1);
+      }
+
+      // Brand Header
+      ctx.fillStyle = '#e60066';
+      ctx.font = '900 38px sans-serif';
+      ctx.fillText('SIMBIOCREACIÓN', 80, 85);
+
+      ctx.fillStyle = currentTheme === 'light' ? '#656d76' : '#8b949e';
+      ctx.font = '600 18px sans-serif';
+      ctx.fillText('Metodología de Co-Creación y Convergencia de Saberes', 80, 120);
+
+      // Export currently visible SVG tree
+      const svgToRender = (activeView === 'comp') ? document.getElementById('svgComp') : document.getElementById('svgConv');
+      
+      if (svgToRender && (activeView === 'conv' || activeView === 'comp')) {
+        const svgData = new XMLSerializer().serializeToString(svgToRender);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const URL = window.URL || window.webkitURL || window;
+        const blobURL = URL.createObjectURL(svgBlob);
+        
+        const img = new Image();
+        img.onload = () => {
+          // Render SVG scaled centered
+          ctx.drawImage(img, 240, 180, 1440, 800);
+          URL.revokeObjectURL(blobURL);
+
+          // Download
+          const link = document.createElement('a');
+          link.download = "simbiocreacion-" + activeView + "-nivel" + currentStep + ".png";
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showToast('✅ PNG descargado correctamente');
+        };
+        img.src = blobURL;
+      } else {
+        // Fallback for combinatorial view
+        ctx.fillStyle = currentTheme === 'light' ? '#1f2328' : '#f0f6fc';
+        ctx.font = 'bold 30px sans-serif';
+        ctx.fillText('Salto Combinatorio: Grupos Aislados vs Red Simbiótica (' + simPeopleCount + ' personas)', 80, 200);
+
+        const link = document.createElement('a');
+        link.download = "simbiocreacion-combinatoria.png";
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('✅ PNG descargado');
+      }
+    }
+
+    // --- 10. VIEW SWITCHING & THEMES ---
     function setView(view) {
       document.body.setAttribute('data-view', view);
       document.querySelectorAll('.view-tab').forEach(tab => {
@@ -2139,57 +2360,6 @@
       setTimeout(() => box.classList.remove('show'), 2800);
     }
 
-    const tooltipEl = document.getElementById('nodeTooltip');
-    function showTooltip(e, text) {
-      tooltipEl.textContent = text;
-      tooltipEl.style.display = 'block';
-      tooltipEl.style.left = (e.pageX + 12) + "px";
-      tooltipEl.style.top = (e.pageY + 12) + "px";
-    }
-    function hideTooltip() {
-      tooltipEl.style.display = 'none';
-    }
-
-    // --- 10. CLEAN CONTEXTUAL PNG EXPORT ---
-    function exportCleanPng() {
-      const activeView = document.body.getAttribute('data-view');
-      const canvas = document.createElement('canvas');
-      canvas.width = 1920;
-      canvas.height = 1080;
-      const ctx = canvas.getContext('2d');
-
-      // Background
-      ctx.fillStyle = currentTheme === 'light' ? '#ffffff' : '#0a0e14';
-      ctx.fillRect(0, 0, 1920, 1080);
-
-      // Header Brand
-      ctx.fillStyle = '#e60066';
-      ctx.font = 'bold 36px sans-serif';
-      ctx.fillText('SIMBIOCREACIÓN', 80, 80);
-
-      ctx.fillStyle = currentTheme === 'light' ? '#656d76' : '#8b949e';
-      ctx.font = '20px sans-serif';
-      ctx.fillText('Metodología de Co-Creación y Convergencia de Saberes', 80, 115);
-
-      if (activeView === 'combinatoria') {
-        ctx.fillStyle = currentTheme === 'light' ? '#1f2328' : '#f0f6fc';
-        ctx.font = 'bold 28px sans-serif';
-        ctx.fillText('Salto Combinatorio: Grupos Aislados vs Red Simbiótica (' + simPeopleCount + ' personas)', 80, 180);
-      } else {
-        const modeLabel = isGuidedMode ? "Caso Guiado: Carpintero + Software" : "Taller Abierto";
-        ctx.fillStyle = currentTheme === 'light' ? '#1f2328' : '#f0f6fc';
-        ctx.font = 'bold 28px sans-serif';
-        ctx.fillText('Nivel ' + currentStep + ' · ' + modeLabel, 80, 180);
-      }
-
-      // Download trigger
-      const link = document.createElement('a');
-      link.download = "simbiocreacion-" + activeView + "-nivel" + currentStep + ".png";
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      showToast('📸 Captura descargada con éxito');
-    }
-
     // --- 11. PARTICIPANTS CONFIG MODAL ---
     function openConfigModal() {
       const grid = document.getElementById('partGrid');
@@ -2217,22 +2387,22 @@
         participants[idx].name = inp.value.trim() || ("Saber " + (idx + 1));
         participants[idx].role = roles[idx].value.trim() || "Disciplina";
       });
-      localStorage.setItem('simbio_participants_v3', JSON.stringify(participants));
+      localStorage.setItem('simbio_participants_v4', JSON.stringify(participants));
       isGuidedMode = false;
       document.getElementById('btnModeCase').classList.remove('active');
       closeConfigModal();
-      showToast('👥 Saberes actualizados para tu taller');
+      showToast('👥 Saberes actualizados');
       updateUI();
     }
 
-    // --- 12. EVENT LISTENERS INITIALIZATION ---
+    // --- 12. INITIALIZATION & LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
-      // View tabs
+      // Views
       document.querySelectorAll('.view-tab').forEach(tab => {
         tab.addEventListener('click', () => setView(tab.dataset.view));
       });
 
-      // Timeline controls
+      // Controls
       document.getElementById('btnNext').addEventListener('click', advanceStep);
       document.getElementById('btnPrev').addEventListener('click', prevStep);
       document.getElementById('btnReset').addEventListener('click', resetStep);
@@ -2251,14 +2421,14 @@
         });
       });
 
-      // Mode Toggle (Caso Guiado vs Abierto)
+      // Mode Case
       const btnModeCase = document.getElementById('btnModeCase');
       btnModeCase.addEventListener('click', () => {
         isGuidedMode = !isGuidedMode;
         btnModeCase.classList.toggle('active', isGuidedMode);
         if (isGuidedMode) {
           participants = [...PRESETS.innovacion];
-          showToast('🪵 Modo Caso Real Activado (Carpintero + Software)');
+          showToast('🪵 Caso Real Activado (Carpintero + Software)');
         } else {
           showToast('👥 Modo Libre: Personaliza los participantes');
         }
@@ -2271,7 +2441,7 @@
       document.getElementById('btnCancelConfig').addEventListener('click', closeConfigModal);
       document.getElementById('btnSaveConfig').addEventListener('click', saveConfigModal);
 
-      // Presets in modal
+      // Presets
       document.getElementById('presetInnovacion').addEventListener('click', () => {
         participants = [...PRESETS.innovacion];
         isGuidedMode = true;
@@ -2291,13 +2461,13 @@
         openConfigModal();
       });
 
-      // Combinatorial Simulator controls
+      // Combinatorial Simulation
       document.querySelectorAll('.btn-pstep').forEach(btn => {
         btn.addEventListener('click', () => setPeopleCount(parseInt(btn.dataset.people)));
       });
-      document.getElementById('btnTestCross').addEventListener('click', testCrossInteraction);
+      document.getElementById('btnRunAnimation').addEventListener('click', runCombinatorialAnimation);
 
-      // 5-Person Breakdown toggle
+      // Breakdown toggle
       document.getElementById('toggleBreakdown').addEventListener('click', () => {
         const content = document.getElementById('breakdownContent');
         const arrow = document.getElementById('toggleArrow');
@@ -2315,9 +2485,9 @@
         showToast(soundEnabled ? 'Sonido activado' : 'Sonido silenciado');
       });
       document.getElementById('btnFullscreen').addEventListener('click', toggleFullscreen);
-      document.getElementById('btnExport').addEventListener('click', exportCleanPng);
+      document.getElementById('btnExport').addEventListener('click', exportFullPng);
 
-      // Keyboard shortcuts
+      // Keyboard navigation
       window.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT') return;
         if (e.code === 'Space' || e.code === 'ArrowRight' || e.code === 'PageDown') {
