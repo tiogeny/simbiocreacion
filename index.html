@@ -1070,6 +1070,9 @@
           <div class="eureka-description">
             Al unirse la idea del <strong>Carpintero (100)</strong> y de la <strong>Programadora (100)</strong>, no generan 200 lineales: crean una mesa ergonómica regulable con firmware y memoria postural valorizada en miles.
           </div>
+          <div class="eureka-proportions-pill">
+            ⚖️ Proporción de la solución: 60% estructura física de madera + 40% control digital
+          </div>
         </div>
 
         <div class="tree-stage" id="stageConv">
@@ -1832,9 +1835,11 @@
             };
           }
 
-          // Rol limpio de Dupla 0
+          // En el paso Eureka (step 2), ocultamos el texto debajo de CS para que el círculo brille limpio;
+          // toda la explicación detallada está en la tarjeta lateral derecha.
           if (currentStep === 2 && i === 0) {
-            roleText = "Carpintero + Software";
+            subnameText = "";
+            roleText = "";
           }
 
           drawNode(svg, {
@@ -2284,6 +2289,7 @@
     }
 
     function advanceStep() {
+      hideNodeTooltip();
       const activeView = document.body.getAttribute('data-view');
       const isConv = (activeView === 'conv');
       const maxSteps = isConv ? 5 : 3;
@@ -2299,6 +2305,7 @@
     }
 
     function prevStep() {
+      hideNodeTooltip();
       if (currentStep > 0) {
         currentStep--;
         playStepSound(Math.min(currentStep, 3));
@@ -2307,6 +2314,7 @@
     }
 
     function resetStep() {
+      hideNodeTooltip();
       currentStep = 0;
       randomizeCompetition();
       playStepSound(0);
@@ -2739,6 +2747,7 @@
 
     // --- 10. VIEW SWITCHING & THEMES ---
     function setView(view) {
+      hideNodeTooltip();
       document.body.setAttribute('data-view', view);
       document.querySelectorAll('.view-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.view === view);
