@@ -311,6 +311,7 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      padding-top: 12px;
     }
 
     /* =========================================================================
@@ -323,14 +324,15 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      transform-origin: 20% 25%;
+      /* Punto de anclaje centrado entre Carlos y Sofía con margen vertical generoso */
+      transform-origin: 16% 22%;
       transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
       will-change: transform;
     }
 
-    /* Estado de Zoom In hacia Carlos y Sofía */
+    /* Estado de Zoom In hacia Carlos y Sofía: margen superior holgado para que el halo no se recorte */
     .tree-stage.spotlight-active {
-      transform: scale(1.35) translate(40px, 20px);
+      transform: scale(1.32) translate(30px, 48px);
     }
 
     .node-dimmed-zoom {
@@ -346,14 +348,14 @@
     /* TARJETA CINEMÁTICA CENTRAL: MOMENTO EUREKA */
     .eureka-card-overlay {
       position: absolute;
-      top: 52%;
+      top: 58%;
       left: 50%;
-      transform: translate(-50%, -45%) scale(0.92);
+      transform: translate(-50%, -48%) scale(0.92);
       background: var(--bg-card);
       border: 2px solid var(--accent-pink);
       border-radius: 20px;
-      padding: 24px 32px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(230, 0, 102, 0.3);
+      padding: 22px 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 0 35px rgba(230, 0, 102, 0.25);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       z-index: 50;
@@ -361,8 +363,8 @@
       pointer-events: none;
       transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
       text-align: center;
-      max-width: 580px;
-      width: 90%;
+      max-width: 560px;
+      width: 88%;
     }
     .eureka-card-overlay.show {
       opacity: 1;
