@@ -313,68 +313,127 @@
       overflow: hidden;
     }
 
-    /* TRANSICIÓN CINEMATOGRÁFICA DE CÁMARA (ZOOM VIEWBOX) */
-    .tree-svg {
-      transition: viewBox 0.85s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .node-dimmed-zoom {
-      opacity: 0.12 !important;
-      filter: grayscale(0.8) blur(0.5px);
-      transition: all 0.6s ease;
-    }
-    .node-focused-zoom {
-      filter: drop-shadow(0 0 14px rgba(230, 0, 102, 0.7)) brightness(1.2);
-      transition: all 0.6s ease;
-    }
-    .eureka-badge {
-      position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-10px);
-      background: var(--bg-card);
-      border: 2px solid var(--accent-pink);
-      box-shadow: 0 10px 35px rgba(230, 0, 102, 0.4);
-      padding: 10px 22px;
-      border-radius: 30px;
+    /* =========================================================================
+       SPOTLIGHT CINEMÁTICO: ENFOQUE DE CÁMARA POR HARDWARE
+       ========================================================================= */
+    .tree-stage {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
-      gap: 14px;
-      z-index: 40;
+      justify-content: center;
+      position: relative;
+      transform-origin: 20% 25%;
+      transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
+    }
+
+    /* Estado de Zoom In hacia Carlos y Sofía */
+    .tree-stage.spotlight-active {
+      transform: scale(1.35) translate(40px, 20px);
+    }
+
+    .node-dimmed-zoom {
+      opacity: 0.15 !important;
+      filter: grayscale(0.85);
+      transition: opacity 0.5s ease, filter 0.5s ease;
+    }
+    .node-focused-zoom {
+      filter: drop-shadow(0 0 16px rgba(230, 0, 102, 0.75)) brightness(1.15);
+      transition: filter 0.5s ease;
+    }
+
+    /* TARJETA CINEMÁTICA CENTRAL: MOMENTO EUREKA */
+    .eureka-card-overlay {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -45%) scale(0.92);
+      background: var(--bg-card);
+      border: 2px solid var(--accent-pink);
+      border-radius: 20px;
+      padding: 24px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(230, 0, 102, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 50;
       opacity: 0;
       pointer-events: none;
       transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      text-align: center;
+      max-width: 580px;
+      width: 90%;
     }
-    .eureka-badge.show {
+    .eureka-card-overlay.show {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
     }
-    .eureka-tag {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+
+    .eureka-pill-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(230, 0, 102, 0.15);
+      border: 1px solid rgba(230, 0, 102, 0.4);
       color: var(--accent-pink);
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
     }
-    .eureka-math {
-      font-size: 14px;
+
+    .eureka-title {
+      font-size: 20px;
       font-weight: 900;
       color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .eureka-math-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px 0;
+      font-family: var(--font-family);
     }
-    .eureka-cross {
+    .eureka-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .eureka-symbol {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-muted);
+    }
+    .eureka-cross-box {
+      border-color: rgba(248, 81, 73, 0.4);
+      background: rgba(248, 81, 73, 0.08);
       color: #f85149;
       text-decoration: line-through;
-      opacity: 0.75;
-      font-size: 13px;
     }
-    .eureka-result {
+    .eureka-gold-box {
+      border-color: rgba(241, 196, 15, 0.6);
+      background: rgba(241, 196, 15, 0.14);
       color: var(--accent-gold);
       font-size: 15px;
-      text-shadow: 0 0 12px rgba(241, 196, 15, 0.5);
+      font-weight: 900;
+      box-shadow: 0 0 20px rgba(241, 196, 15, 0.25);
+    }
+
+    .eureka-description {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
     }
     
     .tree-svg {
@@ -991,17 +1050,29 @@
       </div>
 
       <div class="canvas-container">
-        <!-- Badge Cinemático: Momento Eureka (Carpintero + Programadora) -->
-        <div class="eureka-badge" id="eurekaBadge">
-          <div class="eureka-tag">✨ Multiplicador Simbiótico:</div>
-          <div class="eureka-math">
-            <span>100 + 100</span>
-            <span class="eureka-cross">≠ 200 lineales</span>
-            <span>➔</span>
-            <span class="eureka-result">🚀 Miles (Mesa Automatizada)</span>
+        <!-- TARJETA CINEMÁTICA CENTRAL: MOMENTO EUREKA -->
+        <div class="eureka-card-overlay" id="eurekaCard">
+          <div class="eureka-pill-header">✨ Multiplicador Simbiótico de Valor</div>
+          <div class="eureka-title">Mueble Automatizado con Memoria Digital</div>
+          
+          <div class="eureka-math-row">
+            <div class="eureka-box">Carpintero (100)</div>
+            <div class="eureka-symbol">+</div>
+            <div class="eureka-box">Programadora (100)</div>
+            <div class="eureka-symbol">➔</div>
+            <div class="eureka-box eureka-cross-box">200 lineales</div>
+            <div class="eureka-symbol">≠</div>
+            <div class="eureka-box eureka-gold-box">🚀 ¡Miles!</div>
+          </div>
+
+          <div class="eureka-description">
+            Al unirse la idea del <strong>Carpintero (100)</strong> y de la <strong>Programadora (100)</strong>, no generan 200 lineales: crean una mesa ergonómica regulable con firmware y memoria postural valorizada en miles.
           </div>
         </div>
-        <svg class="tree-svg" id="svgConv" viewBox="0 0 640 430"></svg>
+
+        <div class="tree-stage" id="stageConv">
+          <svg class="tree-svg" id="svgConv" viewBox="0 0 640 430"></svg>
+        </div>
       </div>
     </section>
   </main>
@@ -1686,11 +1757,8 @@
         const isZoomActive = (currentStep === 1 || currentStep === 2);
         const nodeClass = isZoomActive ? (isZoomFocalPair ? 'node-focused-zoom' : 'node-dimmed-zoom') : '';
 
-        // En modo zoom, mostrar valor base 100 en el rol
+        // Rol limpio sin colisiones de texto
         let roleLabel = participants[i].role;
-        if (isZoomActive && isZoomFocalPair) {
-          roleLabel = participants[i].role + " (Valor: 100)";
-        }
 
         drawNode(svg, {
           cx: xL0[i],
@@ -1741,9 +1809,9 @@
             };
           }
 
-          // En step 2, resaltar la Dupla CS con brillo dorado y etiqueta de miles
+          // Rol limpio de Dupla 0
           if (currentStep === 2 && i === 0) {
-            roleText = "¡Valorizada en miles!";
+            roleText = "Carpintero + Software";
           }
 
           drawNode(svg, {
@@ -2043,13 +2111,6 @@
     }
 
     // --- 6. UI UPDATE & PROGRESSION ---
-    // --- CONTROL DE CÁMARA SVG (ZOOM VIEWBOX SUAVE) ---
-    function setCameraViewBox(svg, x, y, width, height) {
-      if (!svg) return;
-      // Animate smoothly to new viewBox
-      svg.setAttribute('viewBox', x + " " + y + " " + width + " " + height);
-    }
-
     function updateUI() {
       const activeView = document.body.getAttribute('data-view');
       const isConv = (activeView === 'conv');
@@ -2148,7 +2209,7 @@
       let convMetricsSub = "Todos los talentos de la sala activos (0% descarte)";
 
       if (currentStep === 1) {
-        convMetricsVal = "Zoom Pedagógico: Carlos & Sofía";
+        convMetricsVal = "Enfoque: Carlos & Sofía";
         convMetricsSub = "Carpintero (100) + Programadora (100)";
       } else if (currentStep === 2) {
         convMetricsVal = "Emergencia de Valor: ¡Miles!";
@@ -2167,29 +2228,29 @@
       convVal.textContent = convMetricsVal;
       convFormula.textContent = convMetricsSub;
 
-      // Badge Eureka visible sólo en el paso 2 de SimbioCreación
-      const eurekaBadge = document.getElementById('eurekaBadge');
-      if (eurekaBadge) {
+      // Tarjeta Cinemática Eureka visible únicamente en el paso 2 de SimbioCreación
+      const eurekaCard = document.getElementById('eurekaCard');
+      if (eurekaCard) {
         if (isConv && currentStep === 2) {
-          eurekaBadge.classList.add('show');
+          eurekaCard.classList.add('show');
         } else {
-          eurekaBadge.classList.remove('show');
+          eurekaCard.classList.remove('show');
         }
       }
 
-      // Manejo cinemático de cámara (viewBox)
+      // Manejo cinemático de cámara suave por hardware (transform)
+      const stageConv = document.getElementById('stageConv');
       const svgConv = document.getElementById('svgConv');
-      if (isConv) {
-        if (currentStep === 1 || currentStep === 2) {
-          // ZOOM IN CINEMATOGRÁFICO: Enfocar Carlos (51.2), Sofía (128) y Dupla CS (89.6)
-          // Cuadro centrado en x: 10..170, y: 15..175
-          setCameraViewBox(svgConv, 15, 12, 160, 165);
+      if (svgConv) {
+        svgConv.setAttribute('viewBox', '0 0 640 430');
+      }
+
+      if (stageConv) {
+        if (isConv && (currentStep === 1 || currentStep === 2)) {
+          stageConv.classList.add('spotlight-active');
         } else {
-          // ZOOM OUT COMPLETO: Plano general
-          setCameraViewBox(svgConv, 0, 0, 640, 430);
+          stageConv.classList.remove('spotlight-active');
         }
-      } else {
-        setCameraViewBox(svgConv, 0, 0, 640, 430);
       }
 
       drawTrees();
