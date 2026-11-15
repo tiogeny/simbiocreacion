@@ -313,6 +313,70 @@
       overflow: hidden;
     }
 
+    /* TRANSICIÓN CINEMATOGRÁFICA DE CÁMARA (ZOOM VIEWBOX) */
+    .tree-svg {
+      transition: viewBox 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .node-dimmed-zoom {
+      opacity: 0.12 !important;
+      filter: grayscale(0.8) blur(0.5px);
+      transition: all 0.6s ease;
+    }
+    .node-focused-zoom {
+      filter: drop-shadow(0 0 14px rgba(230, 0, 102, 0.7)) brightness(1.2);
+      transition: all 0.6s ease;
+    }
+    .eureka-badge {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      background: var(--bg-card);
+      border: 2px solid var(--accent-pink);
+      box-shadow: 0 10px 35px rgba(230, 0, 102, 0.4);
+      padding: 10px 22px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .eureka-badge.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .eureka-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-pink);
+    }
+    .eureka-math {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eureka-cross {
+      color: #f85149;
+      text-decoration: line-through;
+      opacity: 0.75;
+      font-size: 13px;
+    }
+    .eureka-result {
+      color: var(--accent-gold);
+      font-size: 15px;
+      text-shadow: 0 0 12px rgba(241, 196, 15, 0.5);
+    }
+    
     .tree-svg {
       width: 100%;
       height: 100%;
@@ -927,6 +991,16 @@
       </div>
 
       <div class="canvas-container">
+        <!-- Badge Cinemático: Momento Eureka (Carpintero + Programadora) -->
+        <div class="eureka-badge" id="eurekaBadge">
+          <div class="eureka-tag">✨ Multiplicador Simbiótico:</div>
+          <div class="eureka-math">
+            <span>100 + 100</span>
+            <span class="eureka-cross">≠ 200 lineales</span>
+            <span>➔</span>
+            <span class="eureka-result">🚀 Miles (Mesa Automatizada)</span>
+          </div>
+        </div>
         <svg class="tree-svg" id="svgConv" viewBox="0 0 640 430"></svg>
       </div>
     </section>
@@ -1197,7 +1271,7 @@
 
     let participants = JSON.parse(localStorage.getItem('simbio_participants_v4')) || [...PRESETS.innovacion];
     let isGuidedMode = true;
-    let currentStep = 0; // 0, 1, 2, 3
+    let currentStep = 0; // Para competencia: 0..3. Para SimbioCreación: 0..5 (con zoom pedagógico)
     let currentTheme = localStorage.getItem('simbio_theme') || 'light';
 
     // COMPETITION RANDOMIZATION ENGINE (GUARANTEES FRESH WINNERS ACROSS RUNS)
@@ -1406,7 +1480,7 @@
       const { cx, cy, r, fill, initial, subname, role, id, dimmed, isWinner, isMega, modalData, onClick, innerIcon } = opts;
 
       const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      g.setAttribute('class', 'node-group');
+      g.setAttribute('class', 'node-group ' + (opts.extraClass || ''));
       g.setAttribute('id', "group-" + id);
       if (onClick) {
         g.style.cursor = 'pointer';
@@ -1493,13 +1567,25 @@
       svg.appendChild(g);
     }
 
-    // --- 4. RENDER SIMBIOCREACIÓN TREE ---
+    // --- 4. RENDER SIMBIOCREACIÓN TREE (CON ZOOM Y FOCO CINEMATOGRÁFICO) ---
     function renderConvergenceTree(svg, coords) {
       const { yLevels, radii, xL0, xL1, xL2, xL3 } = coords;
 
+      // Determinación de ramas según currentStep en SimbioCreación:
+      // step 0: Sin ramas
+      // step 1: Foco en Carlos y Sofía (sin ramas todavía)
+      // step 2: Rama exclusiva de la dupla 0 (Carlos y Sofía convergiendo)
+      // step 3: Todas las ramas L0 -> L1 (las 4 duplas)
+      // step 4: Ramas L1 -> L2
+      // step 5: Ramas L2 -> L3 (Creación Colectiva)
+
+      const showDupla0Only = (currentStep === 2);
+      const showAllDuplas = (currentStep >= 3);
+
       // Branches L0 -> L1
-      if (currentStep >= 1) {
-        for (let i = 0; i < 4; i++) {
+      if (showDupla0Only || showAllDuplas) {
+        const duplasCount = showDupla0Only ? 1 : 4;
+        for (let i = 0; i < duplasCount; i++) {
           const lIdx = i * 2;
           const rIdx = i * 2 + 1;
           const dL = createSmoothCurve(xL0[lIdx], yLevels[0] + radii[0], xL1[i], yLevels[1] - radii[1]);
@@ -1509,32 +1595,32 @@
           pathL.setAttribute('d', dL);
           pathL.setAttribute('class', 'tree-path');
           pathL.setAttribute('stroke', COLORS[lIdx].color);
-          pathL.setAttribute('stroke-width', '3.5px');
+          pathL.setAttribute('stroke-width', showDupla0Only ? '4.5px' : '3.5px');
           svg.appendChild(pathL);
 
           const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           pathR.setAttribute('d', dR);
           pathR.setAttribute('class', 'tree-path');
           pathR.setAttribute('stroke', COLORS[rIdx].color);
-          pathR.setAttribute('stroke-width', '3.5px');
+          pathR.setAttribute('stroke-width', showDupla0Only ? '4.5px' : '3.5px');
           svg.appendChild(pathR);
 
           // Flowing saberes dots
-          appendSvgFlowingParticles(svg, dL, COLORS[lIdx].color, 2, 2.8);
-          appendSvgFlowingParticles(svg, dR, COLORS[rIdx].color, 2, 2.8);
+          appendSvgFlowingParticles(svg, dL, COLORS[lIdx].color, 2, 2.5);
+          appendSvgFlowingParticles(svg, dR, COLORS[rIdx].color, 2, 2.5);
         }
       }
 
-      // Branches L1 -> L2 (Multicolor gradients con los 8 saberes vivos)
-      if (currentStep >= 2) {
+      // Branches L1 -> L2 (Equipos integrados)
+      if (currentStep >= 4) {
         for (let i = 0; i < 2; i++) {
           const lIdx = i * 2;
           const rIdx = i * 2 + 1;
 
-          const col1 = COLORS[lIdx * 2].color;      // Equipo 1: 0 (Rojo)     | Equipo 2: 4 (Verde azulado)
-          const col2 = COLORS[lIdx * 2 + 1].color;  // Equipo 1: 1 (Naranja)  | Equipo 2: 5 (Azul)
-          const col3 = COLORS[rIdx * 2].color;      // Equipo 1: 2 (Amarillo) | Equipo 2: 6 (Púrpura)
-          const col4 = COLORS[rIdx * 2 + 1].color;  // Equipo 1: 3 (Verde)    | Equipo 2: 7 (Rosa)
+          const col1 = COLORS[lIdx * 2].color;
+          const col2 = COLORS[lIdx * 2 + 1].color;
+          const col3 = COLORS[rIdx * 2].color;
+          const col4 = COLORS[rIdx * 2 + 1].color;
 
           const gradL = createMultiGradient(svg, "grad-conv-branch-1L-" + i, [col1, col2]);
           const gradR = createMultiGradient(svg, "grad-conv-branch-1R-" + i, [col3, col4]);
@@ -1556,18 +1642,15 @@
           pathR.setAttribute('stroke-width', '5px');
           svg.appendChild(pathR);
 
-          // Rama Izquierda lleva los dos primeros colores con tiempos desfasados para que no se tapen
           appendSvgFlowingParticles(svg, dL, col1, 2, 2.8);
           appendSvgFlowingParticles(svg, dL, col2, 2, 3.4);
-
-          // Rama Derecha lleva los otros dos colores con tiempos desfasados
           appendSvgFlowingParticles(svg, dR, col3, 2, 2.8);
           appendSvgFlowingParticles(svg, dR, col4, 2, 3.4);
         }
       }
 
-      // Branches L2 -> L3 (All 8 saberes flowing to core)
-      if (currentStep >= 3) {
+      // Branches L2 -> L3 (Creación Colectiva Final)
+      if (currentStep >= 5) {
         const gradL3_L = createMultiGradient(svg, "grad-conv-L3-L", [COLORS[0].color, COLORS[1].color, COLORS[2].color, COLORS[3].color]);
         const gradL3_R = createMultiGradient(svg, "grad-conv-L3-R", [COLORS[4].color, COLORS[5].color, COLORS[6].color, COLORS[7].color]);
 
@@ -1588,7 +1671,6 @@
         pathR.setAttribute('stroke-width', '6.5px');
         svg.appendChild(pathR);
 
-        // Streams of ALL 8 COLORS flowing alive into final core node
         [0, 1, 2, 3].forEach((cIdx, i) => {
           appendSvgFlowingParticles(svg, dL, COLORS[cIdx].color, 2, 2.5 + i * 0.3);
         });
@@ -1600,27 +1682,40 @@
       // --- NODES SIMBIOCREACIÓN ---
       // Level 0 (r = 17)
       for (let i = 0; i < 8; i++) {
+        const isZoomFocalPair = (i === 0 || i === 1);
+        const isZoomActive = (currentStep === 1 || currentStep === 2);
+        const nodeClass = isZoomActive ? (isZoomFocalPair ? 'node-focused-zoom' : 'node-dimmed-zoom') : '';
+
+        // En modo zoom, mostrar valor base 100 en el rol
+        let roleLabel = participants[i].role;
+        if (isZoomActive && isZoomFocalPair) {
+          roleLabel = participants[i].role + " (Valor: 100)";
+        }
+
         drawNode(svg, {
           cx: xL0[i],
           cy: yLevels[0],
-          r: radii[0],
+          r: isZoomActive && isZoomFocalPair ? radii[0] * 1.15 : radii[0],
           fill: COLORS[i].color,
           initial: participants[i].name.charAt(0).toUpperCase(),
           subname: participants[i].name,
-          role: participants[i].role,
+          role: roleLabel,
           id: "conv-l0-" + i,
+          extraClass: nodeClass,
           modalData: {
             title: participants[i].name + " · " + participants[i].role,
             role: "Saber Individual de Base",
             desc: participants[i].desc || "Capacidad y experiencia específica del participante.",
-            impact: "Impacto Individual: 1 saber aislado"
+            impact: "Impacto Individual: 100 de valor"
           }
         });
       }
 
-      // Level 1 (r = 22)
-      if (currentStep >= 1) {
-        for (let i = 0; i < 4; i++) {
+      // Level 1: Dupla 0 en step 2 (zoom focal) o todas las duplas en step >= 3
+      if (currentStep === 2 || currentStep >= 3) {
+        const duplasToRender = (currentStep === 2) ? 1 : 4;
+
+        for (let i = 0; i < duplasToRender; i++) {
           const lIdx = i * 2;
           const rIdx = i * 2 + 1;
           const fill = createStripedCircle(svg, "conv-l1-" + i, [lIdx, rIdx]);
@@ -1632,7 +1727,7 @@
             title: "Dupla " + (i + 1) + ": " + participants[lIdx].name + " + " + participants[rIdx].name,
             role: roleText,
             desc: "Co-creación directa combinando 2 saberes complementarios.",
-            impact: "Impacto Emergente: " + (i === 0 ? "10x multiplicador de valor" : "Sinergia dual comprobada")
+            impact: "Impacto Emergente: 10x multiplicador de valor"
           };
 
           if (isGuidedMode) {
@@ -1646,22 +1741,28 @@
             };
           }
 
+          // En step 2, resaltar la Dupla CS con brillo dorado y etiqueta de miles
+          if (currentStep === 2 && i === 0) {
+            roleText = "¡Valorizada en miles!";
+          }
+
           drawNode(svg, {
             cx: xL1[i],
             cy: yLevels[1],
-            r: radii[1],
+            r: (currentStep === 2 && i === 0) ? radii[1] * 1.25 : radii[1],
             fill: fill,
             initial: initials,
             subname: subnameText,
             role: roleText,
             id: "conv-l1-" + i,
+            extraClass: (currentStep === 2 && i === 0) ? 'node-focused-zoom' : '',
             modalData: modalData
           });
         }
       }
 
-      // Level 2 (r = 27)
-      if (currentStep >= 2) {
+      // Level 2 (r = 27) en step >= 4
+      if (currentStep >= 4) {
         for (let i = 0; i < 2; i++) {
           const teamColors = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
           const fill = createStripedCircle(svg, "conv-l2-" + i, teamColors);
@@ -1701,8 +1802,8 @@
         }
       }
 
-      // Level 3: CREACIÓN COLECTIVA FINAL (r = 34, Maximum Emergent Impact)
-      if (currentStep >= 3) {
+      // Level 3: CREACIÓN COLECTIVA FINAL (r = 34) en step >= 5
+      if (currentStep >= 5) {
         const fill = createStripedCircle(svg, "conv-final", [0, 1, 2, 3, 4, 5, 6, 7]);
         let subnameText = "Creación Colectiva";
         let roleText = "100% Co-autoría (8/8 saberes)";
@@ -1942,28 +2043,78 @@
     }
 
     // --- 6. UI UPDATE & PROGRESSION ---
-    function updateUI() {
-      const stepTexts = [
-        "8 Saberes Individuales en Sala",
-        "Nivel 1: Diálogo y Creación en Duplas",
-        "Nivel 2: Integración de Equipos Transversales",
-        "Nivel 3: Creación Colectiva Final"
-      ];
-      document.getElementById('stepBadge').textContent = "Nivel " + currentStep;
-      document.getElementById('stepDescription').textContent = stepTexts[currentStep];
+    // --- CONTROL DE CÁMARA SVG (ZOOM VIEWBOX SUAVE) ---
+    function setCameraViewBox(svg, x, y, width, height) {
+      if (!svg) return;
+      // Animate smoothly to new viewBox
+      svg.setAttribute('viewBox', x + " " + y + " " + width + " " + height);
+    }
 
-      // Dots
+    function updateUI() {
+      const activeView = document.body.getAttribute('data-view');
+      const isConv = (activeView === 'conv');
+
+      // Normalizar índice para navegación
+      const maxSteps = isConv ? 5 : 3;
+      const compStep = Math.min(currentStep, 3);
+
+      // Descripciones y badges contextuales
+      let badgeLabel = "Nivel " + compStep;
+      let stepDesc = "8 Saberes Individuales en Sala";
+      let btnLabel = "Avanzar a Nivel 1 ▶";
+
+      if (isConv) {
+        if (currentStep === 0) {
+          badgeLabel = "Nivel 0";
+          stepDesc = "8 Saberes Individuales en Sala";
+          btnLabel = "🔍 Enfocar Carpintero y Programadora ▶";
+        } else if (currentStep === 1) {
+          badgeLabel = "Nivel 0 (Foco)";
+          stepDesc = "Enfoque: Carlos (Carpintero) y Sofía (Programadora)";
+          btnLabel = "⚡ Converger Dupla (100 + 100) ▶";
+        } else if (currentStep === 2) {
+          badgeLabel = "Nivel 1 (Dupla)";
+          stepDesc = "Momento Eureka: 100 + 100 no dan 200, ¡dan miles!";
+          btnLabel = "🌐 Zoom Out a toda la sala ▶";
+        } else if (currentStep === 3) {
+          badgeLabel = "Nivel 1";
+          stepDesc = "Nivel 1: Las 4 Duplas Co-creadas en paralelo";
+          btnLabel = "Avanzar a Nivel 2 ▶";
+        } else if (currentStep === 4) {
+          badgeLabel = "Nivel 2";
+          stepDesc = "Nivel 2: Integración de Equipos Transversales";
+          btnLabel = "Avanzar a Creación Colectiva ▶";
+        } else if (currentStep === 5) {
+          badgeLabel = "Nivel 3";
+          stepDesc = "Nivel 3: Creación Colectiva Final (100% Co-autoría)";
+          btnLabel = "↺ Reiniciar Proceso";
+        }
+      } else {
+        const stepTexts = [
+          "8 Saberes Individuales en Sala",
+          "Nivel 1: Duelos en Mesas (50% Descarte)",
+          "Nivel 2: Semifinales (75% Descarte)",
+          "Nivel 3: Ganador Único (87.5% Descarte)"
+        ];
+        stepDesc = stepTexts[compStep];
+        btnLabel = (currentStep === 3) ? "↺ Reiniciar Proceso" : ("Avanzar a Nivel " + (compStep + 1) + " ▶");
+      }
+
+      document.getElementById('stepBadge').textContent = badgeLabel;
+      document.getElementById('stepDescription').textContent = stepDesc;
+
+      // Actualizar dots de la barra de navegación
+      const activeDotIdx = isConv ? (currentStep <= 1 ? 0 : (currentStep <= 3 ? 1 : (currentStep === 4 ? 2 : 3))) : compStep;
       document.querySelectorAll('.step-dot').forEach((dot, idx) => {
-        dot.classList.toggle('active', idx === currentStep);
+        dot.classList.toggle('active', idx === activeDotIdx);
       });
 
-      // Next button text
+      // Botón principal
       const btnNext = document.getElementById('btnNext');
-      if (currentStep === 3) {
-        btnNext.textContent = "↺ Reiniciar Proceso";
+      btnNext.textContent = btnLabel;
+      if ((isConv && currentStep === 5) || (!isConv && currentStep === 3)) {
         btnNext.classList.remove('btn-primary');
       } else {
-        btnNext.textContent = "Avanzar a Nivel " + (currentStep + 1) + " ▶";
         btnNext.classList.add('btn-primary');
       }
 
@@ -1979,10 +2130,10 @@
         { val: "1 / 8 saber activo (12.5%)", sub: "7 saberes eliminados (87.5% de pérdida colectiva)" }
       ];
 
-      compVal.textContent = compMetrics[currentStep].val;
-      compFormula.textContent = compMetrics[currentStep].sub;
+      compVal.textContent = compMetrics[compStep].val;
+      compFormula.textContent = compMetrics[compStep].sub;
 
-      if (currentStep === 3) {
+      if (compStep === 3) {
         winnerBanner.classList.add('show');
         document.getElementById('winnerText').textContent = "Ganador Único: " + participants[compDecisions.r3].name + " (" + participants[compDecisions.r3].role + ")";
       } else {
@@ -1993,35 +2144,76 @@
       const convVal = document.getElementById('convVal');
       const convFormula = document.getElementById('convFormula');
 
-      const convMetrics = [
-        { val: "8 saberes individuales", sub: "Todos los talentos de la sala activos (0% descarte)" },
-        { val: "4 duplas co-creadas", sub: "100% de co-autoría · 8/8 participantes integrados" },
-        { val: "2 equipos transversales", sub: "Integración sistémica · 8/8 participantes integrados" },
-        { val: "1 Creación Colectiva", sub: "100% Co-autoría · Todos los saberes presentes" }
-      ];
+      let convMetricsVal = "8 saberes individuales";
+      let convMetricsSub = "Todos los talentos de la sala activos (0% descarte)";
 
-      convVal.textContent = convMetrics[currentStep].val;
-      convFormula.textContent = convMetrics[currentStep].sub;
+      if (currentStep === 1) {
+        convMetricsVal = "Zoom Pedagógico: Carlos & Sofía";
+        convMetricsSub = "Carpintero (100) + Programadora (100)";
+      } else if (currentStep === 2) {
+        convMetricsVal = "Emergencia de Valor: ¡Miles!";
+        convMetricsSub = "Mesa Regulable Automatizada con Memoria";
+      } else if (currentStep === 3) {
+        convMetricsVal = "4 duplas co-creadas";
+        convMetricsSub = "100% de co-autoría · 8/8 participantes integrados";
+      } else if (currentStep === 4) {
+        convMetricsVal = "2 equipos transversales";
+        convMetricsSub = "Integración sistémica · 8/8 participantes integrados";
+      } else if (currentStep === 5) {
+        convMetricsVal = "1 Creación Colectiva";
+        convMetricsSub = "100% Co-autoría · Todos los saberes presentes";
+      }
+
+      convVal.textContent = convMetricsVal;
+      convFormula.textContent = convMetricsSub;
+
+      // Badge Eureka visible sólo en el paso 2 de SimbioCreación
+      const eurekaBadge = document.getElementById('eurekaBadge');
+      if (eurekaBadge) {
+        if (isConv && currentStep === 2) {
+          eurekaBadge.classList.add('show');
+        } else {
+          eurekaBadge.classList.remove('show');
+        }
+      }
+
+      // Manejo cinemático de cámara (viewBox)
+      const svgConv = document.getElementById('svgConv');
+      if (isConv) {
+        if (currentStep === 1 || currentStep === 2) {
+          // ZOOM IN CINEMATOGRÁFICO: Enfocar Carlos (51.2), Sofía (128) y Dupla CS (89.6)
+          // Cuadro centrado en x: 10..170, y: 15..175
+          setCameraViewBox(svgConv, 15, 12, 160, 165);
+        } else {
+          // ZOOM OUT COMPLETO: Plano general
+          setCameraViewBox(svgConv, 0, 0, 640, 430);
+        }
+      } else {
+        setCameraViewBox(svgConv, 0, 0, 640, 430);
+      }
 
       drawTrees();
     }
 
     function advanceStep() {
-      if (currentStep < 3) {
+      const activeView = document.body.getAttribute('data-view');
+      const isConv = (activeView === 'conv');
+      const maxSteps = isConv ? 5 : 3;
+
+      if (currentStep < maxSteps) {
         currentStep++;
       } else {
         currentStep = 0;
-        // Re-randomize when starting a fresh cycle so winners vary
         randomizeCompetition();
       }
-      playStepSound(currentStep);
+      playStepSound(Math.min(currentStep, 3));
       updateUI();
     }
 
     function prevStep() {
       if (currentStep > 0) {
         currentStep--;
-        playStepSound(currentStep);
+        playStepSound(Math.min(currentStep, 3));
         updateUI();
       }
     }
@@ -2554,8 +2746,15 @@
 
       document.querySelectorAll('.step-dot').forEach(dot => {
         dot.addEventListener('click', () => {
-          currentStep = parseInt(dot.dataset.step);
-          playStepSound(currentStep);
+          const rawStep = parseInt(dot.dataset.step);
+          const activeView = document.body.getAttribute('data-view');
+          if (activeView === 'conv') {
+            const convMap = [0, 3, 4, 5];
+            currentStep = convMap[rawStep] !== undefined ? convMap[rawStep] : rawStep;
+          } else {
+            currentStep = rawStep;
+          }
+          playStepSound(Math.min(currentStep, 3));
           updateUI();
         });
       });
