@@ -1516,7 +1516,8 @@
     }
 
     // Striped circle with animated rotating gradient (living pie sectors)
-    function createStripedCircle(svg, id, colorIndices) {
+    // Crea círculos con proporciones orgánicas reales (no necesariamente 50/50 simétrico)
+    function createStripedCircle(svg, id, colorIndices, customWeights = null) {
       let defs = svg.querySelector('defs');
       if (!defs) {
         defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -1533,18 +1534,27 @@
       grad.setAttribute('x2', '100%');
       grad.setAttribute('y2', '100%');
 
-      const stepPct = 100 / colorIndices.length;
+      // Calcular porcentajes según pesos orgánicos de las disciplinas
+      const totalWeight = customWeights ? customWeights.reduce((a, b) => a + b, 0) : colorIndices.length;
+      let currentOffset = 0;
+
       colorIndices.forEach((cIdx, i) => {
+        const weight = customWeights ? (customWeights[i] / totalWeight) * 100 : (100 / colorIndices.length);
+        const nextOffset = currentOffset + weight;
+
         const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-        stop1.setAttribute('offset', (i * stepPct) + "%");
+        stop1.setAttribute('offset', currentOffset.toFixed(1) + "%");
         stop1.setAttribute('stop-color', COLORS[cIdx].color);
         grad.appendChild(stop1);
 
         const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-        stop2.setAttribute('offset', ((i + 1) * stepPct) + "%");
+        stop2.setAttribute('offset', nextOffset.toFixed(1) + "%");
         stop2.setAttribute('stop-color', COLORS[cIdx].color);
         grad.appendChild(stop2);
+
+        currentOffset = nextOffset;
       });
+
       defs.appendChild(grad);
       return "url(#" + gradId + ")";
     }
@@ -1631,9 +1641,13 @@
         }
       }
 
-      // Rich Hover Tooltip with impact calculations
+      // Rich Hover Tooltip with impact calculations (silenciado en momento eureka para evitar textos duplicados)
       if (modalData) {
-        circle.addEventListener('mouseenter', (e) => showNodeTooltip(e, modalData));
+        circle.addEventListener('mouseenter', (e) => {
+          const activeView = document.body.getAttribute('data-view');
+          if (activeView === 'conv' && currentStep === 2) return; // Silenciado mientras la tarjeta Eureka está abierta
+          showNodeTooltip(e, modalData);
+        });
         circle.addEventListener('mouseleave', hideNodeTooltip);
       }
 
@@ -1788,7 +1802,14 @@
         for (let i = 0; i < duplasToRender; i++) {
           const lIdx = i * 2;
           const rIdx = i * 2 + 1;
-          const fill = createStripedCircle(svg, "conv-l1-" + i, [lIdx, rIdx]);
+          // Proporciones orgánicas de aporte entre saberes (ej. 60% estructura física, 40% software)
+          const weightsL1 = [
+            [60, 40], // Carpintería 60% + Programación 40%
+            [55, 45], // UX 55% + Biología 45%
+            [65, 35], // Mecatrónica 65% + Medicina 35%
+            [50, 50]  // Finanzas 50% + Comunidad 50%
+          ];
+          const fill = createStripedCircle(svg, "conv-l1-" + i, [lIdx, rIdx], weightsL1[i] || [50, 50]);
           const initials = participants[lIdx].name.charAt(0) + participants[rIdx].name.charAt(0);
 
           let subnameText = "Dupla " + (i + 1);
@@ -1835,7 +1856,11 @@
       if (currentStep >= 4) {
         for (let i = 0; i < 2; i++) {
           const teamColors = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
-          const fill = createStripedCircle(svg, "conv-l2-" + i, teamColors);
+          const weightsL2 = [
+            [30, 25, 25, 20], // Equipo 1
+            [30, 25, 25, 20]  // Equipo 2
+          ];
+          const fill = createStripedCircle(svg, "conv-l2-" + i, teamColors, weightsL2[i]);
 
           let subnameText = "Equipo Integrado " + (i + 1);
           let roleText = "4 saberes transversales";
