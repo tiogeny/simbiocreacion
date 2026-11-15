@@ -348,11 +348,11 @@
 
     /* TARJETA CINEMÁTICA CENTRAL: MOMENTO EUREKA */
     .eureka-card-overlay {
-      position: absolute;
-      top: 50%;
-      right: 36px;
-      left: auto;
-      transform: translateY(-50%) translateX(30px) scale(0.94);
+      position: absolute !important;
+      top: 50% !important;
+      right: 48px !important;
+      left: auto !important;
+      transform: translateY(-50%) translateX(25px) scale(0.94) !important;
       background: var(--bg-card);
       border: 2px solid var(--accent-pink);
       border-radius: 20px;
@@ -360,18 +360,18 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 0 35px rgba(230, 0, 102, 0.25);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      z-index: 50;
+      z-index: 60;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: opacity 0.3s ease, transform 0.3s ease;
       text-align: left;
-      max-width: 500px;
-      width: 44%;
+      max-width: 480px;
+      width: 42%;
     }
     .eureka-card-overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(-50%) translateX(0) scale(1);
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transform: translateY(-50%) translateX(0) scale(1) !important;
     }
 
     .eureka-pill-header {
@@ -2292,6 +2292,19 @@
       const activeView = document.body.getAttribute('data-view');
       const isConv = (activeView === 'conv');
       const maxSteps = isConv ? 5 : 3;
+
+      // Si estamos en el paso 2 de SimbioCreación (Momento Eureka con la tarjeta abierta):
+      // Primero desvanecemos la tarjeta y al mismo instante iniciamos el zoom out limpio
+      if (isConv && currentStep === 2) {
+        const eurekaCard = document.getElementById('eurekaCard');
+        if (eurekaCard) {
+          eurekaCard.classList.remove('show');
+        }
+        currentStep = 3;
+        playStepSound(1);
+        updateUI();
+        return;
+      }
 
       if (currentStep < maxSteps) {
         currentStep++;
