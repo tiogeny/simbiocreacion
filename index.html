@@ -287,8 +287,8 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       z-index: 60;
-      width: 315px;
-      max-width: 30%;
+      width: 345px;
+      max-width: 32%;
       text-align: right;
       transition: top 0.65s cubic-bezier(0.25, 1, 0.5, 1), 
                   width 0.45s ease, 
@@ -309,7 +309,7 @@
     /* Carril exclusivo a la derecha en vistas individuales para evitar cualquier sobreposición */
     body[data-view="conv"] .pane-conv .canvas-container,
     body[data-view="comp"] .pane-comp .canvas-container {
-      width: calc(100% - 350px);
+      width: calc(100% - 375px);
     }
 
     /* En vista Comparativa (split), mantener tarjetas compactas arriba a la derecha */
@@ -330,7 +330,7 @@
 
     .traveling-metric-card.expanded {
       width: 560px;
-      max-width: 52%;
+      max-width: 56%;
       border-color: var(--accent-pink);
       box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 32px rgba(230, 0, 102, 0.22);
       text-align: left;
@@ -345,7 +345,7 @@
       margin-bottom: 6px;
     }
     .tm-title {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 900;
       line-height: 1.3;
       color: var(--text-main);
@@ -377,17 +377,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 6px;
+      flex-wrap: nowrap;
+      gap: 5px;
       margin-top: 10px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
     }
     .tm-box {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      padding: 6px 10px;
+      padding: 5px 9px;
       color: var(--text-main);
       text-align: center;
       white-space: nowrap;
@@ -404,8 +404,8 @@
       background: rgba(241, 196, 15, 0.16);
       color: var(--accent-gold);
       font-weight: 900;
-      font-size: 14px;
-      padding: 6px 12px;
+      font-size: 13.5px;
+      padding: 5px 11px;
     }
 
     /* CANVAS CONTAINERS */
@@ -2282,10 +2282,10 @@
       const winnerBanner = document.getElementById('winnerBanner');
 
       const compMetrics = [
-        { val: "8 / 8 saberes activos (100%)", sub: "Cruce entre mesas: bloqueado (0 sinergias)" },
+        { val: "8 / 8 saberes activos (100%)", sub: "Cruce entre mesas bloqueado (0 sinergias)" },
         { val: "4 saberes eliminados (50%)", sub: "Solo 4 / 8 saberes activos · 0 sinergias" },
         { val: "6 saberes eliminados (75%)", sub: "Solo 2 / 8 saberes activos · 0 sinergias" },
-        { val: "7 saberes eliminados (87.5%)", sub: "Solo 1 / 8 saber activo (12.5%) · Pérdida colectiva" }
+        { val: "7 saberes eliminados (87.5%)", sub: "Solo 1 / 8 saber activo · Pérdida colectiva" }
       ];
 
       if (cardComp) {
@@ -2313,13 +2313,13 @@
           cardConv.classList.remove('expanded');
           convPill.textContent = "Convergencia de saberes";
           convVal.textContent = "8 saberes individuales";
-          convFormula.textContent = "Todos los talentos de la sala activos (0% de descarte)";
+          convFormula.textContent = "Todos los talentos activos (0% descarte)";
           convExtra.innerHTML = "";
         } else if (currentStep === 1) {
           cardConv.classList.remove('expanded');
           convPill.textContent = "Enfoque pedagógico";
-          convVal.textContent = "Carlos (carpintero) y Sofía (programadora)";
-          convFormula.textContent = "Ambos parten de un valor base individual de 100";
+          convVal.innerHTML = "Carlos (carpintero)<br>y Sofía (programadora)";
+          convFormula.textContent = "Valor base individual de 100 cada uno";
           convExtra.innerHTML = "";
         } else if (currentStep === 2) {
           // Momento Eureka expandido: Dupla CS con valor emergente
@@ -2340,20 +2340,20 @@
         } else if (currentStep === 3) {
           cardConv.classList.remove('expanded');
           convPill.textContent = "Nivel 1: Duplas co-creadas";
-          convVal.textContent = "4 duplas co-creadas en paralelo";
-          convFormula.textContent = "100% de co-autoría · 8/8 participantes integrados en duplas";
+          convVal.textContent = "4 duplas co-creadas";
+          convFormula.textContent = "100% co-autoría · 8/8 participantes";
           convExtra.innerHTML = "";
         } else if (currentStep === 4) {
           cardConv.classList.remove('expanded');
           convPill.textContent = "Nivel 2: Integración transversal";
           convVal.textContent = "2 equipos integrados";
-          convFormula.textContent = "Cruce de 4 saberes por equipo · Integración sistémica";
+          convFormula.textContent = "Cruce de 4 saberes · Integración sistémica";
           convExtra.innerHTML = "";
         } else if (currentStep === 5) {
           cardConv.classList.remove('expanded');
           convPill.textContent = "Nivel 3: Creación colectiva";
           convVal.textContent = "1 creación colectiva integral";
-          convFormula.textContent = "100% de co-autoría · Todos los saberes presentes en la solución final";
+          convFormula.textContent = "100% co-autoría · Los 8 saberes integrados";
           convExtra.innerHTML = "";
         }
       }
