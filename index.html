@@ -1866,9 +1866,12 @@
       if (currentStep >= 4) {
         for (let i = 0; i < 2; i++) {
           const teamColors = i === 0 ? [0, 1, 2, 3] : [4, 5, 6, 7];
+          // Proporciones heredadas de Nivel 1:
+          // Equipo 1 (55% CS + 45% DE): Carlos 33%, Sofía 22%, Diego 25%, Elena 20%
+          // Equipo 2 (60% ML + 40% JV): Mateo 39%, Lucía 21%, Javier 20%, Valeria 20%
           const weightsL2 = [
-            [30, 25, 25, 20], // Equipo 1
-            [30, 25, 25, 20]  // Equipo 2
+            [33, 22, 25, 20],
+            [39, 21, 20, 20]
           ];
           const fill = createStripedCircle(svg, "conv-l2-" + i, teamColors, weightsL2[i]);
 
@@ -1909,7 +1912,8 @@
 
       // Level 3: CREACIÓN COLECTIVA FINAL (r = 34) en step >= 5
       if (currentStep >= 5) {
-        const fill = createStripedCircle(svg, "conv-final", [0, 1, 2, 3, 4, 5, 6, 7]);
+        // Herencia proporcional combinada de ambos equipos (52% Equipo 1 + 48% Equipo 2)
+        const fill = createStripedCircle(svg, "conv-final", [0, 1, 2, 3, 4, 5, 6, 7], [17, 11, 13, 11, 19, 10, 10, 9]);
         let subnameText = "Creación colectiva";
         let roleText = "100% de co-autoría (8/8 saberes)";
         let modalData = {
@@ -2156,10 +2160,11 @@
 
       const containerRect = container.getBoundingClientRect();
       const paneRect = pane.getBoundingClientRect();
-      const offsetTopInPane = containerRect.top - paneRect.top;
+      const padTop = parseFloat(getComputedStyle(container).paddingTop) || 0;
+      const offsetTopInPane = (containerRect.top + padTop) - paneRect.top;
 
       const W = containerRect.width;
-      const H = containerRect.height;
+      const H = containerRect.height - padTop;
       if (!W || !H) return 140;
 
       // Escala SVG con preserveAspectRatio='xMidYMid meet' sobre viewBox 0 0 640 430
@@ -2170,7 +2175,9 @@
       const cyLevels = hasSpotlight ? [38, 38, 134, 134, 235, 335] : [38, 134, 235, 335];
       const cy = cyLevels[step] !== undefined ? cyLevels[step] : 134;
 
-      let nodeY = offsetY + (cy * S);
+      // Ajuste sutil hacia el centro visual del bloque (círculo + etiqueta inferior), salvo en paso 2 donde no hay texto bajo CS
+      const labelVisualOffset = (hasSpotlight && step === 2) ? 0 : 10;
+      let nodeY = offsetY + ((cy + labelVisualOffset) * S);
 
       // En pasos 1 y 2 de SimbioCreación, stageConv aplica transform spotlight-active
       if (hasSpotlight && (step === 1 || step === 2)) {
