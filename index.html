@@ -117,9 +117,7 @@
       object-fit: contain;
     }
     [data-theme="dark"] .brand-logo-img {
-      background: rgba(255, 255, 255, 0.92);
-      padding: 3px 8px;
-      border-radius: 8px;
+      filter: brightness(1.45) contrast(1.08) drop-shadow(0 0 2px rgba(255, 255, 255, 0.35));
     }
 
     .brand-divider {
@@ -1377,7 +1375,7 @@
       { id: "c1", color: "#f0883e" }, // Naranja
       { id: "c2", color: "#e3b341" }, // Amarillo
       { id: "c3", color: "#3fb950" }, // Verde
-      { id: "c4", color: "#2ea043" }, // Verde azulado
+      { id: "c4", color: "#14b8a6" }, // Turquesa / Teal (distinto del verde de Elena)
       { id: "c5", color: "#388bfd" }, // Azul
       { id: "c6", color: "#a371f7" }, // Púrpura
       { id: "c7", color: "#f778ba" }  // Rosa
@@ -1586,10 +1584,11 @@
 
       grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
       grad.setAttribute('id', gradId);
-      grad.setAttribute('x1', '0%');
-      grad.setAttribute('y1', '0%');
-      grad.setAttribute('x2', '100%');
-      grad.setAttribute('y2', '100%');
+      // En un cuadrado con círculo inscrito, la diagonal toca el círculo entre 14.65% y 85.35% (0.5 ± 1/(2√2))
+      grad.setAttribute('x1', '14.65%');
+      grad.setAttribute('y1', '14.65%');
+      grad.setAttribute('x2', '85.35%');
+      grad.setAttribute('y2', '85.35%');
 
       // Calcular porcentajes según pesos orgánicos de las disciplinas
       const totalWeight = customWeights ? customWeights.reduce((a, b) => a + b, 0) : colorIndices.length;
