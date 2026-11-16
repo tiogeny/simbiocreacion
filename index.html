@@ -110,41 +110,62 @@
       cursor: pointer;
     }
 
-    .brand-logo-img {
+    .brand-logo-svg-full {
       height: 46px;
       width: auto;
       display: block;
-      object-fit: contain;
     }
-    .brand-logo-dark {
-      height: 44px;
-      width: auto;
-      display: none;
+    .brand-logo-svg-full .sc-text-dark {
+      fill: #4b5563;
+      transition: fill 0.2s ease;
     }
-    [data-theme="dark"] .brand-logo-img {
-      display: none;
+    .brand-logo-svg-full .sc-o-dark {
+      stroke: #4b5563;
+      transition: stroke 0.2s ease;
     }
-    [data-theme="dark"] .brand-logo-dark {
-      display: block;
+    .brand-logo-svg-full .sc-iso-ring {
+      fill: #d1d5db;
+    }
+    .brand-logo-svg-full .sc-iso-inner {
+      fill: #eef1f4;
+    }
+    .brand-logo-svg-full .sc-iso-dot {
+      fill: #cbd5e1;
+    }
+
+    [data-theme="dark"] .brand-logo-svg-full .sc-text-dark {
+      fill: #e2e8f0;
+    }
+    [data-theme="dark"] .brand-logo-svg-full .sc-o-dark {
+      stroke: #e2e8f0;
+    }
+    [data-theme="dark"] .brand-logo-svg-full .sc-iso-ring {
+      fill: rgba(255, 255, 255, 0.13);
+    }
+    [data-theme="dark"] .brand-logo-svg-full .sc-iso-inner {
+      fill: #141c2b;
+    }
+    [data-theme="dark"] .brand-logo-svg-full .sc-iso-dot {
+      fill: rgba(255, 255, 255, 0.18);
     }
 
     .brand-divider {
       width: 1px;
-      height: 24px;
+      height: 22px;
       background: var(--border-subtle);
       display: inline-block;
     }
 
     .brand-fablab-img {
-      height: 28px;
+      height: 22px;
       width: auto;
       display: block;
       object-fit: contain;
-      opacity: 0.9;
+      opacity: 0.88;
       transition: opacity 0.2s ease;
     }
     [data-theme="dark"] .brand-fablab-img {
-      height: 18px;
+      height: 15px;
     }
     .brand-wrap:hover .brand-fablab-img {
       opacity: 1;
@@ -1030,20 +1051,35 @@
        ========================================================================= -->
   <header>
     <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación · Fab Lab Perú">
-      <img src="assets/logos/logo_simbiocreacion.png" alt="SimbioCreación" class="brand-logo-img" />
-      <svg class="brand-logo-dark" viewBox="0 0 250 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SimbioCreación">
-        <!-- Isotipo 5 nodos translúcidos -->
-        <circle cx="96" cy="28" r="19" fill="rgba(255,255,255,0.10)" />
-        <circle cx="96" cy="11" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
-        <circle cx="112" cy="22" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
-        <circle cx="106" cy="41" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
-        <circle cx="86" cy="41" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
-        <circle cx="80" cy="22" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
-        <!-- Texto SIMBI + O bicolor + REACION -->
-        <text x="8" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.5" fill="#e2e8f0">SIMBI</text>
-        <circle cx="92" cy="28" r="8.2" stroke="#e60066" stroke-width="4.2" fill="none" />
-        <path d="M 94.5 20.2 A 8.2 8.2 0 0 1 94.5 35.8" stroke="#e2e8f0" stroke-width="4.2" fill="none" stroke-linecap="round" />
-        <text x="106" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.5" fill="#e60066">REACION</text>
+      <svg class="brand-logo-svg-full" viewBox="0 0 226 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SimbioCreación">
+        <!-- Isotipo oficial de 5 lóbulos simbióticos -->
+        <circle cx="92" cy="32" r="16.5" class="sc-iso-ring" />
+        <g>
+          <circle cx="87.84" cy="15.31" r="10.4" class="sc-iso-ring" />
+          <circle cx="87.84" cy="15.31" r="7.5" class="sc-iso-inner" />
+          <circle cx="92.09" cy="16.45" r="1.5" class="sc-iso-dot" /><circle cx="88.98" cy="19.56" r="1.5" class="sc-iso-dot" /><circle cx="84.73" cy="18.42" r="1.5" class="sc-iso-dot" /><circle cx="83.59" cy="14.17" r="1.5" class="sc-iso-dot" /><circle cx="86.7" cy="11.06" r="1.5" class="sc-iso-dot" /><circle cx="90.95" cy="12.2" r="1.5" class="sc-iso-dot" />
+
+          <circle cx="106.59" cy="22.89" r="10.4" class="sc-iso-ring" />
+          <circle cx="106.59" cy="22.89" r="7.5" class="sc-iso-inner" />
+          <circle cx="110.84" cy="24.03" r="1.5" class="sc-iso-dot" /><circle cx="107.73" cy="27.14" r="1.5" class="sc-iso-dot" /><circle cx="103.48" cy="26" r="1.5" class="sc-iso-dot" /><circle cx="102.34" cy="21.75" r="1.5" class="sc-iso-dot" /><circle cx="105.45" cy="18.64" r="1.5" class="sc-iso-dot" /><circle cx="109.7" cy="19.78" r="1.5" class="sc-iso-dot" />
+
+          <circle cx="105.18" cy="43.06" r="10.4" class="sc-iso-ring" />
+          <circle cx="105.18" cy="43.06" r="7.5" class="sc-iso-inner" />
+          <circle cx="109.43" cy="44.2" r="1.5" class="sc-iso-dot" /><circle cx="106.32" cy="47.31" r="1.5" class="sc-iso-dot" /><circle cx="102.07" cy="46.17" r="1.5" class="sc-iso-dot" /><circle cx="100.93" cy="41.92" r="1.5" class="sc-iso-dot" /><circle cx="104.04" cy="38.81" r="1.5" class="sc-iso-dot" /><circle cx="108.29" cy="39.95" r="1.5" class="sc-iso-dot" />
+
+          <circle cx="85.56" cy="47.95" r="10.4" class="sc-iso-ring" />
+          <circle cx="85.56" cy="47.95" r="7.5" class="sc-iso-inner" />
+          <circle cx="89.81" cy="49.09" r="1.5" class="sc-iso-dot" /><circle cx="86.7" cy="52.2" r="1.5" class="sc-iso-dot" /><circle cx="82.45" cy="51.06" r="1.5" class="sc-iso-dot" /><circle cx="81.31" cy="46.81" r="1.5" class="sc-iso-dot" /><circle cx="84.42" cy="43.7" r="1.5" class="sc-iso-dot" /><circle cx="88.67" cy="44.84" r="1.5" class="sc-iso-dot" />
+
+          <circle cx="74.84" cy="30.8" r="10.4" class="sc-iso-ring" />
+          <circle cx="74.84" cy="30.8" r="7.5" class="sc-iso-inner" />
+          <circle cx="79.09" cy="31.94" r="1.5" class="sc-iso-dot" /><circle cx="75.98" cy="35.05" r="1.5" class="sc-iso-dot" /><circle cx="71.73" cy="33.91" r="1.5" class="sc-iso-dot" /><circle cx="70.59" cy="29.66" r="1.5" class="sc-iso-dot" /><circle cx="73.7" cy="26.55" r="1.5" class="sc-iso-dot" /><circle cx="77.95" cy="27.69" r="1.5" class="sc-iso-dot" />
+        </g>
+        <!-- Texto SIMBI + O bicolor centrada + REACION -->
+        <text x="80" y="39.5" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.4" class="sc-text-dark">SIMBI</text>
+        <circle cx="92" cy="32" r="8.2" stroke="#e60066" stroke-width="4.4" fill="none" />
+        <path d="M 94.6 24.2 A 8.2 8.2 0 0 1 94.6 39.8" class="sc-o-dark" stroke-width="4.4" fill="none" stroke-linecap="round" />
+        <text x="104" y="39.5" text-anchor="start" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.4" fill="#e60066">REACION</text>
       </svg>
       <span class="brand-divider"></span>
       <img src="assets/logos/logo_fablab_negro.png" alt="Fab Lab Perú" class="brand-fablab-img" id="fablabLogo" />
