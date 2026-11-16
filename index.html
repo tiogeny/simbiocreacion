@@ -18,6 +18,7 @@
       --bg-primary: #0a0e14;
       --bg-secondary: #101622;
       --bg-card: rgba(16, 22, 34, 0.88);
+      --bg-card-solid: #101622;
       --bg-card-hover: rgba(26, 35, 54, 0.95);
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-accent: rgba(230, 0, 102, 0.4);
@@ -41,6 +42,7 @@
       --bg-primary: #f6f8fa;
       --bg-secondary: #ffffff;
       --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-card-solid: #ffffff;
       --bg-card-hover: rgba(243, 244, 246, 0.98);
       --border-subtle: rgba(0, 0, 0, 0.08);
       --border-accent: rgba(230, 0, 102, 0.3);
@@ -108,30 +110,35 @@
       cursor: pointer;
     }
 
-    .brand-logo-svg {
-      width: 32px;
-      height: 32px;
+    .brand-logo-img {
+      height: 36px;
+      width: auto;
       display: block;
+      object-fit: contain;
+    }
+    [data-theme="dark"] .brand-logo-img {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 3px 8px;
+      border-radius: 8px;
     }
 
-    .brand-logotype {
-      display: flex;
-      align-items: center;
-      font-size: 19px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      line-height: 1;
-      font-family: var(--font-family);
+    .brand-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--border-subtle);
+      display: inline-block;
     }
-    .brand-logotype .part-simbio {
-      color: #9aa4b2;
-      transition: color 0.2s;
+
+    .brand-fablab-img {
+      height: 22px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+      opacity: 0.88;
+      transition: opacity 0.2s ease;
     }
-    [data-theme="light"] .brand-logotype .part-simbio {
-      color: #374151;
-    }
-    .brand-logotype .part-creacion {
-      color: var(--accent-pink);
+    .brand-wrap:hover .brand-fablab-img {
+      opacity: 1;
     }
 
     /* VIEW SWITCHER */
@@ -304,6 +311,40 @@
     }
     .traveling-metric-card.traveling-comp.has-loss .tm-title {
       color: #ff7b72;
+    }
+
+    /* Triángulo puntero izquierdo señalando hacia la fila activa */
+    .traveling-metric-card::before,
+    .traveling-metric-card::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-style: solid;
+      pointer-events: none;
+    }
+    .traveling-metric-card::before {
+      left: -10px;
+      border-width: 9px 10px 9px 0;
+      border-color: transparent var(--border-accent) transparent transparent;
+      transition: border-color 0.4s ease;
+    }
+    .traveling-metric-card::after {
+      left: -8px;
+      border-width: 8px 9px 8px 0;
+      border-color: transparent var(--bg-card-solid) transparent transparent;
+    }
+    .traveling-metric-card.expanded::before {
+      border-color: transparent var(--accent-pink) transparent transparent;
+    }
+    .traveling-metric-card.traveling-comp::before {
+      border-color: transparent rgba(255, 123, 114, 0.45) transparent transparent;
+    }
+    body[data-view="split"] .traveling-metric-card::before,
+    body[data-view="split"] .traveling-metric-card::after {
+      display: none;
     }
 
     /* Carril exclusivo a la derecha en vistas individuales para evitar cualquier sobreposición */
@@ -976,21 +1017,10 @@
        HEADER: SIMBIOCREACIÓN OFFICIAL BRAND & CONTROLS
        ========================================================================= -->
   <header>
-    <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación">
-      <!-- Vector Logo: 5 interconnected nodes & SimbioCreación logotype -->
-      <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="44" stroke="rgba(255,255,255,0.12)" stroke-width="4" stroke-dasharray="4 4"/>
-        <circle cx="50" cy="20" r="10" fill="#9aa4b2" />
-        <circle cx="78" cy="40" r="10" fill="#9aa4b2" />
-        <circle cx="68" cy="74" r="10" fill="#e60066" />
-        <circle cx="32" cy="74" r="10" fill="#e60066" />
-        <circle cx="22" cy="40" r="10" fill="#9aa4b2" />
-        <circle cx="50" cy="50" r="17" stroke="#e60066" stroke-width="6" fill="none" stroke-dasharray="80 30" stroke-linecap="round" />
-      </svg>
-      
-      <div class="brand-logotype">
-        <span class="part-simbio">SIMBIO</span><span class="part-creacion">CREACIÓN</span>
-      </div>
+    <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación · Fab Lab Perú">
+      <img src="assets/logos/logo_simbiocreacion.png" alt="SimbioCreación" class="brand-logo-img" />
+      <span class="brand-divider"></span>
+      <img src="assets/logos/logo_fablab_negro.png" alt="Fab Lab Perú" class="brand-fablab-img" id="fablabLogo" />
     </div>
 
     <!-- VIEW TABS -->
@@ -2809,6 +2839,10 @@
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('simbio_theme', theme);
       document.getElementById('btnTheme').textContent = (theme === 'dark' ? '☀️' : '🌙');
+      const fablabLogo = document.getElementById('fablabLogo');
+      if (fablabLogo) {
+        fablabLogo.src = (theme === 'dark') ? 'assets/logos/logo_fablab_blanco.png' : 'assets/logos/logo_fablab_negro.png';
+      }
       drawTrees();
       if (document.body.getAttribute('data-view') === 'combinatoria') {
         updateCombinatorialSim();
