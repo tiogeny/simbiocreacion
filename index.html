@@ -3130,6 +3130,10 @@
 
       function buildScale250Graph() {
         const palette = COLORS.map(c => c.color);
+        const sortByPalette = (setOrArr) => {
+          const unique = new Set(setOrArr);
+          return palette.filter(c => unique.has(c));
+        };
         const nodes = [];
         const edges = [];
 
@@ -3140,8 +3144,7 @@
           y: 0,
           r: 36,
           color: '#e60066',
-          colors: palette,
-          label: '250'
+          colors: palette
         });
 
         for (let s = 0; s < 5; s++) {
@@ -3155,8 +3158,7 @@
             y: Math.sin(baseAng) * dist3,
             r: 18,
             color: palette[s % palette.length],
-            colors: [],
-            label: '50'
+            colors: []
           };
           nodes.push(mNode);
 
@@ -3173,8 +3175,7 @@
               y: Math.sin(gAng) * dist2,
               r: 8.5,
               color: palette[(s + g) % palette.length],
-              colors: [],
-              label: '10'
+              colors: []
             };
             nodes.push(gNode);
 
@@ -3200,7 +3201,7 @@
                 color: c1,
                 colors: [c1, c2]
               });
-              edges.push({ from: pIdx, to: gIdx, level: 2, color: c1 });
+              edges.push({ from: pIdx, to: gIdx, level: 2, color: c1, travelColors: [c1, c2] });
 
               const indSpan = pairSpan / 5 * 0.85;
               for (let i = 0; i < 2; i++) {
@@ -3217,19 +3218,21 @@
                   r: 3.9,
                   color: iColor
                 });
-                edges.push({ from: iIdx, to: pIdx, level: 1, color: iColor });
+                edges.push({ from: iIdx, to: pIdx, level: 1, color: iColor, travelColors: [iColor] });
               }
             }
-            gNode.colors = Array.from(new Set(groupColors)).slice(0, 5);
-            edges.push({ from: gIdx, to: mIdx, level: 3, color: gNode.colors[0] });
+            // Hereda TODOS los colores reales del nivel anterior (sin recortar)
+            gNode.colors = sortByPalette(groupColors);
+            edges.push({ from: gIdx, to: mIdx, level: 3, color: gNode.colors[0], travelColors: gNode.colors });
           }
-          mNode.colors = Array.from(macroColorsSet).slice(0, 6);
+          // Hereda TODOS los colores reales del nivel anterior (sin recortar)
+          mNode.colors = sortByPalette(macroColorsSet);
           edges.push({
             from: mIdx,
             to: centerIdx,
             level: 4,
             color: mNode.colors[0],
-            travelColors: mNode.colors.slice(0, 4)
+            travelColors: mNode.colors
           });
         }
         return { nodes, edges };
@@ -3374,36 +3377,40 @@
           const curX = x1 + (x2 - x1) * p;
           const curY = y1 + (y2 - y1) * p;
 
+          // Linea degradada / combinada usando todos los colores heredados del nodo origen
+          let strokeStyle = e.color;
+          if (e.travelColors && e.travelColors.length > 1 && (Math.abs(curX - x1) > 0.5 || Math.abs(curY - y1) > 0.5)) {
+            const grad = ctx.createLinearGradient(x1, y1, curX, curY);
+            const len = e.travelColors.length;
+            e.travelColors.forEach((col, cIdx) => {
+              grad.addColorStop(cIdx / (len - 1), col);
+            });
+            strokeStyle = grad;
+          }
+
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(curX, curY);
-          ctx.strokeStyle = e.color;
-          ctx.globalAlpha = e.level === 4 ? 0.55 : (e.level === 3 ? 0.42 : 0.32);
-          ctx.lineWidth = e.level === 4 ? 4 : (e.level === 3 ? 2 : 1.15);
+          ctx.strokeStyle = strokeStyle;
+          ctx.globalAlpha = e.level === 4 ? 0.65 : (e.level === 3 ? 0.5 : (e.level === 2 ? 0.38 : 0.3));
+          ctx.lineWidth = e.level === 4 ? 4.2 : (e.level === 3 ? 2.2 : 1.25);
           ctx.stroke();
 
-          if (p > 0.92) {
-            if (e.level === 4 && e.travelColors) {
-              e.travelColors.forEach((tc, tIdx) => {
-                const t = ((now * 0.0005 + idx * 0.19 + tIdx * 0.25) % 1);
-                const px = x1 + (x2 - x1) * t;
-                const py = y1 + (y2 - y1) * t;
-                ctx.beginPath();
-                ctx.arc(px, py, 3.4, 0, Math.PI * 2);
-                ctx.fillStyle = tc;
-                ctx.globalAlpha = 0.95;
-                ctx.fill();
-              });
-            } else if (e.level >= 2 || idx % 2 === 0) {
-              const t = ((now * 0.0006 + idx * 0.13) % 1);
+          // Todos los genes (colores) viajando por todas las ramas activas
+          if (p > 0.92 && e.travelColors && e.travelColors.length > 0) {
+            const tcLen = e.travelColors.length;
+            const speed = e.level === 4 ? 0.00045 : (e.level === 3 ? 0.0005 : 0.00055);
+            const pr = e.level === 4 ? 3.2 : (e.level === 3 ? 2.3 : (e.level === 2 ? 1.8 : 1.5));
+            e.travelColors.forEach((tc, tIdx) => {
+              const t = ((now * speed + idx * 0.13 + tIdx / tcLen) % 1);
               const px = x1 + (x2 - x1) * t;
               const py = y1 + (y2 - y1) * t;
               ctx.beginPath();
-              ctx.arc(px, py, e.level === 3 ? 2.6 : 1.9, 0, Math.PI * 2);
-              ctx.fillStyle = e.color;
-              ctx.globalAlpha = 0.9;
+              ctx.arc(px, py, pr, 0, Math.PI * 2);
+              ctx.fillStyle = tc;
+              ctx.globalAlpha = 0.95;
               ctx.fill();
-            }
+            });
           }
         });
 
@@ -3447,17 +3454,6 @@
           ctx.lineWidth = n.level === 4 ? 3 : (n.level >= 2 ? 1.6 : 0.7);
           ctx.strokeStyle = isLight ? '#ffffff' : '#0a0e14';
           ctx.stroke();
-
-          if (n.label && drawR > 9) {
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = 'rgba(0,0,0,0.65)';
-            ctx.shadowBlur = 4;
-            ctx.font = '900 ' + Math.round(n.level === 4 ? drawR * 0.62 : drawR * 0.78) + 'px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(n.label, x, y + 1);
-            ctx.shadowBlur = 0;
-          }
         });
 
         ctx.restore();
