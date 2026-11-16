@@ -151,31 +151,6 @@
       fill: rgba(255, 255, 255, 0.18);
     }
 
-    .brand-divider {
-      width: 1px;
-      height: 22px;
-      background: var(--border-subtle);
-      display: inline-block;
-    }
-
-    .brand-fablab-svg {
-      height: 24px;
-      width: auto;
-      display: block;
-      opacity: 0.9;
-      transition: opacity 0.2s ease;
-    }
-    .brand-wrap:hover .brand-fablab-svg {
-      opacity: 1;
-    }
-    .brand-fablab-svg .fl-text {
-      fill: #1f2328;
-      transition: fill 0.2s ease;
-    }
-    [data-theme="dark"] .brand-fablab-svg .fl-text {
-      fill: #f0f6fc;
-    }
-
     /* VIEW SWITCHER */
     .view-switcher {
       display: flex;
@@ -1169,7 +1144,7 @@
        HEADER: SIMBIOCREACIÓN OFFICIAL BRAND & CONTROLS
        ========================================================================= -->
   <header>
-    <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación · Fab Lab Perú">
+    <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación">
       <svg class="brand-logo-svg-full" viewBox="0 0 226 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SimbioCreación">
         <!-- Isotipo oficial de 5 lóbulos simbióticos -->
         <circle cx="92" cy="32" r="16.5" class="sc-iso-ring" />
@@ -1199,28 +1174,6 @@
         <circle cx="92" cy="32" r="8.2" stroke="#e60066" stroke-width="4.4" fill="none" />
         <path d="M 94.6 24.2 A 8.2 8.2 0 0 1 94.6 39.8" class="sc-o-dark" stroke-width="4.4" fill="none" stroke-linecap="round" />
         <text x="104" y="39.5" text-anchor="start" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.4" fill="#e60066">REACION</text>
-      </svg>
-      <span class="brand-divider"></span>
-      <svg class="brand-fablab-svg" viewBox="0 0 188 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Fab Lab Perú">
-        <!-- Isotipo oficial Fab Lab tricolor -->
-        <circle cx="16" cy="16" r="13.5" fill="#ffffff" />
-        <g transform="translate(16,16)">
-          <!-- Azul (arriba) -->
-          <path d="M -11.4 -6.6 A 13.2 13.2 0 0 1 11.4 -6.6 L 8.2 -4.7 L 0 -9.4 L -8.2 -4.7 Z" fill="#234fa2" />
-          <ellipse cx="0" cy="-6.2" rx="4.2" ry="3.1" fill="#234fa2" />
-          <!-- Verde (abajo derecha) -->
-          <g transform="rotate(120)">
-            <path d="M -11.4 -6.6 A 13.2 13.2 0 0 1 11.4 -6.6 L 8.2 -4.7 L 0 -9.4 L -8.2 -4.7 Z" fill="#008c45" />
-            <ellipse cx="0" cy="-6.2" rx="4.2" ry="3.1" fill="#008c45" />
-          </g>
-          <!-- Rojo (abajo izquierda) -->
-          <g transform="rotate(240)">
-            <path d="M -11.4 -6.6 A 13.2 13.2 0 0 1 11.4 -6.6 L 8.2 -4.7 L 0 -9.4 L -8.2 -4.7 Z" fill="#e31b23" />
-            <ellipse cx="0" cy="-6.2" rx="4.2" ry="3.1" fill="#e31b23" />
-          </g>
-        </g>
-        <!-- Texto FABLABPERU -->
-        <text x="35" y="22.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" letter-spacing="0.4" class="fl-text"><tspan font-weight="900">FABLAB</tspan><tspan font-weight="300">PERU</tspan></text>
       </svg>
     </div>
 
@@ -1410,7 +1363,6 @@
     <div class="scale250-header">
       <div class="pane-title-group">
         <h2><span>🌐</span> SimbioCreación a escala (250 saberes)</h2>
-        <p>Convergencia radial animada: individual → pareja → 5 parejas (10) → 5 macro-grupos (50) → burbuja central (250)</p>
       </div>
       <div class="scale250-controls">
         <button class="btn btn-primary" id="btnScalePlay">▶ Reproducir animación</button>
