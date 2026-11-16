@@ -1007,7 +1007,6 @@
 
       <button class="btn btn-primary" id="btnConfig" title="Configurar saberes o personas del taller (P)">👥 Saberes</button>
       <button class="btn" id="btnTheme" title="Alternar modo Claro / Oscuro (T)">☀️</button>
-      <button class="btn" id="btnExport" title="Descargar captura PNG limpia (E)">📷 PNG</button>
       <button class="btn" id="btnSound" title="Silenciar / Activar Sonido (M)">🔊</button>
       <button class="btn" id="btnFullscreen" title="Pantalla Completa (F)">⛶</button>
     </div>
@@ -1283,9 +1282,9 @@
     const GUIDED_CASE_NARRATIVES = {
       level1: [
         { 
-          title: "Mueble automatizado con memoria digital", 
+          title: "Mueble automatizado", 
           role: "Carpintería + programación",
-          desc: "Al unirse la idea del Carpintero (100) y de la programadora (100), no generan 200 lineales, crean una idea de una mesa regulable con memoria digital valorizada en miles.",
+          desc: "Al unirse la idea del carpintero (100) y de la programadora (100), no generan 200 lineales, crean una idea de una mesa regulable con memoria digital valorizada en miles.",
           impact: "Multiplicador de valor: 10x frente a ideas aisladas"
         },
         { 
@@ -2752,76 +2751,7 @@
       tooltipEl.style.display = 'none';
     }
 
-    // --- 9. FULL HI-RES PNG EXPORT (HTML2CANVAS / SVG TO IMAGE) ---
-    async function exportFullPng() {
-      showToast('📸 Generando captura limpia en alta resolución...');
-      
-      const activeView = document.body.getAttribute('data-view');
-      const canvas = document.createElement('canvas');
-      canvas.width = 1920;
-      canvas.height = 1080;
-      const ctx = canvas.getContext('2d');
-
-      // Theme background
-      ctx.fillStyle = currentTheme === 'light' ? '#ffffff' : '#0a0e14';
-      ctx.fillRect(0, 0, 1920, 1080);
-
-      // Grid watermark
-      ctx.fillStyle = currentTheme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
-      for (let x = 0; x < 1920; x += 40) {
-        ctx.fillRect(x, 0, 1, 1080);
-      }
-      for (let y = 0; y < 1080; y += 40) {
-        ctx.fillRect(0, y, 1920, 1);
-      }
-
-      // Brand Header
-      ctx.fillStyle = '#e60066';
-      ctx.font = '900 38px sans-serif';
-      ctx.fillText('SIMBIOCREACIÓN', 80, 85);
-
-      ctx.fillStyle = currentTheme === 'light' ? '#656d76' : '#8b949e';
-      ctx.font = '600 18px sans-serif';
-      ctx.fillText('Metodología de Co-Creación y Convergencia de Saberes', 80, 120);
-
-      // Export currently visible SVG tree
-      const svgToRender = (activeView === 'comp') ? document.getElementById('svgComp') : document.getElementById('svgConv');
-      
-      if (svgToRender && (activeView === 'conv' || activeView === 'comp')) {
-        const svgData = new XMLSerializer().serializeToString(svgToRender);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const URL = window.URL || window.webkitURL || window;
-        const blobURL = URL.createObjectURL(svgBlob);
-        
-        const img = new Image();
-        img.onload = () => {
-          // Render SVG scaled centered
-          ctx.drawImage(img, 240, 180, 1440, 800);
-          URL.revokeObjectURL(blobURL);
-
-          // Download
-          const link = document.createElement('a');
-          link.download = "simbiocreacion-" + activeView + "-nivel" + currentStep + ".png";
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-          showToast('✅ PNG descargado correctamente');
-        };
-        img.src = blobURL;
-      } else {
-        // Fallback for combinatorial view
-        ctx.fillStyle = currentTheme === 'light' ? '#1f2328' : '#f0f6fc';
-        ctx.font = 'bold 30px sans-serif';
-        ctx.fillText('Salto Combinatorio: Grupos Aislados vs Red Simbiótica (' + simPeopleCount + ' personas)', 80, 200);
-
-        const link = document.createElement('a');
-        link.download = "simbiocreacion-combinatoria.png";
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast('✅ PNG descargado');
-      }
-    }
-
-    // --- 10. VIEW SWITCHING & THEMES ---
+    // --- 9. VIEW SWITCHING & THEMES ---
     function setView(view) {
       hideNodeTooltip();
       document.body.setAttribute('data-view', view);
@@ -3014,8 +2944,6 @@
         setTimeout(alignTravelingCard, 60);
         setTimeout(alignTravelingCard, 200);
       });
-
-      document.getElementById('btnExport').addEventListener('click', exportFullPng);
 
       // Keyboard navigation
       window.addEventListener('keydown', (e) => {
