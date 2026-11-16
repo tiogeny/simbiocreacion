@@ -329,8 +329,8 @@
     }
 
     .traveling-metric-card.expanded {
-      width: 450px;
-      max-width: 44%;
+      width: 560px;
+      max-width: 52%;
       border-color: var(--accent-pink);
       box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 32px rgba(230, 0, 102, 0.22);
       text-align: left;
@@ -375,43 +375,37 @@
 
     .tm-equation {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 8px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-    .tm-eq-row {
-      display: flex;
       align-items: center;
-      gap: 8px;
-      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 700;
     }
     .tm-box {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      padding: 6px 12px;
+      padding: 6px 10px;
       color: var(--text-main);
       text-align: center;
       white-space: nowrap;
-      flex: 1;
+      flex: 0 0 auto;
     }
     .tm-box-cross {
-      flex: 0 0 auto;
       border-color: rgba(248, 81, 73, 0.45);
       background: rgba(248, 81, 73, 0.08);
       color: #f85149;
       text-decoration: line-through;
     }
     .tm-box-gold {
-      flex: 1;
       border-color: rgba(241, 196, 15, 0.7);
       background: rgba(241, 196, 15, 0.16);
       color: var(--accent-gold);
       font-weight: 900;
-      font-size: 16px;
-      padding: 7px 14px;
+      font-size: 14px;
+      padding: 6px 12px;
     }
 
     /* CANVAS CONTAINERS */
@@ -2335,17 +2329,13 @@
           convFormula.textContent = "Al unirse la idea del carpintero (100) y de la programadora (100), no generan 200 lineales: crean una mesa ergonómica regulable con firmware y memoria postural valorizada en miles.";
           convExtra.innerHTML = 
             '<div class="tm-equation">' +
-              '<div class="tm-eq-row">' +
-                '<div class="tm-box">Carpintero (100)</div>' +
-                '<span>+</span>' +
-                '<div class="tm-box">Programadora (100)</div>' +
-              '</div>' +
-              '<div class="tm-eq-row">' +
-                '<span>➔</span>' +
-                '<div class="tm-box tm-box-cross">200 lineales</div>' +
-                '<span>≠</span>' +
-                '<div class="tm-box tm-box-gold">🚀 ¡Miles!</div>' +
-              '</div>' +
+              '<div class="tm-box">Carpintero (100)</div>' +
+              '<span>+</span>' +
+              '<div class="tm-box">Programadora (100)</div>' +
+              '<span>➔</span>' +
+              '<div class="tm-box tm-box-cross">200 lineales</div>' +
+              '<span>≠</span>' +
+              '<div class="tm-box tm-box-gold">🚀 ¡Miles!</div>' +
             '</div>';
         } else if (currentStep === 3) {
           cardConv.classList.remove('expanded');
