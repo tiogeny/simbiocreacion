@@ -302,6 +302,9 @@
     .traveling-metric-card.traveling-comp .tm-pill {
       color: #ff7b72;
     }
+    .traveling-metric-card.traveling-comp.has-loss .tm-title {
+      color: #ff7b72;
+    }
 
     /* Carril exclusivo a la derecha en vistas individuales para evitar cualquier sobreposición */
     body[data-view="conv"] .pane-conv .canvas-container,
@@ -372,30 +375,43 @@
 
     .tm-equation {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
       margin-top: 8px;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 700;
+    }
+    .tm-eq-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
     }
     .tm-box {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      padding: 5px 10px;
+      padding: 6px 12px;
       color: var(--text-main);
+      text-align: center;
+      white-space: nowrap;
+      flex: 1;
     }
     .tm-box-cross {
-      border-color: rgba(248, 81, 73, 0.4);
+      flex: 0 0 auto;
+      border-color: rgba(248, 81, 73, 0.45);
       background: rgba(248, 81, 73, 0.08);
       color: #f85149;
       text-decoration: line-through;
     }
     .tm-box-gold {
-      border-color: rgba(241, 196, 15, 0.6);
-      background: rgba(241, 196, 15, 0.15);
+      flex: 1;
+      border-color: rgba(241, 196, 15, 0.7);
+      background: rgba(241, 196, 15, 0.16);
       color: var(--accent-gold);
       font-weight: 900;
+      font-size: 16px;
+      padding: 7px 14px;
     }
 
     /* CANVAS CONTAINERS */
@@ -2266,23 +2282,27 @@
       }
 
       // Traveling card: Competencia
+      const cardComp = document.getElementById('metricCardComp');
       const compVal = document.getElementById('compVal');
       const compFormula = document.getElementById('compFormula');
       const winnerBanner = document.getElementById('winnerBanner');
 
       const compMetrics = [
-        { val: "8 / 8 saberes activos (100%)", sub: "Cruce entre mesas: Bloqueado (0 sinergias)" },
-        { val: "4 / 8 saberes activos (50%)", sub: "4 saberes eliminados (50% de talento perdido)" },
-        { val: "2 / 8 saberes activos (25%)", sub: "6 saberes eliminados (75% de talento perdido)" },
-        { val: "1 / 8 saber activo (12.5%)", sub: "7 saberes eliminados (87.5% de pérdida colectiva)" }
+        { val: "8 / 8 saberes activos (100%)", sub: "Cruce entre mesas: bloqueado (0 sinergias)" },
+        { val: "4 saberes eliminados (50%)", sub: "Solo 4 / 8 saberes activos · 0 sinergias" },
+        { val: "6 saberes eliminados (75%)", sub: "Solo 2 / 8 saberes activos · 0 sinergias" },
+        { val: "7 saberes eliminados (87.5%)", sub: "Solo 1 / 8 saber activo (12.5%) · Pérdida colectiva" }
       ];
 
+      if (cardComp) {
+        cardComp.classList.toggle('has-loss', compStep > 0);
+      }
       compVal.textContent = compMetrics[compStep].val;
       compFormula.textContent = compMetrics[compStep].sub;
 
       if (compStep === 3) {
         winnerBanner.classList.add('show');
-        document.getElementById('winnerText').textContent = "Ganador Único: " + participants[compDecisions.r3].name + " (" + participants[compDecisions.r3].role + ")";
+        document.getElementById('winnerText').textContent = "Ganador único: " + participants[compDecisions.r3].name + " (" + participants[compDecisions.r3].role + ")";
       } else {
         winnerBanner.classList.remove('show');
       }
@@ -2315,13 +2335,17 @@
           convFormula.textContent = "Al unirse la idea del carpintero (100) y de la programadora (100), no generan 200 lineales: crean una mesa ergonómica regulable con firmware y memoria postural valorizada en miles.";
           convExtra.innerHTML = 
             '<div class="tm-equation">' +
-              '<div class="tm-box">Carpintero (100)</div>' +
-              '<span>+</span>' +
-              '<div class="tm-box">Programadora (100)</div>' +
-              '<span>➔</span>' +
-              '<div class="tm-box tm-box-cross">200 lineales</div>' +
-              '<span>≠</span>' +
-              '<div class="tm-box tm-box-gold">🚀 ¡Miles!</div>' +
+              '<div class="tm-eq-row">' +
+                '<div class="tm-box">Carpintero (100)</div>' +
+                '<span>+</span>' +
+                '<div class="tm-box">Programadora (100)</div>' +
+              '</div>' +
+              '<div class="tm-eq-row">' +
+                '<span>➔</span>' +
+                '<div class="tm-box tm-box-cross">200 lineales</div>' +
+                '<span>≠</span>' +
+                '<div class="tm-box tm-box-gold">🚀 ¡Miles!</div>' +
+              '</div>' +
             '</div>';
         } else if (currentStep === 3) {
           cardConv.classList.remove('expanded');
