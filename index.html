@@ -1049,7 +1049,7 @@
       display: flex;
       gap: 20px;
       min-height: 0;
-      align-items: center;
+      align-items: stretch;
     }
     .scale250-canvas-wrap {
       flex: 1;
@@ -1066,6 +1066,7 @@
       display: block;
     }
     .scale250-sidebar {
+      align-self: center;
       width: 340px;
       max-width: 34%;
       display: flex;
@@ -3091,6 +3092,321 @@
       tooltipEl.style.display = 'none';
     }
 
+      // --- 10. MOTOR RADIAL ANIMADO: ESCALA 250 (1 -> 2 -> 10 -> 50 -> 250) ---
+      let scale250Step = 0;
+      let scale250EdgeProgress = 1;
+      let scale250LastStepChange = 0;
+      let scale250Raf = null;
+      let scale250AutoTimer = null;
+      let scale250Graph = null;
+
+      const SCALE250_META = [
+        {
+          pill: "Nivel 0 · Punto de partida",
+          title: "250 saberes individuales",
+          desc: "250 participantes inician con sus ideas propias distribuidas en 5 ejes temáticos (50 por eje)."
+        },
+        {
+          pill: "Nivel 1 · Duplas (×2)",
+          title: "125 parejas co-creadas",
+          desc: "Cada 2 saberes dialogan y se fusionan en una idea nueva. Nadie queda fuera: 250/250 activos."
+        },
+        {
+          pill: "Nivel 2 · 5 parejas (×10)",
+          title: "25 núcleos de 10 personas",
+          desc: "Cada 5 parejas convergen en 25 células de co-creación (5 núcleos por cada macro-eje)."
+        },
+        {
+          pill: "Nivel 3 · Macro-grupos (×50)",
+          title: "5 grandes nodos de 50",
+          desc: "Los 25 núcleos alimentan a 5 grandes grupos integradores de 50 personas cada uno."
+        },
+        {
+          pill: "Nivel 4 · Convergencia total",
+          title: "1 burbuja central (250)",
+          desc: "100% de co-autoría: los 5 macro-grupos convergen en una sola creación colectiva de 250 saberes."
+        }
+      ];
+
+      function buildScale250Graph() {
+        const sectors = [
+          { name: "Eje 1", color: "#f85149" },
+          { name: "Eje 2", color: "#f0883e" },
+          { name: "Eje 3", color: "#2ecc71" },
+          { name: "Eje 4", color: "#388bfd" },
+          { name: "Eje 5", color: "#a371f7" }
+        ];
+        const nodes = [];
+        const edges = [];
+
+        // Centro (1 nodo de 250)
+        const centerIdx = nodes.length;
+        nodes.push({ level: 4, x: 0, y: 0, r: 34, color: "#e60066", label: "250", sub: "100%" });
+
+        // 5 macro-grupos (nivel 3, de 50 cada uno)
+        const macroIndices = [];
+        for (let s = 0; s < 5; s++) {
+          const baseAng = -Math.PI / 2 + (s * 2 * Math.PI) / 5;
+          const dist3 = 0.135;
+          const mIdx = nodes.length;
+          nodes.push({
+            level: 3,
+            sector: s,
+            x: Math.cos(baseAng) * dist3,
+            y: Math.sin(baseAng) * dist3,
+            r: 17,
+            color: sectors[s].color,
+            label: "50"
+          });
+          macroIndices.push(mIdx);
+          edges.push({ from: mIdx, to: centerIdx, level: 4, color: sectors[s].color });
+
+          // 5 núcleos de 10 por macro-grupo (25 en total, nivel 2)
+          const sectorSpan = (2 * Math.PI) / 5 * 0.84;
+          for (let g = 0; g < 5; g++) {
+            const gAng = baseAng + ((g - 2) / 4) * sectorSpan;
+            const dist2 = 0.255;
+            const gIdx = nodes.length;
+            nodes.push({
+              level: 2,
+              sector: s,
+              x: Math.cos(gAng) * dist2,
+              y: Math.sin(gAng) * dist2,
+              r: 7.5,
+              color: sectors[s].color,
+              label: "10"
+            });
+            edges.push({ from: gIdx, to: mIdx, level: 3, color: sectors[s].color });
+
+            // 5 parejas por núcleo (125 en total, nivel 1)
+            const pairSpan = (sectorSpan / 5) * 0.88;
+            for (let p = 0; p < 5; p++) {
+              const pAng = gAng + ((p - 2) / 4) * pairSpan;
+              const dist1 = 0.365 + (p % 2 === 0 ? 0.012 : -0.012);
+              const pIdx = nodes.length;
+              nodes.push({
+                level: 1,
+                sector: s,
+                x: Math.cos(pAng) * dist1,
+                y: Math.sin(pAng) * dist1,
+                r: 4.2,
+                color: sectors[s].color
+              });
+              edges.push({ from: pIdx, to: gIdx, level: 2, color: sectors[s].color });
+
+              // 2 individuales por pareja (250 en total, nivel 0)
+              const indSpan = pairSpan / 5 * 0.85;
+              for (let i = 0; i < 2; i++) {
+                const iAng = pAng + (i === 0 ? -0.5 : 0.5) * indSpan;
+                const dist0 = 0.455 + ((p + i) % 3) * 0.011;
+                const iIdx = nodes.length;
+                nodes.push({
+                  level: 0,
+                  sector: s,
+                  x: Math.cos(iAng) * dist0,
+                  y: Math.sin(iAng) * dist0,
+                  r: 2.8,
+                  color: sectors[s].color
+                });
+                edges.push({ from: iIdx, to: pIdx, level: 1, color: sectors[s].color });
+              }
+            }
+          }
+        }
+        return { nodes, edges };
+      }
+
+      function updateScale250Sidebar() {
+        const meta = SCALE250_META[scale250Step];
+        document.getElementById('scale250Pill').textContent = meta.pill;
+        document.getElementById('scale250Title').textContent = meta.title;
+        document.getElementById('scale250Desc').textContent = meta.desc;
+        document.querySelectorAll('.scale250-step-item').forEach(el => {
+          el.classList.toggle('active', parseInt(el.dataset.scaleStep) === scale250Step);
+        });
+      }
+
+      function setScale250Step(step, withSound = true) {
+        scale250Step = Math.max(0, Math.min(4, step));
+        scale250LastStepChange = performance.now();
+        scale250EdgeProgress = (scale250Step === 0) ? 1 : 0;
+        updateScale250Sidebar();
+        if (withSound) {
+          playStepSound(scale250Step === 4 ? 5 : scale250Step, 'conv');
+        }
+      }
+
+      function advanceScale250Step() {
+        if (scale250Step < 4) {
+          setScale250Step(scale250Step + 1);
+        } else {
+          setScale250Step(0);
+        }
+      }
+
+      function stopScale250Animation() {
+        if (scale250AutoTimer) {
+          clearInterval(scale250AutoTimer);
+          scale250AutoTimer = null;
+        }
+        const btnPlay = document.getElementById('btnScalePlay');
+        if (btnPlay) btnPlay.textContent = '▶ Reproducir animación';
+        if (scale250Raf) {
+          cancelAnimationFrame(scale250Raf);
+          scale250Raf = null;
+        }
+      }
+
+      function toggleScale250Play() {
+        const btnPlay = document.getElementById('btnScalePlay');
+        if (scale250AutoTimer) {
+          clearInterval(scale250AutoTimer);
+          scale250AutoTimer = null;
+          btnPlay.textContent = '▶ Reproducir animación';
+          return;
+        }
+        if (scale250Step >= 4) setScale250Step(0);
+        btnPlay.textContent = '⏸ Pausar';
+        scale250AutoTimer = setInterval(() => {
+          if (scale250Step < 4) {
+            setScale250Step(scale250Step + 1);
+          } else {
+            clearInterval(scale250AutoTimer);
+            scale250AutoTimer = null;
+            btnPlay.textContent = '▶ Reproducir animación';
+          }
+        }, 2100);
+      }
+
+      function renderScale250Frame(now) {
+        if (document.body.getAttribute('data-view') !== 'scale250') {
+          scale250Raf = null;
+          return;
+        }
+        const canvas = document.getElementById('scale250Canvas');
+        if (!canvas || !scale250Graph) return;
+
+        const rect = canvas.parentElement.getBoundingClientRect();
+        if (rect.width < 10 || rect.height < 10) { scale250Raf = requestAnimationFrame(renderScale250Frame); return; }
+        const dpr = window.devicePixelRatio || 1;
+        if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+          canvas.width = Math.floor(rect.width * dpr);
+          canvas.height = Math.floor(rect.height * dpr);
+        }
+        const ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, rect.width, rect.height);
+
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const dim = Math.min(rect.width, rect.height);
+        const isLight = (currentTheme === 'light');
+
+        // Progreso de animacion del nivel actual (0 -> 1 en 750ms)
+        const elapsed = now - scale250LastStepChange;
+        const animP = Math.min(1, Math.max(0, elapsed / 750));
+        const easeP = 1 - Math.pow(1 - animP, 3);
+
+        // Anillos guia tenues
+        [0.46, 0.365, 0.255, 0.135].forEach((rf, idx) => {
+          ctx.beginPath();
+          ctx.arc(cx, cy, dim * rf, 0, Math.PI * 2);
+          ctx.strokeStyle = isLight ? 'rgba(0,0,0,0.045)' : 'rgba(255,255,255,0.05)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 6]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        });
+
+        // Dibujar enlaces hasta el paso actual
+        const { nodes, edges } = scale250Graph;
+        edges.forEach((e, idx) => {
+          if (e.level > scale250Step) return;
+          const n1 = nodes[e.from];
+          const n2 = nodes[e.to];
+          const x1 = cx + n1.x * dim;
+          const y1 = cy + n1.y * dim;
+          const x2 = cx + n2.x * dim;
+          const y2 = cy + n2.y * dim;
+
+          const p = (e.level === scale250Step) ? easeP : 1;
+          const curX = x1 + (x2 - x1) * p;
+          const curY = y1 + (y2 - y1) * p;
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(curX, curY);
+          ctx.strokeStyle = e.color;
+          ctx.globalAlpha = e.level === 4 ? 0.65 : (e.level === 3 ? 0.45 : 0.28);
+          ctx.lineWidth = e.level === 4 ? 3.5 : (e.level === 3 ? 2 : 1.1);
+          ctx.stroke();
+
+          // Particula animada viajando hacia adentro
+          if (p > 0.95 && (e.level >= 2 || idx % 3 === 0)) {
+            const t = ((now * 0.00055 + idx * 0.17) % 1);
+            const px = x1 + (x2 - x1) * t;
+            const py = y1 + (y2 - y1) * t;
+            ctx.beginPath();
+            ctx.arc(px, py, e.level === 4 ? 3.2 : 1.8, 0, Math.PI * 2);
+            ctx.fillStyle = e.level === 4 ? '#ffffff' : e.color;
+            ctx.globalAlpha = 0.85;
+            ctx.fill();
+          }
+        });
+
+        // Dibujar nodos hasta el paso actual
+        ctx.globalAlpha = 1;
+        nodes.forEach(n => {
+          if (n.level > scale250Step) return;
+          const x = cx + n.x * dim;
+          const y = cy + n.y * dim;
+          const scaleFactor = (n.level === scale250Step && scale250Step > 0) ? (0.3 + 0.7 * easeP) : 1;
+          const r = n.r * scaleFactor * (dim / 650);
+          const drawR = Math.max(2.2, r);
+
+          // Halo en macro-nodos y burbuja central
+          if (n.level >= 3) {
+            const pulse = 1 + 0.08 * Math.sin(now * 0.004);
+            ctx.beginPath();
+            ctx.arc(x, y, drawR * 1.35 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = n.level === 4 ? 'rgba(230, 0, 102, 0.22)' : 'rgba(255, 255, 255, 0.08)';
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(x, y, drawR, 0, Math.PI * 2);
+          ctx.fillStyle = n.color;
+          ctx.fill();
+
+          if (n.level >= 2) {
+            ctx.lineWidth = n.level === 4 ? 3 : 1.5;
+            ctx.strokeStyle = isLight ? '#ffffff' : '#0a0e14';
+            ctx.stroke();
+          }
+
+          if (n.label && drawR > 9) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `900 ${Math.round(n.level === 4 ? drawR * 0.62 : drawR * 0.78)}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(n.label, x, y + 1);
+          }
+        });
+
+        ctx.restore();
+        scale250Raf = requestAnimationFrame(renderScale250Frame);
+      }
+
+      function initScale250View() {
+        if (!scale250Graph) scale250Graph = buildScale250Graph();
+        setScale250Step(0, false);
+        if (!scale250Raf) {
+          scale250Raf = requestAnimationFrame(renderScale250Frame);
+        }
+      }
+
+
     // --- 9. VIEW SWITCHING & THEMES ---
     function setView(view) {
       hideNodeTooltip();
@@ -3331,319 +3647,6 @@
         else if (e.code === 'Digit4') setView('combinatoria');
         else if (e.code === 'Digit5') setView('scale250');
       });
-
-      // --- 10. MOTOR RADIAL ANIMADO: ESCALA 250 (1 -> 2 -> 10 -> 50 -> 250) ---
-      let scale250Step = 0;
-      let scale250EdgeProgress = 1;
-      let scale250LastStepChange = 0;
-      let scale250Raf = null;
-      let scale250AutoTimer = null;
-      let scale250Graph = null;
-
-      const SCALE250_META = [
-        {
-          pill: "Nivel 0 · Punto de partida",
-          title: "250 saberes individuales",
-          desc: "250 participantes inician con sus ideas propias distribuidas en 5 ejes temáticos (50 por eje)."
-        },
-        {
-          pill: "Nivel 1 · Duplas (×2)",
-          title: "125 parejas co-creadas",
-          desc: "Cada 2 saberes dialogan y se fusionan en una idea nueva. Nadie queda fuera: 250/250 activos."
-        },
-        {
-          pill: "Nivel 2 · 5 parejas (×10)",
-          title: "25 núcleos de 10 personas",
-          desc: "Cada 5 parejas convergen en 25 células de co-creación (5 núcleos por cada macro-eje)."
-        },
-        {
-          pill: "Nivel 3 · Macro-grupos (×50)",
-          title: "5 grandes nodos de 50",
-          desc: "Los 25 núcleos alimentan a 5 grandes grupos integradores de 50 personas cada uno."
-        },
-        {
-          pill: "Nivel 4 · Convergencia total",
-          title: "1 burbuja central (250)",
-          desc: "100% de co-autoría: los 5 macro-grupos convergen en una sola creación colectiva de 250 saberes."
-        }
-      ];
-
-      function buildScale250Graph() {
-        const sectors = [
-          { name: "Eje 1", color: "#f85149" },
-          { name: "Eje 2", color: "#f0883e" },
-          { name: "Eje 3", color: "#2ecc71" },
-          { name: "Eje 4", color: "#388bfd" },
-          { name: "Eje 5", color: "#a371f7" }
-        ];
-        const nodes = [];
-        const edges = [];
-
-        // Centro (1 nodo de 250)
-        const centerIdx = nodes.length;
-        nodes.push({ level: 4, x: 0, y: 0, r: 34, color: "#e60066", label: "250", sub: "100%" });
-
-        // 5 macro-grupos (nivel 3, de 50 cada uno)
-        const macroIndices = [];
-        for (let s = 0; s < 5; s++) {
-          const baseAng = -Math.PI / 2 + (s * 2 * Math.PI) / 5;
-          const dist3 = 0.135;
-          const mIdx = nodes.length;
-          nodes.push({
-            level: 3,
-            sector: s,
-            x: Math.cos(baseAng) * dist3,
-            y: Math.sin(baseAng) * dist3,
-            r: 17,
-            color: sectors[s].color,
-            label: "50"
-          });
-          macroIndices.push(mIdx);
-          edges.push({ from: mIdx, to: centerIdx, level: 4, color: sectors[s].color });
-
-          // 5 núcleos de 10 por macro-grupo (25 en total, nivel 2)
-          const sectorSpan = (2 * Math.PI) / 5 * 0.84;
-          for (let g = 0; g < 5; g++) {
-            const gAng = baseAng + ((g - 2) / 4) * sectorSpan;
-            const dist2 = 0.255;
-            const gIdx = nodes.length;
-            nodes.push({
-              level: 2,
-              sector: s,
-              x: Math.cos(gAng) * dist2,
-              y: Math.sin(gAng) * dist2,
-              r: 7.5,
-              color: sectors[s].color,
-              label: "10"
-            });
-            edges.push({ from: gIdx, to: mIdx, level: 3, color: sectors[s].color });
-
-            // 5 parejas por núcleo (125 en total, nivel 1)
-            const pairSpan = (sectorSpan / 5) * 0.88;
-            for (let p = 0; p < 5; p++) {
-              const pAng = gAng + ((p - 2) / 4) * pairSpan;
-              const dist1 = 0.365 + (p % 2 === 0 ? 0.012 : -0.012);
-              const pIdx = nodes.length;
-              nodes.push({
-                level: 1,
-                sector: s,
-                x: Math.cos(pAng) * dist1,
-                y: Math.sin(pAng) * dist1,
-                r: 4.2,
-                color: sectors[s].color
-              });
-              edges.push({ from: pIdx, to: gIdx, level: 2, color: sectors[s].color });
-
-              // 2 individuales por pareja (250 en total, nivel 0)
-              const indSpan = pairSpan / 5 * 0.85;
-              for (let i = 0; i < 2; i++) {
-                const iAng = pAng + (i === 0 ? -0.5 : 0.5) * indSpan;
-                const dist0 = 0.455 + ((p + i) % 3) * 0.011;
-                const iIdx = nodes.length;
-                nodes.push({
-                  level: 0,
-                  sector: s,
-                  x: Math.cos(iAng) * dist0,
-                  y: Math.sin(iAng) * dist0,
-                  r: 2.8,
-                  color: sectors[s].color
-                });
-                edges.push({ from: iIdx, to: pIdx, level: 1, color: sectors[s].color });
-              }
-            }
-          }
-        }
-        return { nodes, edges };
-      }
-
-      function updateScale250Sidebar() {
-        const meta = SCALE250_META[scale250Step];
-        document.getElementById('scale250Pill').textContent = meta.pill;
-        document.getElementById('scale250Title').textContent = meta.title;
-        document.getElementById('scale250Desc').textContent = meta.desc;
-        document.querySelectorAll('.scale250-step-item').forEach(el => {
-          el.classList.toggle('active', parseInt(el.dataset.scaleStep) === scale250Step);
-        });
-      }
-
-      function setScale250Step(step, withSound = true) {
-        scale250Step = Math.max(0, Math.min(4, step));
-        scale250LastStepChange = performance.now();
-        scale250EdgeProgress = (scale250Step === 0) ? 1 : 0;
-        updateScale250Sidebar();
-        if (withSound) {
-          playStepSound(scale250Step === 4 ? 5 : scale250Step, 'conv');
-        }
-      }
-
-      function advanceScale250Step() {
-        if (scale250Step < 4) {
-          setScale250Step(scale250Step + 1);
-        } else {
-          setScale250Step(0);
-        }
-      }
-
-      function stopScale250Animation() {
-        if (scale250AutoTimer) {
-          clearInterval(scale250AutoTimer);
-          scale250AutoTimer = null;
-        }
-        const btnPlay = document.getElementById('btnScalePlay');
-        if (btnPlay) btnPlay.textContent = '▶ Reproducir animación';
-        if (scale250Raf) {
-          cancelAnimationFrame(scale250Raf);
-          scale250Raf = null;
-        }
-      }
-
-      function toggleScale250Play() {
-        const btnPlay = document.getElementById('btnScalePlay');
-        if (scale250AutoTimer) {
-          clearInterval(scale250AutoTimer);
-          scale250AutoTimer = null;
-          btnPlay.textContent = '▶ Reproducir animación';
-          return;
-        }
-        if (scale250Step >= 4) setScale250Step(0);
-        btnPlay.textContent = '⏸ Pausar';
-        scale250AutoTimer = setInterval(() => {
-          if (scale250Step < 4) {
-            setScale250Step(scale250Step + 1);
-          } else {
-            clearInterval(scale250AutoTimer);
-            scale250AutoTimer = null;
-            btnPlay.textContent = '▶ Reproducir animación';
-          }
-        }, 2100);
-      }
-
-      function renderScale250Frame(now) {
-        if (document.body.getAttribute('data-view') !== 'scale250') {
-          scale250Raf = null;
-          return;
-        }
-        const canvas = document.getElementById('scale250Canvas');
-        if (!canvas || !scale250Graph) return;
-
-        const rect = canvas.parentElement.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
-          canvas.width = Math.floor(rect.width * dpr);
-          canvas.height = Math.floor(rect.height * dpr);
-        }
-        const ctx = canvas.getContext('2d');
-        ctx.save();
-        ctx.scale(dpr, dpr);
-        ctx.clearRect(0, 0, rect.width, rect.height);
-
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        const dim = Math.min(rect.width, rect.height);
-        const isLight = (currentTheme === 'light');
-
-        // Progreso de animacion del nivel actual (0 -> 1 en 750ms)
-        const elapsed = now - scale250LastStepChange;
-        const animP = Math.min(1, Math.max(0, elapsed / 750));
-        const easeP = 1 - Math.pow(1 - animP, 3);
-
-        // Anillos guia tenues
-        [0.46, 0.365, 0.255, 0.135].forEach((rf, idx) => {
-          ctx.beginPath();
-          ctx.arc(cx, cy, dim * rf, 0, Math.PI * 2);
-          ctx.strokeStyle = isLight ? 'rgba(0,0,0,0.045)' : 'rgba(255,255,255,0.05)';
-          ctx.lineWidth = 1;
-          ctx.setLineDash([4, 6]);
-          ctx.stroke();
-          ctx.setLineDash([]);
-        });
-
-        // Dibujar enlaces hasta el paso actual
-        const { nodes, edges } = scale250Graph;
-        edges.forEach((e, idx) => {
-          if (e.level > scale250Step) return;
-          const n1 = nodes[e.from];
-          const n2 = nodes[e.to];
-          const x1 = cx + n1.x * dim;
-          const y1 = cy + n1.y * dim;
-          const x2 = cx + n2.x * dim;
-          const y2 = cy + n2.y * dim;
-
-          const p = (e.level === scale250Step) ? easeP : 1;
-          const curX = x1 + (x2 - x1) * p;
-          const curY = y1 + (y2 - y1) * p;
-
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(curX, curY);
-          ctx.strokeStyle = e.color;
-          ctx.globalAlpha = e.level === 4 ? 0.65 : (e.level === 3 ? 0.45 : 0.28);
-          ctx.lineWidth = e.level === 4 ? 3.5 : (e.level === 3 ? 2 : 1.1);
-          ctx.stroke();
-
-          // Particula animada viajando hacia adentro
-          if (p > 0.95 && (e.level >= 2 || idx % 3 === 0)) {
-            const t = ((now * 0.00055 + idx * 0.17) % 1);
-            const px = x1 + (x2 - x1) * t;
-            const py = y1 + (y2 - y1) * t;
-            ctx.beginPath();
-            ctx.arc(px, py, e.level === 4 ? 3.2 : 1.8, 0, Math.PI * 2);
-            ctx.fillStyle = e.level === 4 ? '#ffffff' : e.color;
-            ctx.globalAlpha = 0.85;
-            ctx.fill();
-          }
-        });
-
-        // Dibujar nodos hasta el paso actual
-        ctx.globalAlpha = 1;
-        nodes.forEach(n => {
-          if (n.level > scale250Step) return;
-          const x = cx + n.x * dim;
-          const y = cy + n.y * dim;
-          const scaleFactor = (n.level === scale250Step && scale250Step > 0) ? (0.3 + 0.7 * easeP) : 1;
-          const r = n.r * scaleFactor * (dim / 650);
-          const drawR = Math.max(2.2, r);
-
-          // Halo en macro-nodos y burbuja central
-          if (n.level >= 3) {
-            const pulse = 1 + 0.08 * Math.sin(now * 0.004);
-            ctx.beginPath();
-            ctx.arc(x, y, drawR * 1.35 * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = n.level === 4 ? 'rgba(230, 0, 102, 0.22)' : 'rgba(255, 255, 255, 0.08)';
-            ctx.fill();
-          }
-
-          ctx.beginPath();
-          ctx.arc(x, y, drawR, 0, Math.PI * 2);
-          ctx.fillStyle = n.color;
-          ctx.fill();
-
-          if (n.level >= 2) {
-            ctx.lineWidth = n.level === 4 ? 3 : 1.5;
-            ctx.strokeStyle = isLight ? '#ffffff' : '#0a0e14';
-            ctx.stroke();
-          }
-
-          if (n.label && drawR > 9) {
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `900 ${Math.round(n.level === 4 ? drawR * 0.62 : drawR * 0.78)}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(n.label, x, y + 1);
-          }
-        });
-
-        ctx.restore();
-        scale250Raf = requestAnimationFrame(renderScale250Frame);
-      }
-
-      function initScale250View() {
-        if (!scale250Graph) scale250Graph = buildScale250Graph();
-        setScale250Step(0, false);
-        if (!scale250Raf) {
-          scale250Raf = requestAnimationFrame(renderScale250Frame);
-        }
-      }
 
       document.getElementById('btnScalePlay').addEventListener('click', toggleScale250Play);
       document.getElementById('btnScaleNext').addEventListener('click', advanceScale250Step);
