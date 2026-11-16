@@ -273,34 +273,128 @@
       margin-top: 2px;
     }
 
-    /* METRIC CARDS (IMAGE 1 STYLE) */
+    /* TARJETAS VIAJERAS VERTICALES */
     .metric-bubble {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
-      padding: 6px 14px;
+      padding: 8px 16px;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
       text-align: right;
       transition: all 0.3s ease;
     }
     .metric-bubble-label {
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       color: var(--text-muted);
     }
     .metric-bubble-value {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.25;
+      color: #ff7b72;
     }
     .metric-bubble-sub {
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
     }
-    .pane-comp .metric-bubble-value { color: #ff7b72; }
-    .pane-conv .metric-bubble-value { color: var(--accent-pink); }
+
+    /* TARJETA VIAJERA DE SIMBIOCREACIÓN (LATERAL DERECHO) */
+    .traveling-metric-card {
+      position: absolute;
+      right: 32px;
+      top: 14px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 14px 20px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 60;
+      width: 360px;
+      max-width: 40%;
+      text-align: right;
+      transition: top 0.65s cubic-bezier(0.25, 1, 0.5, 1), 
+                  width 0.5s ease, 
+                  border-color 0.4s ease, 
+                  box-shadow 0.4s ease;
+    }
+
+    .traveling-metric-card.expanded {
+      width: 440px;
+      max-width: 46%;
+      border-color: var(--accent-pink);
+      box-shadow: 0 14px 45px rgba(0, 0, 0, 0.35), 0 0 30px rgba(230, 0, 102, 0.2);
+      text-align: left;
+    }
+
+    .tm-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+      margin-bottom: 4px;
+    }
+    .tm-title {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.3;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .traveling-metric-card.expanded .tm-title {
+      font-size: 20px;
+    }
+    .tm-sub {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .traveling-metric-card.expanded .tm-sub {
+      font-size: 13.5px;
+    }
+
+    .tm-extra {
+      display: none;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .traveling-metric-card.expanded .tm-extra {
+      display: block;
+    }
+
+    .tm-equation {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .tm-box {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 5px 10px;
+      color: var(--text-main);
+    }
+    .tm-box-cross {
+      border-color: rgba(248, 81, 73, 0.4);
+      background: rgba(248, 81, 73, 0.08);
+      color: #f85149;
+      text-decoration: line-through;
+    }
+    .tm-box-gold {
+      border-color: rgba(241, 196, 15, 0.6);
+      background: rgba(241, 196, 15, 0.15);
+      color: var(--accent-gold);
+      font-weight: 900;
+    }
 
     /* CANVAS CONTAINERS */
     .canvas-container {
@@ -346,99 +440,6 @@
       transition: filter 0.5s ease;
     }
 
-    /* TARJETA CINEMÁTICA CENTRAL: MOMENTO EUREKA */
-    .eureka-card-overlay {
-      position: absolute !important;
-      top: 50% !important;
-      right: 48px !important;
-      left: auto !important;
-      transform: translateY(-50%) translateX(25px) scale(0.94) !important;
-      background: var(--bg-card);
-      border: 2px solid var(--accent-pink);
-      border-radius: 20px;
-      padding: 22px 28px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 0 35px rgba(230, 0, 102, 0.25);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      z-index: 60;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      text-align: left;
-      max-width: 480px;
-      width: 42%;
-    }
-    .eureka-card-overlay.show {
-      opacity: 1 !important;
-      pointer-events: auto !important;
-      transform: translateY(-50%) translateX(0) scale(1) !important;
-    }
-
-    .eureka-pill-header {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(230, 0, 102, 0.15);
-      border: 1px solid rgba(230, 0, 102, 0.4);
-      color: var(--accent-pink);
-      font-size: 11.5px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      padding: 4px 14px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-    }
-
-    .eureka-title {
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--text-main);
-      margin-bottom: 8px;
-    }
-
-    .eureka-math-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin: 16px 0;
-      font-family: var(--font-family);
-    }
-    .eureka-box {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .eureka-symbol {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--text-muted);
-    }
-    .eureka-cross-box {
-      border-color: rgba(248, 81, 73, 0.4);
-      background: rgba(248, 81, 73, 0.08);
-      color: #f85149;
-      text-decoration: line-through;
-    }
-    .eureka-gold-box {
-      border-color: rgba(241, 196, 15, 0.6);
-      background: rgba(241, 196, 15, 0.14);
-      color: var(--accent-gold);
-      font-size: 15px;
-      font-weight: 900;
-      box-shadow: 0 0 20px rgba(241, 196, 15, 0.25);
-    }
-
-    .eureka-description {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
     
     .tree-svg {
       width: 100%;
@@ -1027,7 +1028,7 @@
         </div>
 
         <div class="metric-bubble" id="metricCardComp">
-          <div class="metric-bubble-label">Inteligencia Retenida</div>
+          <div class="metric-bubble-label">Inteligencia retenida</div>
           <div class="metric-bubble-value" id="compVal">8 / 8 saberes (100%)</div>
           <div class="metric-bubble-sub" id="compFormula">Cruce entre mesas: Bloqueado (0 sinergias)</div>
         </div>
@@ -1043,36 +1044,18 @@
       <div class="pane-header">
         <div class="pane-title-group">
           <h2><span>🌿</span> SimbioCreación</h2>
-          <p>Convergencia exponencial de saberes · 100% Co-autoría</p>
+          <p>Convergencia exponencial de saberes · 100% de co-autoría</p>
         </div>
 
-        <div class="metric-bubble" id="metricCardConv">
-          <div class="metric-bubble-label">Convergencia de Saberes</div>
-          <div class="metric-bubble-value" id="convVal">8 saberes individuales</div>
-          <div class="metric-bubble-sub" id="convFormula">Todos los talentos activos (0% descarte)</div>
+        <div class="traveling-metric-card" id="metricCardConv">
+          <div class="tm-pill" id="convPill">Convergencia de saberes</div>
+          <div class="tm-title" id="convVal">8 saberes individuales</div>
+          <div class="tm-sub" id="convFormula">Todos los talentos activos (0% de descarte)</div>
+          <div class="tm-extra" id="convExtra"></div>
         </div>
       </div>
 
       <div class="canvas-container">
-        <!-- TARJETA CINEMÁTICA CENTRAL: MOMENTO EUREKA -->
-        <div class="eureka-card-overlay" id="eurekaCard">
-          <div class="eureka-pill-header">✨ Multiplicador Simbiótico de Valor</div>
-          <div class="eureka-title">Mueble Automatizado con Memoria Digital</div>
-          
-          <div class="eureka-math-row">
-            <div class="eureka-box">Carpintero (100)</div>
-            <div class="eureka-symbol">+</div>
-            <div class="eureka-box">Programadora (100)</div>
-            <div class="eureka-symbol">➔</div>
-            <div class="eureka-box eureka-cross-box">200 lineales</div>
-            <div class="eureka-symbol">≠</div>
-            <div class="eureka-box eureka-gold-box">🚀 ¡Miles!</div>
-          </div>
-
-          <div class="eureka-description">
-            Al unirse la idea del <strong>Carpintero (100)</strong> y de la <strong>Programadora (100)</strong>, no generan 200 lineales: crean una mesa ergonómica regulable con firmware y memoria postural valorizada en miles.
-          </div>
-        </div>
 
         <div class="tree-stage" id="stageConv">
           <svg class="tree-svg" id="svgConv" viewBox="0 0 640 430"></svg>
@@ -1191,7 +1174,7 @@
         <div class="step-dot active" data-step="0" title="Nivel 0: Saberes de Partida"></div>
         <div class="step-dot" data-step="1" title="Nivel 1: Duplas Co-creadas"></div>
         <div class="step-dot" data-step="2" title="Nivel 2: Integración de Equipos"></div>
-        <div class="step-dot" data-step="3" title="Nivel 3: Creación Colectiva Final"></div>
+        <div class="step-dot" data-step="3" title="Nivel 3: Creación colectiva final"></div>
       </div>
 
       <button class="btn btn-primary" id="btnNext" title="Avanzar Ronda (Espacio / →)">Avanzar a Nivel 1 ▶</button>
@@ -1250,6 +1233,18 @@
        APPLICATION LOGIC
        ========================================================================= -->
   <script>
+    // Limpieza automatica de Service Workers antiguos para desarrollo y visualizacion en vivo
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for (var r of regs) r.unregister();
+      });
+      if (window.caches) {
+        caches.keys().then(function(keys) {
+          return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+        });
+      }
+    }
+
     // --- 1. DATA PRESETS & NARRATIVE DETAILS ---
     const PRESETS = {
       innovacion: [
@@ -1287,49 +1282,49 @@
     const GUIDED_CASE_NARRATIVES = {
       level1: [
         { 
-          title: "Mueble Automatizado", 
-          role: "Carpintería + Programación",
+          title: "Mueble automatizado con memoria digital", 
+          role: "Carpintería + programación",
           desc: "Al unirse la idea del Carpintero (100) y de la programadora (100), no generan 200 lineales, crean una idea de una mesa regulable con memoria digital valorizada en miles.",
-          impact: "Multiplicador de Valor: 10x frente a ideas aisladas"
+          impact: "Multiplicador de valor: 10x frente a ideas aisladas"
         },
         { 
-          title: "Bio-Mobiliario Ergonómico", 
-          role: "Diseño UX + Biología",
+          title: "Bio-mobiliario ergonómico", 
+          role: "Diseño UX + biología",
           desc: "Superficies táctiles adaptativas fabricadas con biomateriales biodegradables locales.",
           impact: "Sostenibilidad de ciclo cerrado"
         },
         { 
-          title: "Sistema Postural Sensado", 
-          role: "Mecatrónica + Medicina",
+          title: "Sistema postural sensado", 
+          role: "Mecatrónica + medicina",
           desc: "Sensores biomecánicos que detectan fatiga y corrigen la postura en tiempo real.",
           impact: "Prevención médica activa"
         },
         { 
-          title: "Modelo Sostenible Abierto", 
-          role: "Finanzas + Comunidad",
+          title: "Modelo sostenible abierto", 
+          role: "Finanzas + comunidad",
           desc: "Ecosistema de micro-financiamiento y distribución barrial de código abierto.",
           impact: "Autonomía comunitaria"
         }
       ],
       level2: [
         { 
-          title: "Estación de Trabajo Inteligente", 
-          role: "Hardware + Software + Biomateriales",
+          title: "Estación de trabajo inteligente", 
+          role: "Hardware + software + biomateriales",
           desc: "Integración de la mesa automatizada con biomateriales y diseño adaptativo integral.",
-          impact: "Salto Cualitativo: Producto de alta gama accesible"
+          impact: "Salto cualitativo: producto de alta gama accesible"
         },
         { 
-          title: "Ecosistema de Salud y Accesibilidad", 
-          role: "Mecatrónica + Salud + Economía Circular",
+          title: "Ecosistema de salud y accesibilidad", 
+          role: "Mecatrónica + salud + economía circular",
           desc: "Mobiliario inteligente preventivo con viabilidad financiera local.",
           impact: "Impacto sistémico en bienestar laboral"
         }
       ],
       level3: {
-        title: "Creación Colectiva Integral",
-        role: "Estación Ergonómica Inteligente y Circular",
+        title: "Creación colectiva integral",
+        role: "Estación ergonómica inteligente y circular",
         desc: "Solución completa: Madera local, sensores posturales, firmware libre, bio-superficies y producción en red distribuida.",
-        impact: "100% de Co-autoría · Los 8 saberes presentes en el producto final"
+        impact: "100% de co-autoría · Los 8 saberes presentes en el producto final"
       }
     };
 
@@ -1647,7 +1642,7 @@
       if (modalData) {
         circle.addEventListener('mouseenter', (e) => {
           const activeView = document.body.getAttribute('data-view');
-          if (activeView === 'conv' && currentStep === 2) return; // Silenciado mientras la tarjeta Eureka está abierta
+          if (activeView === 'conv' && (currentStep === 1 || currentStep === 2)) return; // Silenciado mientras la tarjeta Eureka está abierta
           showNodeTooltip(e, modalData);
         });
         circle.addEventListener('mouseleave', hideNodeTooltip);
@@ -1904,8 +1899,8 @@
       // Level 3: CREACIÓN COLECTIVA FINAL (r = 34) en step >= 5
       if (currentStep >= 5) {
         const fill = createStripedCircle(svg, "conv-final", [0, 1, 2, 3, 4, 5, 6, 7]);
-        let subnameText = "Creación Colectiva";
-        let roleText = "100% Co-autoría (8/8 saberes)";
+        let subnameText = "Creación colectiva";
+        let roleText = "100% de co-autoría (8/8 saberes)";
         let modalData = {
           title: subnameText,
           role: roleText,
@@ -2120,7 +2115,7 @@
           id: "comp-final",
           isWinner: true,
           modalData: {
-            title: "Ganador Único: " + participants[r3].name,
+            title: "Ganador único: " + participants[r3].name,
             role: participants[r3].role,
             desc: "7 de 8 saberes han sido eliminados. El 87.5% de la inteligencia del equipo se perdió.",
             impact: "Costo de Competencia: Cero integración sistémica"
@@ -2152,44 +2147,44 @@
 
       // Descripciones y badges contextuales
       let badgeLabel = "Nivel " + compStep;
-      let stepDesc = "8 Saberes Individuales en Sala";
+      let stepDesc = "8 saberes individuales en sala";
       let btnLabel = "Avanzar a Nivel 1 ▶";
 
       if (isConv) {
         if (currentStep === 0) {
           badgeLabel = "Nivel 0";
           stepDesc = "8 Saberes Individuales en Sala";
-          btnLabel = "🔍 Enfocar Carpintero y Programadora ▶";
+          btnLabel = "🔍 Enfocar carpintero y programadora ▶";
         } else if (currentStep === 1) {
           badgeLabel = "Nivel 0 (Foco)";
           stepDesc = "Enfoque: Carlos (Carpintero) y Sofía (Programadora)";
-          btnLabel = "⚡ Converger Dupla (100 + 100) ▶";
+          btnLabel = "⚡ Converger dupla (100 + 100) ▶";
         } else if (currentStep === 2) {
           badgeLabel = "Nivel 1 (Dupla)";
-          stepDesc = "Momento Eureka: 100 + 100 no dan 200, ¡dan miles!";
-          btnLabel = "🌐 Zoom Out a toda la sala ▶";
+          stepDesc = "Momento eureka: 100 + 100 no dan 200, ¡dan miles!";
+          btnLabel = "🌐 Ver todas las duplas ▶";
         } else if (currentStep === 3) {
           badgeLabel = "Nivel 1";
-          stepDesc = "Nivel 1: Las 4 Duplas Co-creadas en paralelo";
+          stepDesc = "Nivel 1: Las 4 duplas co-creadas en paralelo";
           btnLabel = "Avanzar a Nivel 2 ▶";
         } else if (currentStep === 4) {
           badgeLabel = "Nivel 2";
-          stepDesc = "Nivel 2: Integración de Equipos Transversales";
-          btnLabel = "Avanzar a Creación Colectiva ▶";
+          stepDesc = "Nivel 2: Integración de equipos transversales";
+          btnLabel = "Avanzar a creación colectiva ▶";
         } else if (currentStep === 5) {
           badgeLabel = "Nivel 3";
-          stepDesc = "Nivel 3: Creación Colectiva Final (100% Co-autoría)";
-          btnLabel = "↺ Reiniciar Proceso";
+          stepDesc = "Nivel 3: Creación colectiva final (100% de co-autoría)";
+          btnLabel = "↺ Reiniciar proceso";
         }
       } else {
         const stepTexts = [
-          "8 Saberes Individuales en Sala",
-          "Nivel 1: Duelos en Mesas (50% Descarte)",
-          "Nivel 2: Semifinales (75% Descarte)",
-          "Nivel 3: Ganador Único (87.5% Descarte)"
+          "8 saberes individuales en sala",
+          "Nivel 1: Duelos en mesas (50% de descarte)",
+          "Nivel 2: Semifinales (75% de descarte)",
+          "Nivel 3: Ganador único (87.5% de descarte)"
         ];
         stepDesc = stepTexts[compStep];
-        btnLabel = (currentStep === 3) ? "↺ Reiniciar Proceso" : ("Avanzar a Nivel " + (compStep + 1) + " ▶");
+        btnLabel = (currentStep === 3) ? "↺ Reiniciar proceso" : ("Avanzar a nivel " + (compStep + 1) + " ▶");
       }
 
       document.getElementById('stepBadge').textContent = badgeLabel;
@@ -2232,40 +2227,72 @@
         winnerBanner.classList.remove('show');
       }
 
-      // Traveling card: SimbioCreación
+      // Tarjeta Viajera Vertical de SimbioCreación
+      const cardConv = document.getElementById('metricCardConv');
+      const convPill = document.getElementById('convPill');
       const convVal = document.getElementById('convVal');
       const convFormula = document.getElementById('convFormula');
+      const convExtra = document.getElementById('convExtra');
 
-      let convMetricsVal = "8 saberes individuales";
-      let convMetricsSub = "Todos los talentos de la sala activos (0% descarte)";
+      if (cardConv) {
+        // Posiciones verticales exactas alineadas con los niveles del árbol SVG
+        // Nivel 0 (y: 38px) -> top: 16px
+        // Nivel 1 (y: 134px) -> top: 125px (expandida explicando Carlos + Sofía)
+        // Nivel 2 (y: 235px) -> top: 230px
+        // Nivel 3 (y: 335px) -> top: 325px
 
-      if (currentStep === 1) {
-        convMetricsVal = "Enfoque: Carlos & Sofía";
-        convMetricsSub = "Carpintero (100) + Programadora (100)";
-      } else if (currentStep === 2) {
-        convMetricsVal = "Emergencia de Valor: ¡Miles!";
-        convMetricsSub = "Mesa Regulable Automatizada con Memoria";
-      } else if (currentStep === 3) {
-        convMetricsVal = "4 duplas co-creadas";
-        convMetricsSub = "100% de co-autoría · 8/8 participantes integrados";
-      } else if (currentStep === 4) {
-        convMetricsVal = "2 equipos transversales";
-        convMetricsSub = "Integración sistémica · 8/8 participantes integrados";
-      } else if (currentStep === 5) {
-        convMetricsVal = "1 Creación Colectiva";
-        convMetricsSub = "100% Co-autoría · Todos los saberes presentes";
-      }
-
-      convVal.textContent = convMetricsVal;
-      convFormula.textContent = convMetricsSub;
-
-      // Tarjeta Cinemática Eureka visible únicamente en el paso 2 de SimbioCreación
-      const eurekaCard = document.getElementById('eurekaCard');
-      if (eurekaCard) {
-        if (isConv && currentStep === 2) {
-          eurekaCard.classList.add('show');
-        } else {
-          eurekaCard.classList.remove('show');
+        if (currentStep === 0) {
+          cardConv.style.top = "14px";
+          cardConv.classList.remove('expanded');
+          convPill.textContent = "Convergencia de saberes";
+          convVal.textContent = "8 saberes individuales";
+          convFormula.textContent = "Todos los talentos de la sala activos (0% de descarte)";
+          convExtra.innerHTML = "";
+        } else if (currentStep === 1) {
+          cardConv.style.top = "70px";
+          cardConv.classList.remove('expanded');
+          convPill.textContent = "Enfoque pedagógico";
+          convVal.textContent = "Carlos (Carpintero) y Sofía (Programadora)";
+          convFormula.textContent = "Ambos parten de un valor base individual de 100";
+          convExtra.innerHTML = "";
+        } else if (currentStep === 2) {
+          // MOMENTO EUREKA EXPANDIDO: Altura exacta de la dupla CS
+          cardConv.style.top = "120px";
+          cardConv.classList.add('expanded');
+          convPill.textContent = "✨ Multiplicador simbiótico de valor";
+          convVal.textContent = "Mueble automatizado con memoria digital";
+          convFormula.textContent = "Al unirse la idea del carpintero (100) y de la programadora (100), no generan 200 lineales: crean una mesa ergonómica regulable con firmware y memoria postural valorizada en miles.";
+          convExtra.innerHTML = 
+            '<div class="tm-equation">' +
+              '<div class="tm-box">Carpintero (100)</div>' +
+              '<span>+</span>' +
+              '<div class="tm-box">Programadora (100)</div>' +
+              '<span>➔</span>' +
+              '<div class="tm-box tm-box-cross">200 lineales</div>' +
+              '<span>≠</span>' +
+              '<div class="tm-box tm-box-gold">🚀 ¡Miles!</div>' +
+            '</div>';
+        } else if (currentStep === 3) {
+          cardConv.style.top = "130px";
+          cardConv.classList.remove('expanded');
+          convPill.textContent = "Nivel 1: Duplas co-creadas";
+          convVal.textContent = "4 duplas co-creadas en paralelo";
+          convFormula.textContent = "100% de co-autoría · 8/8 participantes integrados en duplas";
+          convExtra.innerHTML = "";
+        } else if (currentStep === 4) {
+          cardConv.style.top = "235px";
+          cardConv.classList.remove('expanded');
+          convPill.textContent = "Nivel 2: Integración transversal";
+          convVal.textContent = "2 equipos integrados";
+          convFormula.textContent = "Cruce de 4 saberes por equipo · Integración sistémica";
+          convExtra.innerHTML = "";
+        } else if (currentStep === 5) {
+          cardConv.style.top = "330px";
+          cardConv.classList.remove('expanded');
+          convPill.textContent = "Nivel 3: Creación colectiva";
+          convVal.textContent = "1 creación colectiva integral";
+          convFormula.textContent = "100% de co-autoría · Todos los saberes presentes en la solución final";
+          convExtra.innerHTML = "";
         }
       }
 
@@ -2293,13 +2320,7 @@
       const isConv = (activeView === 'conv');
       const maxSteps = isConv ? 5 : 3;
 
-      // Si estamos en el paso 2 de SimbioCreación (Momento Eureka con la tarjeta abierta):
-      // Primero desvanecemos la tarjeta y al mismo instante iniciamos el zoom out limpio
       if (isConv && currentStep === 2) {
-        const eurekaCard = document.getElementById('eurekaCard');
-        if (eurekaCard) {
-          eurekaCard.classList.remove('show');
-        }
         currentStep = 3;
         playStepSound(1);
         updateUI();
