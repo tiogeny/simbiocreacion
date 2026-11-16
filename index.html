@@ -3130,27 +3130,36 @@
 
       function buildScale250Graph() {
         const palette = COLORS.map(c => c.color);
-        const sortByPalette = (setOrArr) => {
-          const unique = new Set(setOrArr);
-          return palette.filter(c => unique.has(c));
+        const buildSlicesFromMap = (weightMap) => {
+          const out = [];
+          palette.forEach(c => {
+            if (weightMap[c] > 0) out.push({ color: c, weight: weightMap[c] });
+          });
+          return out;
         };
         const nodes = [];
         const edges = [];
 
+        const centerWeights = {};
         const centerIdx = nodes.length;
-        nodes.push({
+        const centerNode = {
           level: 4,
           x: 0,
           y: 0,
           r: 36,
           color: '#e60066',
-          colors: palette
-        });
+          slices: []
+        };
+        nodes.push(centerNode);
+
+        // Pesos orgánicos para parejas
+        const pairSplits = [[60, 40], [55, 45], [65, 35], [50, 50], [70, 30]];
 
         for (let s = 0; s < 5; s++) {
           const baseAng = -Math.PI / 2 + (s * 2 * Math.PI) / 5;
           const dist3 = 0.135;
           const mIdx = nodes.length;
+          const macroWeights = {};
           const mNode = {
             level: 3,
             sector: s,
@@ -3158,16 +3167,20 @@
             y: Math.sin(baseAng) * dist3,
             r: 18,
             color: palette[s % palette.length],
-            colors: []
+            slices: []
           };
           nodes.push(mNode);
 
+          // Cada eje tiene 2 saberes afines dominantes + presencia orgánica de los demás
+          const domA = (s * 2) % palette.length;
+          const domB = (s * 2 + 1) % palette.length;
+
           const sectorSpan = (2 * Math.PI) / 5 * 0.84;
-          const macroColorsSet = new Set();
           for (let g = 0; g < 5; g++) {
             const gAng = baseAng + ((g - 2) / 4) * sectorSpan;
             const dist2 = 0.255;
             const gIdx = nodes.length;
+            const groupWeights = {};
             const gNode = {
               level: 2,
               sector: s,
@@ -3175,22 +3188,39 @@
               y: Math.sin(gAng) * dist2,
               r: 8.5,
               color: palette[(s + g) % palette.length],
-              colors: []
+              slices: []
             };
             nodes.push(gNode);
 
             const pairSpan = (sectorSpan / 5) * 0.88;
-            const groupColors = [];
             for (let p = 0; p < 5; p++) {
               const pAng = gAng + ((p - 2) / 4) * pairSpan;
               const dist1 = 0.365 + (p % 2 === 0 ? 0.012 : -0.012);
               const pIdx = nodes.length;
 
-              const c1 = palette[(s * 3 + g * 5 + p * 2) % palette.length];
-              const c2 = palette[(s * 3 + g * 5 + p * 2 + 1) % palette.length];
-              groupColors.push(c1, c2);
-              macroColorsSet.add(c1);
-              macroColorsSet.add(c2);
+              // En cada núcleo (g), ~60% pertenece a los saberes afines del eje/núcleo y ~40% a otros saberes
+              const pickIdx = (slot) => {
+                const seed = (s * 17 + g * 7 + p * 3 + slot);
+                if (seed % 5 === 0 || seed % 5 === 1) return domA;
+                if (seed % 5 === 2) return domB;
+                if (seed % 5 === 3) return (domA + g + 2) % palette.length;
+                return (domB + p + slot + 3) % palette.length;
+              };
+
+              const c1 = palette[pickIdx(0)];
+              const c2 = palette[pickIdx(1)];
+              const [w1, w2] = pairSplits[(g + p) % pairSplits.length];
+
+              const pairSlices = (c1 === c2)
+                ? [{ color: c1, weight: w1 + w2 }]
+                : [{ color: c1, weight: w1 }, { color: c2, weight: w2 }];
+
+              groupWeights[c1] = (groupWeights[c1] || 0) + w1;
+              groupWeights[c2] = (groupWeights[c2] || 0) + w2;
+              macroWeights[c1] = (macroWeights[c1] || 0) + w1;
+              macroWeights[c2] = (macroWeights[c2] || 0) + w2;
+              centerWeights[c1] = (centerWeights[c1] || 0) + w1;
+              centerWeights[c2] = (centerWeights[c2] || 0) + w2;
 
               nodes.push({
                 level: 1,
@@ -3199,9 +3229,9 @@
                 y: Math.sin(pAng) * dist1,
                 r: 5.0,
                 color: c1,
-                colors: [c1, c2]
+                slices: pairSlices
               });
-              edges.push({ from: pIdx, to: gIdx, level: 2, color: c1, travelColors: [c1, c2] });
+              edges.push({ from: pIdx, to: gIdx, level: 2, color: c1, travelColors: c1 === c2 ? [c1] : [c1, c2] });
 
               const indSpan = pairSpan / 5 * 0.85;
               for (let i = 0; i < 2; i++) {
@@ -3221,38 +3251,42 @@
                 edges.push({ from: iIdx, to: pIdx, level: 1, color: iColor, travelColors: [iColor] });
               }
             }
-            // Hereda TODOS los colores reales del nivel anterior (sin recortar)
-            gNode.colors = sortByPalette(groupColors);
-            edges.push({ from: gIdx, to: mIdx, level: 3, color: gNode.colors[0], travelColors: gNode.colors });
+            gNode.slices = buildSlicesFromMap(groupWeights);
+            const gCols = gNode.slices.map(sl => sl.color);
+            edges.push({ from: gIdx, to: mIdx, level: 3, color: gCols[0], travelColors: gCols });
           }
-          // Hereda TODOS los colores reales del nivel anterior (sin recortar)
-          mNode.colors = sortByPalette(macroColorsSet);
+          mNode.slices = buildSlicesFromMap(macroWeights);
+          const mCols = mNode.slices.map(sl => sl.color);
           edges.push({
             from: mIdx,
             to: centerIdx,
             level: 4,
-            color: mNode.colors[0],
-            travelColors: mNode.colors
+            color: mCols[0],
+            travelColors: mCols
           });
         }
+        centerNode.slices = buildSlicesFromMap(centerWeights);
         return { nodes, edges };
       }
 
-      function drawMulticolorCircle(ctx, x, y, r, colors) {
+      function drawMulticolorCircle(ctx, x, y, r, slices) {
         ctx.save();
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.clip();
-        if (!colors || colors.length <= 1) {
-          ctx.fillStyle = (colors && colors[0]) || '#e60066';
+        if (!slices || slices.length <= 1) {
+          ctx.fillStyle = (slices && slices[0] && slices[0].color) || '#e60066';
           ctx.fillRect(x - r, y - r, r * 2, r * 2);
         } else {
           ctx.translate(x, y);
           ctx.rotate(-Math.PI / 4);
-          const span = (r * 2) / colors.length;
-          colors.forEach((col, i) => {
-            ctx.fillStyle = col;
-            ctx.fillRect(-r - 1, -r + i * span, r * 2 + 2, span + 1);
+          const totalW = slices.reduce((acc, sl) => acc + sl.weight, 0);
+          let curY = -r;
+          slices.forEach((sl) => {
+            const span = (r * 2) * (sl.weight / totalW);
+            ctx.fillStyle = sl.color;
+            ctx.fillRect(-r - 1, curY, r * 2 + 2, span + 0.8);
+            curY += span;
           });
         }
         ctx.restore();
@@ -3440,8 +3474,8 @@
             ctx.fill();
           }
 
-          if (n.colors && n.colors.length > 1) {
-            drawMulticolorCircle(ctx, x, y, drawR, n.colors);
+          if (n.slices && n.slices.length > 1) {
+            drawMulticolorCircle(ctx, x, y, drawR, n.slices);
           } else {
             ctx.beginPath();
             ctx.arc(x, y, drawR, 0, Math.PI * 2);
