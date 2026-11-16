@@ -1408,11 +1408,27 @@
       });
     }
 
-    function playStepSound(step) {
-      if (step === 0) playTone(260, 'sine', 0.1);
-      if (step === 1) playChord([330, 415, 495]);
-      if (step === 2) playChord([392, 494, 587, 659]);
-      if (step === 3) playChord([523, 659, 784, 1046], 0.6);
+    function playStepSound(step, view) {
+      const activeView = view || document.body.getAttribute('data-view');
+      if (activeView === 'conv') {
+        if (step === 0) playTone(262, 'sine', 0.12, 0.08); // Base neutra
+        if (step === 1) {
+          // Enfoque sutil a Carlos y Sofía (sin acorde de convergencia)
+          playTone(392, 'sine', 0.09, 0.05);
+          setTimeout(() => playTone(523, 'sine', 0.14, 0.05), 60);
+        }
+        if (step === 2) playChord([392, 494, 587, 740], 0.35); // Chispa Eureka (CS)
+        if (step === 3) playChord([330, 415, 494], 0.32);      // Nivel 1: 4 duplas
+        if (step === 4) playChord([440, 554, 659, 831], 0.4);  // Nivel 2: 2 equipos
+        if (step === 5) playChord([523, 659, 784, 1046], 0.65); // Nivel 3: Clímax final
+        return;
+      }
+
+      const compStep = Math.min(step, 3);
+      if (compStep === 0) playTone(260, 'sine', 0.1);
+      if (compStep === 1) playChord([330, 415, 495]);
+      if (compStep === 2) playChord([392, 494, 587, 659]);
+      if (compStep === 3) playChord([523, 659, 784, 1046], 0.6);
     }
 
     // --- 3. INLINE SVG TREE ENGINE WITH ANIMATED PARTICLES & CLEAN LABELS ---
@@ -2390,20 +2406,13 @@
       const isConv = (activeView === 'conv');
       const maxSteps = isConv ? 5 : 3;
 
-      if (isConv && currentStep === 2) {
-        currentStep = 3;
-        playStepSound(1);
-        updateUI();
-        return;
-      }
-
       if (currentStep < maxSteps) {
         currentStep++;
       } else {
         currentStep = 0;
         randomizeCompetition();
       }
-      playStepSound(Math.min(currentStep, 3));
+      playStepSound(currentStep, activeView);
       updateUI();
     }
 
@@ -2411,7 +2420,7 @@
       hideNodeTooltip();
       if (currentStep > 0) {
         currentStep--;
-        playStepSound(Math.min(currentStep, 3));
+        playStepSound(currentStep, document.body.getAttribute('data-view'));
         updateUI();
       }
     }
@@ -2420,7 +2429,7 @@
       hideNodeTooltip();
       currentStep = 0;
       randomizeCompetition();
-      playStepSound(0);
+      playStepSound(0, document.body.getAttribute('data-view'));
       updateUI();
     }
 
@@ -2885,7 +2894,7 @@
           } else {
             currentStep = rawStep;
           }
-          playStepSound(Math.min(currentStep, 3));
+          playStepSound(currentStep, activeView);
           updateUI();
         });
       });
