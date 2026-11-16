@@ -116,13 +116,21 @@
       display: block;
       object-fit: contain;
     }
+    .brand-logo-dark {
+      height: 44px;
+      width: auto;
+      display: none;
+    }
     [data-theme="dark"] .brand-logo-img {
-      filter: brightness(1.45) contrast(1.08) drop-shadow(0 0 2px rgba(255, 255, 255, 0.35));
+      display: none;
+    }
+    [data-theme="dark"] .brand-logo-dark {
+      display: block;
     }
 
     .brand-divider {
       width: 1px;
-      height: 28px;
+      height: 24px;
       background: var(--border-subtle);
       display: inline-block;
     }
@@ -134,6 +142,9 @@
       object-fit: contain;
       opacity: 0.9;
       transition: opacity 0.2s ease;
+    }
+    [data-theme="dark"] .brand-fablab-img {
+      height: 18px;
     }
     .brand-wrap:hover .brand-fablab-img {
       opacity: 1;
@@ -1020,6 +1031,20 @@
   <header>
     <div class="brand-wrap" id="brandBtn" title="Metodología SimbioCreación · Fab Lab Perú">
       <img src="assets/logos/logo_simbiocreacion.png" alt="SimbioCreación" class="brand-logo-img" />
+      <svg class="brand-logo-dark" viewBox="0 0 250 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SimbioCreación">
+        <!-- Isotipo 5 nodos translúcidos -->
+        <circle cx="96" cy="28" r="19" fill="rgba(255,255,255,0.10)" />
+        <circle cx="96" cy="11" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
+        <circle cx="112" cy="22" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
+        <circle cx="106" cy="41" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
+        <circle cx="86" cy="41" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
+        <circle cx="80" cy="22" r="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" />
+        <!-- Texto SIMBI + O bicolor + REACION -->
+        <text x="8" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.5" fill="#e2e8f0">SIMBI</text>
+        <circle cx="92" cy="28" r="8.2" stroke="#e60066" stroke-width="4.2" fill="none" />
+        <path d="M 94.5 20.2 A 8.2 8.2 0 0 1 94.5 35.8" stroke="#e2e8f0" stroke-width="4.2" fill="none" stroke-linecap="round" />
+        <text x="106" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" letter-spacing="0.5" fill="#e60066">REACION</text>
+      </svg>
       <span class="brand-divider"></span>
       <img src="assets/logos/logo_fablab_negro.png" alt="Fab Lab Perú" class="brand-fablab-img" id="fablabLogo" />
     </div>
