@@ -3129,91 +3129,130 @@
       ];
 
       function buildScale250Graph() {
-        const sectors = [
-          { name: "Eje 1", color: "#f85149" },
-          { name: "Eje 2", color: "#f0883e" },
-          { name: "Eje 3", color: "#2ecc71" },
-          { name: "Eje 4", color: "#388bfd" },
-          { name: "Eje 5", color: "#a371f7" }
-        ];
+        const palette = COLORS.map(c => c.color);
         const nodes = [];
         const edges = [];
 
-        // Centro (1 nodo de 250)
         const centerIdx = nodes.length;
-        nodes.push({ level: 4, x: 0, y: 0, r: 34, color: "#e60066", label: "250", sub: "100%" });
+        nodes.push({
+          level: 4,
+          x: 0,
+          y: 0,
+          r: 36,
+          color: '#e60066',
+          colors: palette,
+          label: '250'
+        });
 
-        // 5 macro-grupos (nivel 3, de 50 cada uno)
-        const macroIndices = [];
         for (let s = 0; s < 5; s++) {
           const baseAng = -Math.PI / 2 + (s * 2 * Math.PI) / 5;
           const dist3 = 0.135;
           const mIdx = nodes.length;
-          nodes.push({
+          const mNode = {
             level: 3,
             sector: s,
             x: Math.cos(baseAng) * dist3,
             y: Math.sin(baseAng) * dist3,
-            r: 17,
-            color: sectors[s].color,
-            label: "50"
-          });
-          macroIndices.push(mIdx);
-          edges.push({ from: mIdx, to: centerIdx, level: 4, color: sectors[s].color });
+            r: 18,
+            color: palette[s % palette.length],
+            colors: [],
+            label: '50'
+          };
+          nodes.push(mNode);
 
-          // 5 núcleos de 10 por macro-grupo (25 en total, nivel 2)
           const sectorSpan = (2 * Math.PI) / 5 * 0.84;
+          const macroColorsSet = new Set();
           for (let g = 0; g < 5; g++) {
             const gAng = baseAng + ((g - 2) / 4) * sectorSpan;
             const dist2 = 0.255;
             const gIdx = nodes.length;
-            nodes.push({
+            const gNode = {
               level: 2,
               sector: s,
               x: Math.cos(gAng) * dist2,
               y: Math.sin(gAng) * dist2,
-              r: 7.5,
-              color: sectors[s].color,
-              label: "10"
-            });
-            edges.push({ from: gIdx, to: mIdx, level: 3, color: sectors[s].color });
+              r: 8.5,
+              color: palette[(s + g) % palette.length],
+              colors: [],
+              label: '10'
+            };
+            nodes.push(gNode);
 
-            // 5 parejas por núcleo (125 en total, nivel 1)
             const pairSpan = (sectorSpan / 5) * 0.88;
+            const groupColors = [];
             for (let p = 0; p < 5; p++) {
               const pAng = gAng + ((p - 2) / 4) * pairSpan;
               const dist1 = 0.365 + (p % 2 === 0 ? 0.012 : -0.012);
               const pIdx = nodes.length;
+
+              const c1 = palette[(s * 3 + g * 5 + p * 2) % palette.length];
+              const c2 = palette[(s * 3 + g * 5 + p * 2 + 1) % palette.length];
+              groupColors.push(c1, c2);
+              macroColorsSet.add(c1);
+              macroColorsSet.add(c2);
+
               nodes.push({
                 level: 1,
                 sector: s,
                 x: Math.cos(pAng) * dist1,
                 y: Math.sin(pAng) * dist1,
-                r: 4.2,
-                color: sectors[s].color
+                r: 5.0,
+                color: c1,
+                colors: [c1, c2]
               });
-              edges.push({ from: pIdx, to: gIdx, level: 2, color: sectors[s].color });
+              edges.push({ from: pIdx, to: gIdx, level: 2, color: c1 });
 
-              // 2 individuales por pareja (250 en total, nivel 0)
               const indSpan = pairSpan / 5 * 0.85;
               for (let i = 0; i < 2; i++) {
                 const iAng = pAng + (i === 0 ? -0.5 : 0.5) * indSpan;
-                const dist0 = 0.455 + ((p + i) % 3) * 0.011;
+                const dist0 = 0.458 + ((p + i) % 3) * 0.01;
+                const iColor = i === 0 ? c1 : c2;
                 const iIdx = nodes.length;
                 nodes.push({
                   level: 0,
                   sector: s,
+                  orderIdx: s * 50 + g * 10 + p * 2 + i,
                   x: Math.cos(iAng) * dist0,
                   y: Math.sin(iAng) * dist0,
-                  r: 2.8,
-                  color: sectors[s].color
+                  r: 3.9,
+                  color: iColor
                 });
-                edges.push({ from: iIdx, to: pIdx, level: 1, color: sectors[s].color });
+                edges.push({ from: iIdx, to: pIdx, level: 1, color: iColor });
               }
             }
+            gNode.colors = Array.from(new Set(groupColors)).slice(0, 5);
+            edges.push({ from: gIdx, to: mIdx, level: 3, color: gNode.colors[0] });
           }
+          mNode.colors = Array.from(macroColorsSet).slice(0, 6);
+          edges.push({
+            from: mIdx,
+            to: centerIdx,
+            level: 4,
+            color: mNode.colors[0],
+            travelColors: mNode.colors.slice(0, 4)
+          });
         }
         return { nodes, edges };
+      }
+
+      function drawMulticolorCircle(ctx, x, y, r, colors) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.clip();
+        if (!colors || colors.length <= 1) {
+          ctx.fillStyle = (colors && colors[0]) || '#e60066';
+          ctx.fillRect(x - r, y - r, r * 2, r * 2);
+        } else {
+          ctx.translate(x, y);
+          ctx.rotate(-Math.PI / 4);
+          const span = (r * 2) / colors.length;
+          colors.forEach((col, i) => {
+            ctx.fillStyle = col;
+            ctx.fillRect(-r - 1, -r + i * span, r * 2 + 2, span + 1);
+          });
+        }
+        ctx.restore();
       }
 
       function updateScale250Sidebar() {
@@ -3289,27 +3328,29 @@
         const rect = canvas.parentElement.getBoundingClientRect();
         if (rect.width < 10 || rect.height < 10) { scale250Raf = requestAnimationFrame(renderScale250Frame); return; }
         const dpr = window.devicePixelRatio || 1;
-        if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
-          canvas.width = Math.floor(rect.width * dpr);
-          canvas.height = Math.floor(rect.height * dpr);
+        const cssW = Math.round(rect.width);
+        const cssH = Math.round(rect.height);
+        if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
+          canvas.width = Math.round(cssW * dpr);
+          canvas.height = Math.round(cssH * dpr);
+          canvas.style.width = cssW + 'px';
+          canvas.style.height = cssH + 'px';
         }
         const ctx = canvas.getContext('2d');
         ctx.save();
         ctx.scale(dpr, dpr);
-        ctx.clearRect(0, 0, rect.width, rect.height);
+        ctx.clearRect(0, 0, cssW, cssH);
 
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        const dim = Math.min(rect.width, rect.height);
+        const cx = cssW / 2;
+        const cy = cssH / 2;
+        const dim = Math.min(cssW, cssH);
         const isLight = (currentTheme === 'light');
 
-        // Progreso de animacion del nivel actual (0 -> 1 en 750ms)
         const elapsed = now - scale250LastStepChange;
         const animP = Math.min(1, Math.max(0, elapsed / 750));
         const easeP = 1 - Math.pow(1 - animP, 3);
 
-        // Anillos guia tenues
-        [0.46, 0.365, 0.255, 0.135].forEach((rf, idx) => {
+        [0.468, 0.365, 0.255, 0.135].forEach((rf) => {
           ctx.beginPath();
           ctx.arc(cx, cy, dim * rf, 0, Math.PI * 2);
           ctx.strokeStyle = isLight ? 'rgba(0,0,0,0.045)' : 'rgba(255,255,255,0.05)';
@@ -3319,7 +3360,6 @@
           ctx.setLineDash([]);
         });
 
-        // Dibujar enlaces hasta el paso actual
         const { nodes, edges } = scale250Graph;
         edges.forEach((e, idx) => {
           if (e.level > scale250Step) return;
@@ -3338,59 +3378,85 @@
           ctx.moveTo(x1, y1);
           ctx.lineTo(curX, curY);
           ctx.strokeStyle = e.color;
-          ctx.globalAlpha = e.level === 4 ? 0.65 : (e.level === 3 ? 0.45 : 0.28);
-          ctx.lineWidth = e.level === 4 ? 3.5 : (e.level === 3 ? 2 : 1.1);
+          ctx.globalAlpha = e.level === 4 ? 0.55 : (e.level === 3 ? 0.42 : 0.32);
+          ctx.lineWidth = e.level === 4 ? 4 : (e.level === 3 ? 2 : 1.15);
           ctx.stroke();
 
-          // Particula animada viajando hacia adentro
-          if (p > 0.95 && (e.level >= 2 || idx % 3 === 0)) {
-            const t = ((now * 0.00055 + idx * 0.17) % 1);
-            const px = x1 + (x2 - x1) * t;
-            const py = y1 + (y2 - y1) * t;
-            ctx.beginPath();
-            ctx.arc(px, py, e.level === 4 ? 3.2 : 1.8, 0, Math.PI * 2);
-            ctx.fillStyle = e.level === 4 ? '#ffffff' : e.color;
-            ctx.globalAlpha = 0.85;
-            ctx.fill();
+          if (p > 0.92) {
+            if (e.level === 4 && e.travelColors) {
+              e.travelColors.forEach((tc, tIdx) => {
+                const t = ((now * 0.0005 + idx * 0.19 + tIdx * 0.25) % 1);
+                const px = x1 + (x2 - x1) * t;
+                const py = y1 + (y2 - y1) * t;
+                ctx.beginPath();
+                ctx.arc(px, py, 3.4, 0, Math.PI * 2);
+                ctx.fillStyle = tc;
+                ctx.globalAlpha = 0.95;
+                ctx.fill();
+              });
+            } else if (e.level >= 2 || idx % 2 === 0) {
+              const t = ((now * 0.0006 + idx * 0.13) % 1);
+              const px = x1 + (x2 - x1) * t;
+              const py = y1 + (y2 - y1) * t;
+              ctx.beginPath();
+              ctx.arc(px, py, e.level === 3 ? 2.6 : 1.9, 0, Math.PI * 2);
+              ctx.fillStyle = e.color;
+              ctx.globalAlpha = 0.9;
+              ctx.fill();
+            }
           }
         });
 
-        // Dibujar nodos hasta el paso actual
         ctx.globalAlpha = 1;
         nodes.forEach(n => {
           if (n.level > scale250Step) return;
           const x = cx + n.x * dim;
           const y = cy + n.y * dim;
-          const scaleFactor = (n.level === scale250Step && scale250Step > 0) ? (0.3 + 0.7 * easeP) : 1;
-          const r = n.r * scaleFactor * (dim / 650);
-          const drawR = Math.max(2.2, r);
 
-          // Halo en macro-nodos y burbuja central
+          let scaleFactor = 1;
+          if (n.level === 0 && scale250Step === 0) {
+            const delay = (n.orderIdx || 0) * 1.6;
+            const localP = Math.min(1, Math.max(0, (elapsed - delay) / 220));
+            scaleFactor = 0.1 + 0.9 * (1 - Math.pow(1 - localP, 2));
+          } else if (n.level === scale250Step && scale250Step > 0) {
+            scaleFactor = 0.3 + 0.7 * easeP;
+          }
+
+          const r = n.r * scaleFactor * (dim / 650);
+          const drawR = n.level === 0 ? Math.max(3.2, r) : Math.max(3.5, r);
+
           if (n.level >= 3) {
             const pulse = 1 + 0.08 * Math.sin(now * 0.004);
             ctx.beginPath();
-            ctx.arc(x, y, drawR * 1.35 * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = n.level === 4 ? 'rgba(230, 0, 102, 0.22)' : 'rgba(255, 255, 255, 0.08)';
+            ctx.arc(x, y, drawR * 1.32 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = n.level === 4 ? 'rgba(230, 0, 102, 0.2)' : 'rgba(255, 255, 255, 0.08)';
+            ctx.fill();
+          }
+
+          if (n.colors && n.colors.length > 1) {
+            drawMulticolorCircle(ctx, x, y, drawR, n.colors);
+          } else {
+            ctx.beginPath();
+            ctx.arc(x, y, drawR, 0, Math.PI * 2);
+            ctx.fillStyle = n.color;
             ctx.fill();
           }
 
           ctx.beginPath();
           ctx.arc(x, y, drawR, 0, Math.PI * 2);
-          ctx.fillStyle = n.color;
-          ctx.fill();
-
-          if (n.level >= 2) {
-            ctx.lineWidth = n.level === 4 ? 3 : 1.5;
-            ctx.strokeStyle = isLight ? '#ffffff' : '#0a0e14';
-            ctx.stroke();
-          }
+          ctx.lineWidth = n.level === 4 ? 3 : (n.level >= 2 ? 1.6 : 0.7);
+          ctx.strokeStyle = isLight ? '#ffffff' : '#0a0e14';
+          ctx.stroke();
 
           if (n.label && drawR > 9) {
             ctx.fillStyle = '#ffffff';
-            ctx.font = `900 ${Math.round(n.level === 4 ? drawR * 0.62 : drawR * 0.78)}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+            ctx.shadowColor = 'rgba(0,0,0,0.65)';
+            ctx.shadowBlur = 4;
+            ctx.font = '900 ' + Math.round(n.level === 4 ? drawR * 0.62 : drawR * 0.78) + 'px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(n.label, x, y + 1);
+            ctx.shadowBlur = 0;
           }
         });
 
