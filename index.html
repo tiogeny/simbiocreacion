@@ -532,7 +532,6 @@
       font-weight: 800;
       fill: #ffffff;
       text-anchor: middle;
-      dominant-baseline: central;
       pointer-events: none;
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
@@ -1675,6 +1674,7 @@
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', cx);
         text.setAttribute('y', cy);
+        text.setAttribute('dy', '0.35em');
         text.setAttribute('class', 'node-label-initial');
         text.textContent = initial;
         g.appendChild(text);
@@ -1962,7 +1962,6 @@
             cy: yLevels[2],
             r: radii[2],
             fill: fill,
-            innerIcon: "✦",
             subname: subnameText,
             role: roleText,
             id: "conv-l2-" + i,
@@ -2000,7 +1999,6 @@
           cy: yLevels[3],
           r: radii[3],
           fill: fill,
-          innerIcon: "⭐",
           subname: subnameText,
           role: roleText,
           id: "conv-final",
