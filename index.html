@@ -273,55 +273,56 @@
       margin-top: 2px;
     }
 
-    /* TARJETAS VIAJERAS VERTICALES */
-    .metric-bubble {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 8px 16px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
-      text-align: right;
-      transition: all 0.3s ease;
-    }
-    .metric-bubble-label {
-      font-size: 10.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
-    }
-    .metric-bubble-value {
-      font-size: 17px;
-      font-weight: 900;
-      line-height: 1.25;
-      color: #ff7b72;
-    }
-    .metric-bubble-sub {
-      font-size: 11.5px;
-      color: var(--text-muted);
-    }
-
-    /* TARJETA VIAJERA DE SIMBIOCREACIÓN (LATERAL DERECHO) */
+    /* TARJETAS VIAJERAS VERTICALES (COMPETENCIA Y SIMBIOCREACIÓN) */
     .traveling-metric-card {
       position: absolute;
-      right: 32px;
+      right: 24px;
       top: 140px;
       transform: translateY(-50%);
       background: var(--bg-card);
       border: 1.5px solid var(--border-accent);
       border-radius: 16px;
-      padding: 16px 22px;
+      padding: 16px 20px;
       box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       z-index: 60;
-      width: 350px;
-      max-width: 34%;
+      width: 315px;
+      max-width: 30%;
       text-align: right;
       transition: top 0.65s cubic-bezier(0.25, 1, 0.5, 1), 
                   width 0.45s ease, 
                   border-color 0.4s ease, 
                   box-shadow 0.4s ease;
+    }
+
+    .traveling-metric-card.traveling-comp {
+      border-color: rgba(255, 123, 114, 0.45);
+    }
+    .traveling-metric-card.traveling-comp .tm-pill {
+      color: #ff7b72;
+    }
+
+    /* Carril exclusivo a la derecha en vistas individuales para evitar cualquier sobreposición */
+    body[data-view="conv"] .pane-conv .canvas-container,
+    body[data-view="comp"] .pane-comp .canvas-container {
+      width: calc(100% - 350px);
+    }
+
+    /* En vista Comparativa (split), mantener tarjetas compactas arriba a la derecha */
+    body[data-view="split"] .traveling-metric-card {
+      top: 10px !important;
+      right: 12px;
+      transform: none !important;
+      width: auto;
+      max-width: 240px;
+      padding: 8px 12px;
+    }
+    body[data-view="split"] .traveling-metric-card .tm-title {
+      font-size: 14px;
+    }
+    body[data-view="split"] .traveling-metric-card .tm-sub {
+      font-size: 11px;
     }
 
     .traveling-metric-card.expanded {
@@ -1023,15 +1024,15 @@
           <h2><span>⚔️</span> Competencia Tradicional</h2>
           <p>Torneo por descarte sucesivo · Silos cerrados</p>
           <div class="winner-banner" id="winnerBanner">
-            <span>👑</span> <span id="winnerText">Ganador Único</span>
+            <span>👑</span> <span id="winnerText">Ganador único</span>
           </div>
         </div>
+      </div>
 
-        <div class="metric-bubble" id="metricCardComp">
-          <div class="metric-bubble-label">Inteligencia retenida</div>
-          <div class="metric-bubble-value" id="compVal">8 / 8 saberes (100%)</div>
-          <div class="metric-bubble-sub" id="compFormula">Cruce entre mesas: Bloqueado (0 sinergias)</div>
-        </div>
+      <div class="traveling-metric-card traveling-comp" id="metricCardComp">
+        <div class="tm-pill" id="compPill">Inteligencia retenida</div>
+        <div class="tm-title" id="compVal">8 / 8 saberes (100%)</div>
+        <div class="tm-sub" id="compFormula">Cruce entre mesas: Bloqueado (0 sinergias)</div>
       </div>
 
       <div class="canvas-container">
@@ -2138,9 +2139,9 @@
 
 
     // --- CÁLCULO DINÁMICO DE ALTURA VERTICAL EXACTA DE LOS NIVELES DEL ÁRBOL ---
-    function getTreeLevelCenterY(step) {
-      const container = document.querySelector('.pane-conv .canvas-container');
-      const pane = document.getElementById('paneConv');
+    function getTreeLevelCenterY(paneSelector, step, hasSpotlight) {
+      const pane = document.querySelector(paneSelector);
+      const container = pane ? pane.querySelector('.canvas-container') : null;
       if (!container || !pane) return 140;
 
       const containerRect = container.getBoundingClientRect();
@@ -2156,13 +2157,13 @@
       const offsetY = (H - (430 * S)) / 2;
 
       // Coordenadas Y en el SVG: Nivel 0 = 38, Nivel 1 = 134, Nivel 2 = 235, Nivel 3 = 335
-      const cyLevels = [38, 38, 134, 134, 235, 335];
+      const cyLevels = hasSpotlight ? [38, 38, 134, 134, 235, 335] : [38, 134, 235, 335];
       const cy = cyLevels[step] !== undefined ? cyLevels[step] : 134;
 
       let nodeY = offsetY + (cy * S);
 
-      // En pasos 1 y 2, stageConv aplica transform spotlight-active: scale(1.28) translate(-10px, 45px) con origin 16% 22%
-      if (step === 1 || step === 2) {
+      // En pasos 1 y 2 de SimbioCreación, stageConv aplica transform spotlight-active
+      if (hasSpotlight && (step === 1 || step === 2)) {
         const origY = 0.22 * H;
         nodeY = origY + 1.28 * (nodeY - origY + 45);
       }
@@ -2170,23 +2171,29 @@
       return offsetTopInPane + nodeY;
     }
 
-    function alignTravelingCard() {
-      const cardConv = document.getElementById('metricCardConv');
-      if (!cardConv) return;
-      const activeView = document.body.getAttribute('data-view');
-      if (activeView !== 'conv' && activeView !== 'split') return;
+    function positionCardOnPane(cardId, paneSelector, step, hasSpotlight) {
+      const card = document.getElementById(cardId);
+      const pane = document.querySelector(paneSelector);
+      if (!card || !pane) return;
 
-      const targetCenterY = getTreeLevelCenterY(currentStep);
-      const pane = document.getElementById('paneConv');
-      const paneH = pane ? pane.clientHeight : window.innerHeight;
-      const cardH = cardConv.offsetHeight || 130;
+      const targetCenterY = getTreeLevelCenterY(paneSelector, step, hasSpotlight);
+      const paneH = pane.clientHeight || window.innerHeight;
+      const cardH = card.offsetHeight || 130;
 
-      // Límites de seguridad para que la tarjeta no toque el header superior (54px) ni la barra inferior (42px)
       const minCenterY = 54 + (cardH / 2) + 6;
       const maxCenterY = paneH - 42 - (cardH / 2) - 6;
       const safeCenterY = Math.max(minCenterY, Math.min(targetCenterY, maxCenterY));
 
-      cardConv.style.top = Math.round(safeCenterY) + 'px';
+      card.style.top = Math.round(safeCenterY) + 'px';
+    }
+
+    function alignTravelingCard() {
+      const activeView = document.body.getAttribute('data-view');
+      if (activeView === 'conv') {
+        positionCardOnPane('metricCardConv', '#paneConv', currentStep, true);
+      } else if (activeView === 'comp') {
+        positionCardOnPane('metricCardComp', '#paneComp', Math.min(currentStep, 3), false);
+      }
     }
 
     // --- 6. UI UPDATE & PROGRESSION ---
@@ -2929,14 +2936,17 @@
 
       // Recalcular alineación vertical en cambios de tamaño y pantalla completa
       window.addEventListener('resize', () => {
-        const cardConv = document.getElementById('metricCardConv');
-        if (cardConv) {
-          cardConv.style.transition = 'none';
-          alignTravelingCard();
-          requestAnimationFrame(() => { cardConv.style.transition = ''; });
-        } else {
-          alignTravelingCard();
-        }
+        ['metricCardConv', 'metricCardComp'].forEach(id => {
+          const c = document.getElementById(id);
+          if (c) c.style.transition = 'none';
+        });
+        alignTravelingCard();
+        requestAnimationFrame(() => {
+          ['metricCardConv', 'metricCardComp'].forEach(id => {
+            const c = document.getElementById(id);
+            if (c) c.style.transition = '';
+          });
+        });
       });
 
       document.addEventListener('fullscreenchange', () => {
