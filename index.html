@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SimbioCreación · Metodología de Co-Creación Simbiótica</title>
 
   <!-- PWA meta tags -->
@@ -1141,44 +1141,67 @@
        ADAPTACIÓN MÓVIL (SOLO <= 900px, NO AFECTA ESCRITORIO)
        ========================================================================= */
     @media (max-width: 900px) {
+      html, body {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100dvh;
+        overflow-x: hidden !important;
+      }
       header {
         height: auto;
-        padding: 8px 12px;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 8px 10px;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
+        box-sizing: border-box;
+      }
+      .brand-wrap {
+        flex-shrink: 0;
       }
       .brand-logo-svg-full {
-        height: 36px;
+        height: 26px;
       }
       .header-actions {
-        gap: 6px;
+        gap: 4px;
+        margin-left: auto;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
       }
       .mode-pill {
-        padding: 4px 10px;
-        font-size: 11px;
+        padding: 5px 7px;
+        font-size: 12px;
+      }
+      #btnModeCase span:last-child,
+      #btnConfig span:last-child {
+        display: none;
       }
       .btn {
-        padding: 6px 10px;
+        padding: 5px 7px;
         font-size: 12px;
       }
-      #btnFullscreen {
-        display: none;
-      }
+      /* 5 pestañas en 2 filas simétricas que siempre caben en 100% sin desborde */
       .view-switcher {
         order: 3;
-        width: 100%;
-        overflow-x: auto;
-        justify-content: flex-start;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-      }
-      .view-switcher::-webkit-scrollbar {
-        display: none;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 4px;
+        padding: 4px;
+        box-sizing: border-box;
       }
       .view-tab {
-        flex-shrink: 0;
-        padding: 6px 10px;
-        font-size: 12px;
+        grid-column: span 2;
+        justify-content: center;
+        padding: 6px 4px;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #tabComb, #tabScale250 {
+        grid-column: span 3;
       }
 
       /* Anular carril lateral de 375px en móvil */
@@ -1187,8 +1210,14 @@
         width: 100% !important;
       }
 
+      .workspace, .pane, .canvas-container, .tree-stage, .tree-svg {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box;
+      }
       .pane {
-        padding: 8px 12px;
+        padding: 6px 10px;
       }
       .pane-header {
         min-height: 0;
@@ -1205,9 +1234,10 @@
         width: 100% !important;
         max-width: 100% !important;
         margin: 2px 0 6px !important;
-        padding: 10px 14px !important;
+        padding: 9px 12px !important;
         text-align: left !important;
         border-radius: 12px;
+        box-sizing: border-box;
       }
       .traveling-metric-card::before,
       .traveling-metric-card::after {
@@ -1219,29 +1249,29 @@
       }
       .tm-title,
       .traveling-metric-card.expanded .tm-title {
-        font-size: 15px !important;
+        font-size: 14.5px !important;
         margin-bottom: 2px !important;
       }
       .tm-sub,
       .traveling-metric-card.expanded .tm-sub {
-        font-size: 12px !important;
+        font-size: 11.5px !important;
         line-height: 1.35 !important;
       }
       .tm-extra {
-        margin-top: 8px !important;
-        padding-top: 8px !important;
+        margin-top: 6px !important;
+        padding-top: 6px !important;
       }
       .tm-equation {
         flex-wrap: wrap !important;
         justify-content: flex-start !important;
         gap: 4px !important;
-        font-size: 11.5px !important;
+        font-size: 11px !important;
       }
       .tm-box {
-        padding: 4px 8px !important;
+        padding: 4px 7px !important;
       }
       .tm-box-gold {
-        font-size: 12px !important;
+        font-size: 11.5px !important;
       }
 
       /* Comparativa apilada verticalmente */
@@ -1251,7 +1281,7 @@
       }
       body[data-view="split"] .pane {
         height: auto;
-        min-height: 360px;
+        min-height: 320px;
         flex: none;
       }
       body[data-view="split"] .traveling-metric-card {
@@ -1261,28 +1291,40 @@
       /* Salto Combinatorio en columna */
       #paneComb {
         overflow-y: auto;
-        padding: 12px;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
       }
       .comb-grid {
         grid-template-columns: 1fr;
       }
 
-      /* Escala 250 en columna */
+      /* Escala 250 en columna sin desborde */
       #paneScale250 {
         overflow-y: auto;
-        padding: 10px 12px 18px;
+        overflow-x: hidden;
+        padding: 8px 10px 16px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
       .scale250-header {
         margin-bottom: 6px;
       }
+      .scale250-controls .btn {
+        font-size: 11px;
+        padding: 5px 8px;
+      }
       .scale250-body {
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+        width: 100%;
       }
       .scale250-canvas-wrap {
         width: 100%;
-        min-height: 330px;
-        height: 52vh;
+        max-width: 100%;
+        min-height: 290px;
+        height: 44vh;
         flex: none;
       }
       .scale250-sidebar {
@@ -1290,37 +1332,54 @@
         max-width: 100%;
       }
       .scale250-card {
-        padding: 12px 14px;
+        padding: 10px 12px;
       }
       .scale250-steps-list {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
       }
       .scale250-step-item {
         font-size: 11.5px;
-        padding: 6px 8px;
+        padding: 5px 8px;
       }
 
-      /* Barra inferior táctil limpia (sin atajos de teclado) */
+      /* Barra inferior táctil limpia que siempre cabe en <= 390px */
       .bottom-bar {
-        padding: 8px 12px;
+        padding: 8px 8px;
         justify-content: center;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
       .bottom-left-info,
       .key-shortcuts {
         display: none !important;
       }
+      body:not([data-view="comp"]) #btnReroll {
+        display: none;
+      }
       .timeline-nav {
         width: 100%;
         justify-content: center;
-        gap: 10px;
+        gap: 5px;
+      }
+      .step-dots {
+        gap: 4px;
+      }
+      .btn-circle {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
       }
       #btnNext {
         flex: 1;
-        max-width: 240px;
-        padding: 10px 14px;
-        font-size: 13px;
+        min-width: 0;
+        max-width: 210px;
+        padding: 7px 10px;
+        font-size: 11.5px;
+        white-space: normal;
+        line-height: 1.2;
       }
     }
 
@@ -1391,7 +1450,7 @@
         <span>🪵</span> <span>Caso Real</span>
       </button>
 
-      <button class="btn btn-primary" id="btnConfig" title="Configurar saberes o personas del taller (P)">👥 Saberes</button>
+      <button class="btn btn-primary" id="btnConfig" title="Configurar saberes o personas del taller (P)"><span>👥</span> <span>Saberes</span></button>
       <button class="btn" id="btnTheme" title="Alternar modo Claro / Oscuro (T)">☀️</button>
       <button class="btn" id="btnSound" title="Silenciar / Activar Sonido (M)">🔊</button>
       <button class="btn" id="btnFullscreen" title="Pantalla Completa (F)">⛶</button>
