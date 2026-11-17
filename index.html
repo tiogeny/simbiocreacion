@@ -1286,7 +1286,15 @@
         font-size: 11.5px !important;
       }
 
-      /* Salto Combinatorio limpio en móvil: ocultar columna izquierda (grupos aislados) y evitar superposición */
+      /* Zoom en móvil: centrar Carlos y Sofía sin que se corten a la izquierda */
+      .tree-stage {
+        transform-origin: 18% 12%;
+      }
+      .tree-stage.spotlight-active {
+        transform: scale(1.22) translate(14px, 12px);
+      }
+
+      /* Salto Combinatorio limpio en móvil: priorizar gráfico y animación, ocultar textos sobrantes */
       #paneComb {
         overflow-y: auto;
         padding: 10px;
@@ -1295,7 +1303,30 @@
         gap: 10px;
       }
       .comb-header {
-        margin-bottom: 4px;
+        margin-bottom: 2px;
+        gap: 6px;
+      }
+      .comb-header h2 {
+        font-size: 14.5px;
+      }
+      .comb-header p,
+      .comb-card-desc,
+      .comb-grid > .comb-card > div:last-child {
+        display: none !important;
+      }
+      .comb-card-header {
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+      }
+      .comb-big-num {
+        font-size: 22px;
+      }
+      .comb-ticker-wrap {
+        margin-top: 2px;
+        padding: 6px 10px;
+      }
+      .comb-ticker-text {
+        font-size: 11px;
       }
       .comb-grid {
         grid-template-columns: 1fr;
@@ -1597,7 +1628,7 @@
           <canvas class="comb-canvas" id="canvasNetwork"></canvas>
         </div>
         <div style="font-size:11px; color:var(--accent-green); margin-top:10px;">
-          ✨ <strong>Convergencia Total:</strong> Toda idea puede combinarse con cualquier saber de la sala: ( C = 2^N - 1 ).
+          ✨ <strong>Convergencia Total:</strong> Toda idea puede combinarse con cualquier saber de la sala: <strong>C = 2^N - 1</strong>.
         </div>
       </div>
     </div>
@@ -1611,7 +1642,7 @@
         <span style="font-size:12px; color:var(--text-muted);" id="toggleArrow">▼</span>
       </div>
       <div class="math-breakdown-content" id="breakdownContent">
-        <p>Cuando 5 saberes distintos ((A, B, C, D, E)) dialogan en red abierta, el espacio de posibilidades no es la suma de 5 ideas, sino <strong>31 soluciones emergentes</strong>:</p>
+        <p>Cuando 5 saberes distintos (A, B, C, D, E) dialogan en red abierta, el espacio de posibilidades no es la suma de 5 ideas, sino <strong>31 soluciones emergentes</strong>:</p>
         <div class="comb-list-grid">
           <div class="comb-chip"><strong>1 saber (5):</strong><br>A, B, C, D, E</div>
           <div class="comb-chip"><strong>Parejas (10):</strong><br>AB, AC, AD, AE, BC, BD, BE, CD, CE, DE</div>
@@ -1619,7 +1650,7 @@
           <div class="comb-chip"><strong>Cuartetos (5):</strong><br>ABCD, ABCE, ABDE, ACDE, BCDE</div>
           <div class="comb-chip" style="border-color:var(--accent-pink); background:rgba(230,0,102,0.1);"><strong>Integración Total (1):</strong><br>ABCDE</div>
         </div>
-        <p style="margin-top:8px; font-size:11px; color:var(--text-muted);">Fórmula matemática: ( \sum_{k=1}^{N} \binom{N}{k} = 2^N - 1 = 2^5 - 1 = 31 ).</p>
+        <p style="margin-top:8px; font-size:11px; color:var(--text-muted);">Fórmula matemática: <strong>2^N - 1 = 2^5 - 1 = 31</strong>.</p>
       </div>
     </div>
   </section>
