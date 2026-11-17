@@ -3455,13 +3455,39 @@
       }
 
 
-    // --- 9. VIEW SWITCHING & THEMES ---
-    function setView(view) {
+    // --- 9. VIEW SWITCHING, URL HASH ROUTING & THEMES ---
+    const VIEW_HASH_MAP = {
+      comp: 'competicion',
+      conv: 'simbiocreacion',
+      split: 'comparativa',
+      combinatoria: 'combinatoria',
+      scale250: 'escala'
+    };
+
+    function getViewFromHash() {
+      const h = (window.location.hash || '').replace(/^#/, '').toLowerCase().trim();
+      if (!h) return null;
+      if (h === 'competicion' || h === 'comp') return 'comp';
+      if (h === 'simbiocreacion' || h === 'conv') return 'conv';
+      if (h === 'comparativa' || h === 'split') return 'split';
+      if (h === 'combinatoria') return 'combinatoria';
+      if (h === 'escala' || h === 'escala250') return 'scale250';
+      return null;
+    }
+
+    function setView(view, updateHash = true) {
       hideNodeTooltip();
       document.body.setAttribute('data-view', view);
       document.querySelectorAll('.view-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.view === view);
       });
+
+      if (updateHash && VIEW_HASH_MAP[view]) {
+        const targetHash = '#' + VIEW_HASH_MAP[view];
+        if (window.location.hash !== targetHash) {
+          history.replaceState(null, '', targetHash);
+        }
+      }
 
       if (view === 'combinatoria') {
         stopScale250Animation();
@@ -3709,10 +3735,20 @@
         });
       });
 
-      // Initial Render
+      window.addEventListener('hashchange', () => {
+        const v = getViewFromHash();
+        if (v) setView(v, false);
+      });
+
+      // Initial Render (respeta #hash si se comparte una pestaña específica)
       setTheme(currentTheme);
       setPeopleCount(5);
-      updateUI();
+      const initialHashView = getViewFromHash();
+      if (initialHashView) {
+        setView(initialHashView, false);
+      } else {
+        updateUI();
+      }
     });
   </script>
 </body>
