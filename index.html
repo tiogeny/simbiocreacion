@@ -8,9 +8,6 @@
   <!-- PWA meta tags -->
   <meta name="description" content="Herramienta interactiva y pedagógica de SimbioCreación para talleres y conferencias. Modelo de convergencia exponencial vs competencia tradicional." />
   <meta name="theme-color" content="#0a0e14" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
@@ -992,6 +989,7 @@
     body[data-view="split"] .pane { padding: 8px 12px; }
     body[data-view="combinatoria"] .workspace { display: none; }
     body[data-view="combinatoria"] #paneComb { display: flex; }
+    body[data-view="combinatoria"] .bottom-bar { display: none; }
     body[data-view="scale250"] .workspace { display: none; }
     body[data-view="scale250"] #paneScale250 { display: flex; }
     body[data-view="scale250"] .bottom-bar { display: none; }
@@ -1180,28 +1178,29 @@
         padding: 5px 7px;
         font-size: 12px;
       }
-      /* 5 pestañas en 2 filas simétricas que siempre caben en 100% sin desborde */
+
+      /* Ocultar Comparativa en celular y mostrar 4 pestañas simétricas 2x2 */
+      #tabSplit {
+        display: none !important;
+      }
       .view-switcher {
         order: 3;
         width: 100% !important;
         max-width: 100% !important;
         display: grid;
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: 1fr 1fr;
         gap: 4px;
         padding: 4px;
         box-sizing: border-box;
       }
       .view-tab {
-        grid-column: span 2;
+        grid-column: auto !important;
         justify-content: center;
-        padding: 6px 4px;
-        font-size: 11px;
+        padding: 6px 6px;
+        font-size: 11.5px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-      #tabComb, #tabScale250 {
-        grid-column: span 3;
       }
 
       /* Anular carril lateral de 375px en móvil */
@@ -1221,7 +1220,20 @@
       }
       .pane-header {
         min-height: 0;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
+      }
+      .pane-title-group p {
+        display: none;
+      }
+      .canvas-container {
+        padding-top: 8px;
+        flex: 0 0 auto;
+        height: auto;
+        align-items: flex-start;
+      }
+      .tree-svg {
+        height: auto !important;
+        aspect-ratio: 640 / 430;
       }
 
       /* Tarjetas explicativas en flujo superior compacto sin triángulo */
@@ -1233,7 +1245,7 @@
         transform: none !important;
         width: 100% !important;
         max-width: 100% !important;
-        margin: 2px 0 6px !important;
+        margin: 4px 0 4px !important;
         padding: 9px 12px !important;
         text-align: left !important;
         border-radius: 12px;
@@ -1249,12 +1261,12 @@
       }
       .tm-title,
       .traveling-metric-card.expanded .tm-title {
-        font-size: 14.5px !important;
+        font-size: 15px !important;
         margin-bottom: 2px !important;
       }
       .tm-sub,
       .traveling-metric-card.expanded .tm-sub {
-        font-size: 11.5px !important;
+        font-size: 12px !important;
         line-height: 1.35 !important;
       }
       .tm-extra {
@@ -1274,29 +1286,38 @@
         font-size: 11.5px !important;
       }
 
-      /* Comparativa apilada verticalmente */
-      body[data-view="split"] .workspace {
-        flex-direction: column;
-        overflow-y: auto;
-      }
-      body[data-view="split"] .pane {
-        height: auto;
-        min-height: 320px;
-        flex: none;
-      }
-      body[data-view="split"] .traveling-metric-card {
-        max-width: 100% !important;
-      }
-
-      /* Salto Combinatorio en columna */
+      /* Salto Combinatorio limpio en móvil: ocultar columna izquierda (grupos aislados) y evitar superposición */
       #paneComb {
         overflow-y: auto;
         padding: 10px;
         width: 100%;
         box-sizing: border-box;
+        gap: 10px;
+      }
+      .comb-header {
+        margin-bottom: 4px;
       }
       .comb-grid {
         grid-template-columns: 1fr;
+        flex: none;
+        min-height: 0;
+        gap: 10px;
+      }
+      .comb-grid > .comb-card:first-child {
+        display: none !important;
+      }
+      .comb-card {
+        height: auto;
+        padding: 12px;
+      }
+      .comb-canvas-wrap {
+        flex: none;
+        min-height: 270px;
+        height: 270px;
+      }
+      .math-breakdown-box {
+        flex-shrink: 0;
+        margin-top: 4px;
       }
 
       /* Escala 250 en columna sin desborde */
@@ -1323,8 +1344,8 @@
       .scale250-canvas-wrap {
         width: 100%;
         max-width: 100%;
-        min-height: 290px;
-        height: 44vh;
+        min-height: 300px;
+        height: 46vh;
         flex: none;
       }
       .scale250-sidebar {
