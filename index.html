@@ -557,27 +557,6 @@
       pointer-events: none;
     }
 
-    /* WINNER BANNER (COMPETITION) */
-    .winner-banner {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #f1c40f;
-      background: rgba(241, 196, 15, 0.12);
-      border: 1px solid rgba(241, 196, 15, 0.3);
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-top: 4px;
-      opacity: 0;
-      transform: translateY(-4px);
-      transition: all 0.3s ease;
-    }
-    .winner-banner.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
 
     /* POPUP TOOLTIP FOR NODES (CLEAN AND NO TEXT OVERLAP) */
     .node-tooltip {
@@ -1519,9 +1498,6 @@
         <div class="pane-title-group">
           <h2><span>⚔️</span> Competencia Tradicional</h2>
           <p>Torneo por descarte sucesivo · Silos cerrados</p>
-          <div class="winner-banner" id="winnerBanner">
-            <span>👑</span> <span id="winnerText">Ganador único</span>
-          </div>
         </div>
       </div>
 
@@ -2857,7 +2833,6 @@
       const cardComp = document.getElementById('metricCardComp');
       const compVal = document.getElementById('compVal');
       const compFormula = document.getElementById('compFormula');
-      const winnerBanner = document.getElementById('winnerBanner');
 
       const compMetrics = [
         { val: "8 / 8 saberes activos (100%)", sub: "Cruce entre mesas bloqueado (0 sinergias)" },
@@ -2871,13 +2846,6 @@
       }
       compVal.textContent = compMetrics[compStep].val;
       compFormula.textContent = compMetrics[compStep].sub;
-
-      if (compStep === 3) {
-        winnerBanner.classList.add('show');
-        document.getElementById('winnerText').textContent = "Ganador único: " + participants[compDecisions.r3].name + " (" + participants[compDecisions.r3].role + ")";
-      } else {
-        winnerBanner.classList.remove('show');
-      }
 
       // Tarjeta Viajera Vertical de SimbioCreación
       const cardConv = document.getElementById('metricCardConv');
